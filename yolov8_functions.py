@@ -357,6 +357,7 @@ def main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, s
             matplotlib.image.imsave(filename + '.jpg', img)
 
             # kreiraj JSON dataset
+            # x in y koordinati v points sta obrnjeni
             dictionary = {
                 "Image name": filename,
                 "Point name": point_names[i],
