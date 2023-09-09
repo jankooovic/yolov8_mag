@@ -35,7 +35,7 @@ model.train(data='config_ALL.yaml', epochs=300, pretrained=True, imgsz=640, batc
 
 ### Treniraj model - sprememba config datotek
 model.train(
-    data='config_ALL.yaml',
+    data='config/config_ALL.yaml',
     epochs=300,
     pretrained=True,
     imgsz=2560,

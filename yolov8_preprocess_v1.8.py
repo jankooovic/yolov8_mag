@@ -1,6 +1,4 @@
 ### Imports: 
-
-import pathlib
 import yolov8_functions
 from sklearn.model_selection import train_test_split
 
