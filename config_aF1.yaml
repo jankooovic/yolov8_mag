@@ -1,0 +1,17 @@
+# Data
+path: /Users/jankovic/Downloads/yolov8/data/dataset/aF1
+train: images/train  # train images (relative to 'path')
+val: images/val  # val images (relative to 'path')
+
+# Keypoints
+kpt_shape: [1, 3]  # [number of keypoints in data, number of dim]
+#v datoteki class.names definiraš imena točk
+flip_idx: [0] # What is the correct index when flipping image
+#flip_idx: [0, 1, 2, 3]
+
+# Classes
+names:
+  0: aF1
+
+
+

@@ -1,0 +1,6 @@
+/.DS_Store
+/__pycache__
+/_archive
+/data
+/evaluate.py
+/yolov8n-pose.pt
