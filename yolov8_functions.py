@@ -347,7 +347,7 @@ def main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, s
 
             # shrani sliko v PNG
             filename = sav_path + "/PNGs/" + name + "_" + point_names[i]
-            img = get_zoomed_image_part(orig_image_shape, square, p, data_arr, filename)
+            #img = get_zoomed_image_part(orig_image_shape, square, p, data_arr, filename)
 
             # slice image - remove img zgoraj!
             img, p_changed= slice_image_3_parts(orig_image_shape, square, p, data_arr, point_names[i], filename)
