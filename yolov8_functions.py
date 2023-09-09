@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.image
 import pathlib
+import math
 
 #### Functions:
 
@@ -347,7 +348,10 @@ def main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, s
             # shrani sliko v PNG
             filename = sav_path + "/PNGs/" + name + "_" + point_names[i]
             img = get_zoomed_image_part(orig_image_shape, square, p, data_arr, filename)
-            
+
+            # slice image - remove img zgoraj!
+            img = slice_image_3_parts(orig_image_shape, square, p, data_arr, point_names[i], filename)
+
             # Shrani sliko v JPG
             filename = sav_path + "/" + point_names[i] + "/images/"  + data + "/" + name + "_" + point_names[i]
             matplotlib.image.imsave(filename + '.jpg', img)
@@ -449,5 +453,57 @@ def full_image_save_predict(points, img, filename):
     plt.clf()
     plt.close()
 
+def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
 
+   # define square side size - prilagodi glede na velikost objekta
+    square_side = image_shape[0]*square
+
+    fig, ax = plt.subplots()
+
+    height = image_shape[0]
+    two_thirds = math.ceil(height*(2/3))
+    one_third = math.ceil(height*(1/3))
+
+    # točka na sliki + izrez kvadrata iz slike
+    if point_name == 'FHC':
+        image_part = img[0:one_third,:]
+        # plot points
+        ax.plot(point[0], point[1], marker='.', color="white")
+        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
+        ax.add_patch(rect)
+
+    elif point_name == 'TKC':
+        image_part = img[one_third:two_thirds,:]
+        # plot points
+        point = [point[0], point[1]-one_third]
+        ax.plot(point[0], point[1], marker='.', color="white")
+        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
+        ax.add_patch(rect)
+
+    elif point_name == 'TML':
+        image_part = img[two_thirds:height,:]
+        # plot points
+        point = [point[0], point[1]-two_thirds]
+        ax.plot(point[0], point[1], marker='.', color="white")
+        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
+        ax.add_patch(rect)
+
+    elif point_name == 'aF1':
+        image_part = img[0:math.ceil(height/2),:]
+        # plot points
+        ax.plot(point[0], point[1], marker='.', color="white")
+        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
+        ax.add_patch(rect)
+
+    #print("Image part shape:", img.shape)
+    #print("Point coordinates:", point)
+    plt.imshow(image_part[:,:])
+    # save image&markers to png
+    plt.savefig(filename + '.png')
+    #plt.show()
+    plt.cla()
+    plt.clf()
+    plt.close()
+    
+    return image_part
 
