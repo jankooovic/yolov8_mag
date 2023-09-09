@@ -350,7 +350,7 @@ def main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, s
             img = get_zoomed_image_part(orig_image_shape, square, p, data_arr, filename)
 
             # slice image - remove img zgoraj!
-            img = slice_image_3_parts(orig_image_shape, square, p, data_arr, point_names[i], filename)
+            img, p_changed= slice_image_3_parts(orig_image_shape, square, p, data_arr, point_names[i], filename)
 
             # Shrani sliko v JPG
             filename = sav_path + "/" + point_names[i] + "/images/"  + data + "/" + name + "_" + point_names[i]
@@ -361,6 +361,7 @@ def main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, s
                 "Image name": filename,
                 "Point name": point_names[i],
                 "Point coordinates": p,
+                "Changed coordinates": p_changed,
                 "Image_size": orig_image_shape,
                 "Zoomed_image_size": img.shape
             }
@@ -505,5 +506,5 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     plt.clf()
     plt.close()
     
-    return image_part
+    return image_part, point
 
