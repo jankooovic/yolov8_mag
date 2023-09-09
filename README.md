@@ -19,3 +19,6 @@ Path: Downloads/yolov8/data/dataset
 - config_TKC.yaml
 - config_TML.yaml
 - config_FHC.yaml
+
+# Github repository
+https://github.com/jankooovic/yolov8_mag.git
