@@ -2,6 +2,10 @@
 import yolov8_functions
 from sklearn.model_selection import train_test_split
 
+"""
+Prepare pictures and data for YoloV8 training.
+"""
+
 ### Variables: ###
 
 # Dataset path:
