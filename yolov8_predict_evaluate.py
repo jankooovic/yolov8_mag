@@ -21,6 +21,15 @@ model_path_fhc = "/opt/homebrew/runs/pose/train_all_imgsize_640/weights/best.pt"
 """
 ################################
 model_path_all = "/opt/homebrew/runs/pose/train_all_imgsize_960/weights/best.pt"
+model_path_fhc = "/opt/homebrew/runs/pose/train_fhc_imgsize_960/weights/best.pt"
+model_path_af1 = "/opt/homebrew/runs/pose/train_af1_imgsize_960/weights/best.pt"
+model_path_fnoc = "/opt/homebrew/runs/pose/train_fnoc_imgsize_960/weights/best.pt"
+model_path_tkc = "/opt/homebrew/runs/pose/train_tkc_imgsize_960/weights/best.pt"
+model_path_tml = "/opt/homebrew/runs/pose/train_tml_imgsize_960/weights/best.pt"
+
+###############################
+model_path_train7 = "/opt/homebrew/runs/pose/train7/weights/best.pt"
+model_path_test = "/opt/homebrew/runs/pose/train7/weights/best.pt"
 
 # Test image directories
 all_imgs = "/images/test"
@@ -38,17 +47,18 @@ image_paths = yolov8_functions.get_jpg_paths(dirs, directories, path, all_imgs)
 
 # izberi slike iz posameznega direktorija - for loop, da gre čez vse pathe
 all_paths = yolov8_functions.get_paths_word("ALL", image_paths)
+fhc_paths = yolov8_functions.get_paths_word("FHC", image_paths)
 af1_paths = yolov8_functions.get_paths_word("aF1", image_paths)
-tkc_paths = yolov8_functions.get_paths_word("FNOC", image_paths)
-tml_paths = yolov8_functions.get_paths_word("TKC", image_paths)
-fhc_paths = yolov8_functions.get_paths_word("TML", image_paths)
+fnoc_paths = yolov8_functions.get_paths_word("FNOC", image_paths)
+tkc_paths = yolov8_functions.get_paths_word("TKC", image_paths)
+tml_paths = yolov8_functions.get_paths_word("TML", image_paths)
 
 # predict points na slikah posameznega direktorija -> ALL
-for img_path in all_paths:
+for img_path in fhc_paths:
 
     # Load a model
     model = YOLO('yolov8n-pose.pt')  # load an official model
-    model = YOLO(model_path_all)  # load a custom model
+    model = YOLO(model_path_test)  # load a custom model
 
     # Predict with the model
     results = model(img_path)[0]  # predict on an image

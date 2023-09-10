@@ -1,6 +1,10 @@
 ### Imports: 
 import yolov8_functions
 from sklearn.model_selection import train_test_split
+import os
+import shutil
+from datetime import date
+from datetime import datetime
 
 """
 Prepare pictures and data for YoloV8 training.
@@ -62,6 +66,20 @@ print("")
 print("Validation paths:", val)
 
 ##### Make dataset ####
+
+### change name of current dataset folder to dataset_date_time
+
+# datetime object containing current date and time
+now = datetime.now()
+# dd/mm/YY H:M:S
+dt_string = now.strftime("_%d-%m-%Y_%H:%M:%S")
+os.rename(sav_path,sav_path + dt_string)
+
+### create new dataset folder from dataset_template
+# calling the shutil.copytree() method and passing the src,dst
+shutil.copytree(sav_path + "_template",sav_path)
+
+### Script 
 
 j = 0
 u = len(point_names)
