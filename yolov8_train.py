@@ -1,9 +1,9 @@
 """
 ToDo:
 - test prametrov učenja 
-    - saturacija = 0
-    - batch = default, 1, -1(autobatch)
-    -  test črno bele slike
+    - saturacija = 0 - ne zmaegli delov slike
+    - batch = default, 1, -1(autobatch) - itak imam samo 7 slik :D - nima veze nad 7 slik autobatch/defualt je isto
+    - test črno bele slike
 """
 
 from ultralytics import YOLO
@@ -51,9 +51,9 @@ for config in config_files:
         epochs=300,
         imgsz=960,
         #batch=-1,
-        hsv_h = 0.008,
-        hsv_s = 0.3,
-        hsv_v = 0.2,
+        hsv_h = 0.015,
+        hsv_s = 0.1,
+        hsv_v = 0.05,
         degrees=10,
         scale=0.1,
         perspective=0.0005,
