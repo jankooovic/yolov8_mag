@@ -30,7 +30,7 @@ model.train(data='config.yaml', epochs=100, imgsz=640)
 model.train(data='config.yaml', epochs=300, imgsz=640, flipud=1, fliplr=1, degrees=90.0)
 
 """
-
+"""
 ### Treniraj model - Cela slika
 model.train(
     data='config/config_ALL.yaml',
@@ -44,8 +44,8 @@ model.train(
     scale=0.1,
     fliplr=0,
     mosaic=0)
-
 """
+
 ### Treniraj model - FHC
 model.train(
     data='config/config_FHC.yaml',
@@ -115,5 +115,3 @@ model.train(
     scale=0.1,
     fliplr=0,
     mosaic=0)
-
-"""

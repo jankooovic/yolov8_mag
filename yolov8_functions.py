@@ -350,7 +350,7 @@ def main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, s
             #img = get_zoomed_image_part(orig_image_shape, square, p, data_arr, filename)
 
             # slice image - remove img zgoraj!
-            img, p_changed= slice_image_3_parts(orig_image_shape, square, p, data_arr, point_names[i], filename)
+            img, p_changed, changed_image_shape, changed_img_ratio = slice_image_3_parts(orig_image_shape, square, p, data_arr, point_names[i], filename)
 
             # Shrani sliko v JPG
             filename = sav_path + "/" + point_names[i] + "/images/"  + data + "/" + name + "_" + point_names[i]
@@ -372,7 +372,10 @@ def main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, s
 
             # kreiraj txt zapis za točke
             filename = sav_path + "/" + point_names[i] + "/labels/"  + data + "/" + name
-            create_landmarks_file(p, orig_image_shape, square, orig_img_ratio, filename, 0, point_names[i])
+            # square je tukaj večji, ker je na sliki za učenje potem večji, 0.1 je premajhen
+            square = 0.2
+            create_landmarks_file(p_changed, changed_image_shape, square, changed_img_ratio, filename, 0, point_names[i])
+            square = 0.1
 
             i += 1
 
@@ -505,6 +508,12 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
         rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
         ax.add_patch(rect)
 
+    # image shape
+    img_shape = image_part.shape
+
+    # image heigth / width ratio
+    img_ratio = (img_shape[0] / img_shape[1])
+
     #print("Image part shape:", img.shape)
     #print("Point coordinates:", point)
     plt.imshow(image_part[:,:])
@@ -515,5 +524,5 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     plt.clf()
     plt.close()
     
-    return image_part, point
+    return image_part, point, img_shape, img_ratio
 

@@ -36,7 +36,6 @@ nrrd_image_paths = yolov8_functions.get_nrrd_paths(dirs)
 
 ## poti do json datotek s podatki o točkah
 point_json_paths = yolov8_functions.get_json_paths(dirs, point_names)
-print(point_json_paths)
 
 ### Make train, test and validate groups ###
 """
