@@ -3,6 +3,7 @@ ToDo:
 - test prametrov učenja 
     - saturacija = 0
     - batch = default, 1, -1(autobatch)
+    -  test črno bele slike
 """
 
 from ultralytics import YOLO
