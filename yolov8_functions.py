@@ -526,3 +526,12 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     
     return image_part, point, img_shape, img_ratio
 
+
+
+
+
+
+
+
+
+

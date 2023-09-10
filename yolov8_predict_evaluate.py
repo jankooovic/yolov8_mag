@@ -1,3 +1,8 @@
+"""
+ToDo:
+- algoritem za af1 - med točkama FNOC in FHC na polovici - izreže del slike(pas) in naredi predikcijo
+"""
+
 from ultralytics import YOLO
 import cv2
 import numpy as np
@@ -19,7 +24,7 @@ model_path_tkc = "/opt/homebrew/runs/pose/train_all_imgsize_640/weights/best.pt"
 model_path_af1 = "/opt/homebrew/runs/pose/train_all_imgsize_640/weights/best.pt"
 model_path_fhc = "/opt/homebrew/runs/pose/train_all_imgsize_640/weights/best.pt"
 """
-################################
+################################ - premakni v direktorij yolov8/models - ko imem boljše rezultate
 model_path_all = "/opt/homebrew/runs/pose/train_all_imgsize_960/weights/best.pt"
 model_path_fhc = "/opt/homebrew/runs/pose/train_fhc_imgsize_960/weights/best.pt"
 model_path_af1 = "/opt/homebrew/runs/pose/train_af1_imgsize_960/weights/best.pt"
@@ -100,15 +105,3 @@ for img_path in fhc_paths:
     }
 
     yolov8_functions.create_json_datafile(dictionary, filename)
-
-
-
-"""
-ToDo:
-- dodaj kaskadno iskanje na sliki poleg normalnega iskanja - 
-- algoritem za af1 - med točkama FNOC in FHC na polovici - izreže del slike(pas) in naredi predikcijo
-- predict posamezne točke poleg vseh - 
-
-Komentarji:
-- trenutni rezultati (640 imgsize za vse točke) so thrash, tisto disected, k sm naredu je delalo še najbolje do sedaj -> mogoče mi manjka podatkov?
-"""
