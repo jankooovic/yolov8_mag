@@ -1,3 +1,11 @@
+"""
+ToDo:
+- test prametrov učenja 
+    - saturacija = 0
+    - batch = default, 1, -1(autobatch)
+
+"""
+
 from ultralytics import YOLO
 
 """
@@ -38,13 +46,13 @@ for config in config_files:
 
     model.train(
         data=config,
-        epochs=300,
         pretrained=True,
+        epochs=300,
         imgsz=960,
         batch=-1,
         degrees=10,
+        scale=0.1,
         perspective=0.0005,
         translate=0,
-        scale=0.1,
         fliplr=0,
         mosaic=0)
