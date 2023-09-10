@@ -40,9 +40,11 @@ model.train(data='config.yaml', epochs=100, imgsz=640)
 
 ### Treniraj model - per config file
 config_files = ['config/config_ALL.yaml', 'config/config_FHC.yaml', 'config/config_aF1.yaml', 'config/config_FNOC.yaml', 'config/config_TKC', 'config/config_TML']
+config_files = ['config/config_ALL']
+
 for config in config_files:
 
-    print("Using cofngi file:", config)
+    print("Using config file:", config)
 
     model.train(
         data=config,
@@ -58,4 +60,5 @@ for config in config_files:
         perspective=0.0005,
         translate=0,
         fliplr=0,
-        mosaic=0)
+        mosaic=0
+        )
