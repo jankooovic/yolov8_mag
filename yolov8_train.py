@@ -26,10 +26,8 @@ fliplr = 0.5 image flip left-right (probability)
 imgsz = 640	image size as scalar or (h, w) list, i.e. (640, 480)
 batch = 16 number of images per batch (-1 for AutoBatch)
 
-### Sample commands:
+### Sample command:
 model.train(data='config.yaml', epochs=100, imgsz=640)
-model.train(data='config.yaml', epochs=300, imgsz=640, flipud=1, fliplr=1, degrees=90.0)
-
 """
 
 ### Treniraj model - per config file
