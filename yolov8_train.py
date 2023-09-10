@@ -3,13 +3,12 @@ ToDo:
 - test prametrov učenja 
     - saturacija = 0
     - batch = default, 1, -1(autobatch)
-
 """
 
 from ultralytics import YOLO
 
 """
-Train a YOLOv8-pose model on the COCO128-pose dataset.
+Train YOLOv8-pose model on the COCO128-pose dataset.
 """
 
 ### Load a model
@@ -49,7 +48,10 @@ for config in config_files:
         pretrained=True,
         epochs=300,
         imgsz=960,
-        batch=-1,
+        #batch=-1,
+        hsv_h = 0.008,
+        hsv_s = 0.3,
+        hsv_v = 0.2,
         degrees=10,
         scale=0.1,
         perspective=0.0005,

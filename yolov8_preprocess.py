@@ -18,7 +18,6 @@ sav_path = './data/dataset'
 
 # point names array
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
-#point_names = ['FHC', 'TKC', 'TML', 'aF1']
 
 # obdelava variables:
 filter_val = 10000
@@ -72,7 +71,7 @@ print("Validation paths:", val)
 # datetime object containing current date and time
 now = datetime.now()
 # dd/mm/YY H:M:S
-dt_string = now.strftime("_%d-%m-%Y %H.%M")
+dt_string = now.strftime("_%d-%m-%Y %H;%M")
 os.rename(sav_path,sav_path + dt_string)
 
 ### create new dataset folder from dataset_template
