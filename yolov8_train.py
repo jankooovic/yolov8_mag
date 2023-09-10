@@ -39,8 +39,7 @@ model.train(data='config.yaml', epochs=100, imgsz=640)
 """
 
 ### Treniraj model - per config file
-config_files = ['config/config_ALL.yaml', 'config/config_FHC.yaml', 'config/config_aF1.yaml', 'config/config_FNOC.yaml', 'config/config_TKC', 'config/config_TML']
-config_files = ['config/config_ALL']
+config_files = ['config/config_ALL.yaml', 'config/config_FHC.yaml', 'config/config_aF1.yaml', 'config/config_FNOC.yaml', 'config/config_TKC.yaml', 'config/config_TML.yaml']
 
 for config in config_files:
 
