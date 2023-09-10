@@ -482,6 +482,14 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
         rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
         ax.add_patch(rect)
 
+    elif point_name == 'FNOC':
+        image_part = img[one_third:two_thirds,:]
+        # plot points
+        point = [point[0], point[1]-one_third]
+        ax.plot(point[0], point[1], marker='.', color="white")
+        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
+        ax.add_patch(rect)
+
     elif point_name == 'TML':
         image_part = img[two_thirds:height,:]
         # plot points
