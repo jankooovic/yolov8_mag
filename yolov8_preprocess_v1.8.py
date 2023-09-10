@@ -72,7 +72,7 @@ print("Validation paths:", val)
 # datetime object containing current date and time
 now = datetime.now()
 # dd/mm/YY H:M:S
-dt_string = now.strftime("_%d-%m-%Y_%H:%M:%S")
+dt_string = now.strftime("_%d-%m-%Y %H.%M")
 os.rename(sav_path,sav_path + dt_string)
 
 ### create new dataset folder from dataset_template
