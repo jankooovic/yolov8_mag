@@ -1,5 +1,5 @@
 # Data
-path: /Users/jankovic/Downloads/yolov8/data/dataset/FNOC
+path: /Users/jankovic/Documents/yolov8/data/dataset/FNOC
 train: images/train  # train images (relative to 'path')
 val: images/val  # val images (relative to 'path')
 

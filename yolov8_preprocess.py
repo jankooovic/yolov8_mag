@@ -13,7 +13,7 @@ Prepare pictures and data for YoloV8 training.
 ### Variables: ###
 
 # Dataset path:
-workingDirPath = "/Users/jankovic/Downloads/yolov8/"
+workingDirPath = "/Users/jankovic/Documents/yolov8/"
 path = "./data/RTG_dataset/"
 sav_path = './data/dataset'
 
