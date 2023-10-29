@@ -385,19 +385,20 @@ def get_dirs(path):
     d = pathlib.Path(path)
     for item in d.iterdir():
         i = str(item)
-        if(i != path + ".DS_Store"):
+        if(i.find(".DS_Store") == -1):
             dirs.append(i)
 
     return dirs
 
-def get_nrrd_paths(dirs):
+def get_nrrd_paths(dirs, workingDirPath):
     nrrd_image_paths = []
     for d in dirs:
+        d = workingDirPath + str(d) + '/'
         d = pathlib.Path(d)
         for item in d.iterdir():
             i = str(item)
-            if (str(i).find(".nrrd") != -1):
-                nrrd_image_paths.append(str(i))
+            if (i.find(".nrrd") != -1):
+                nrrd_image_paths.append(i)
     
     return nrrd_image_paths
 

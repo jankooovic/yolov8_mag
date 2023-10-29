@@ -13,7 +13,8 @@ Prepare pictures and data for YoloV8 training.
 ### Variables: ###
 
 # Dataset path:
-path = "/Users/jankovic/Downloads/mag_data/Data/RTG_dataset/"
+workingDirPath = "/Users/jankovic/Downloads/yolov8/"
+path = "./data/RTG_dataset/"
 sav_path = './data/dataset'
 
 # point names array
@@ -35,7 +36,8 @@ num_parts = 3
 dirs = yolov8_functions.get_dirs(path)
 
 ## poti do nrrd slik
-nrrd_image_paths = yolov8_functions.get_nrrd_paths(dirs)
+nrrd_image_paths = yolov8_functions.get_nrrd_paths(dirs, workingDirPath)
+print( "nrrd_image_paths: ", nrrd_image_paths)
 
 ## poti do json datotek s podatki o točkah
 point_json_paths = yolov8_functions.get_json_paths(dirs, point_names)
