@@ -1,16 +1,9 @@
-"""
-ToDo:
-- algoritem za af1 - med točkama FNOC in FHC na polovici - izreže del slike(pas) in naredi predikcijo
-"""
 
+""" Use a trained YOLOv8n-pose model to run predictions on images. """
 from ultralytics import YOLO
 import cv2
 import numpy as np
 import yolov8_functions
-
-"""
-Use a trained YOLOv8n-pose model to run predictions on images.
-"""
 
 # Dataset path:
 path = "/Users/jankovic/Downloads/yolov8/data/dataset/"
