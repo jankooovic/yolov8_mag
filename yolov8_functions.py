@@ -6,6 +6,11 @@ import matplotlib.patches as patches
 import matplotlib.image
 import pathlib
 import math
+import os
+import shutil
+from datetime import date
+from datetime import datetime
+from sklearn.model_selection import train_test_split
 
 #### Functions:
 
@@ -325,7 +330,6 @@ def get_jpg_paths(dirs, point_names, path, all_imgs):
         name = d.replace(path, "")
         if name in point_names:
             d = pathlib.Path(d+all_imgs)
-
             for item in d.iterdir():
                 i = str(item)
                 if (str(i).find(".jpg") != -1):
@@ -375,3 +379,17 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     plt.close()
     
     return image_part, point, image_part.shape, (image_part.shape[0] / image_part.shape[1])
+
+def dataset_archive(sav_path):
+    now = datetime.now()
+    dt_string = now.strftime("_%d-%m-%Y %H-%M") # dd/mm/YY H:M:S
+    os.rename(sav_path,sav_path + dt_string)
+    shutil.copytree(sav_path + "_template",sav_path)    # copy dataset template to dataset
+
+def split_train_test_val_data(nrrd_image_paths):
+    train,test=train_test_split(nrrd_image_paths,test_size=0.2) # Train/Test split 80/20
+    train,val=train_test_split(train,test_size=0.2) # Train/Val split 80/20
+    return train, test, val
+
+
+
