@@ -136,7 +136,7 @@ def create_landmarks_file(points, img_shape, sqr, rat, filename, more_points ,po
     # preveri za velikost slike v obeh smereh !!!!
     for idx, point in enumerate(points):
 
-        x_percent, y_percent = get_coordinate_percent(point, img_shape) # get cooridnate width/heigth percentage
+        x_percent, y_percent = get_coordinate_percent(float(point), img_shape) # get cooridnate width/heigth percentage
 
         if x_percent >= 1 or y_percent >= 1:
             print("Error: x_percent >= 1 or y_percent >= 1")
