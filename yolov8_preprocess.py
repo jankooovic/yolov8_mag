@@ -10,37 +10,21 @@ from datetime import datetime
 Prepare pictures and data for YoloV8 training.
 """
 
-### Variables: ###
-
 # Dataset path:
 workingDirPath = "/Users/jankovic/Documents/yolov8/"
 path = "./data/RTG_dataset/"
 sav_path = './data/dataset'
-
-# point names array
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
-
-# obdelava variables:
 filter_val = 10000
 faktor_preslikave = 3.6
+square = 0.1    # square size
+num_parts = 3   # number of parts on image
 
-# square size - matplotlib + veliksot za kvadrat učenja
-square = 0.1
-
-# number of parts on image
-num_parts = 3
-
-### Directories and images: ###
-
-## poti do direktorijev, kjer so nrrd datoteke
-dirs = yolov8_functions.get_dirs(path)
-
-## poti do nrrd slik
-nrrd_image_paths = yolov8_functions.get_nrrd_paths(dirs, workingDirPath)
+# poti do direktorijev, kjer so nrrd datoteke
+directories = yolov8_functions.get_dirs(path)
+nrrd_image_paths = yolov8_functions.get_nrrd_paths(directories, workingDirPath)
 print( "nrrd_image_paths: ", nrrd_image_paths)
-
-## poti do json datotek s podatki o točkah
-point_json_paths = yolov8_functions.get_json_paths(dirs, point_names)
+point_json_paths = yolov8_functions.get_json_paths(directories, point_names)
 
 ### Make train, test and validate groups ###
 """
@@ -52,12 +36,8 @@ Validate = 20% of Train
 
 # Size of entire Dataset
 all_num = len(nrrd_image_paths)
-
-# Train/Test split 80/20
-train,test=train_test_split(nrrd_image_paths,test_size=0.2)
-
-# Val/Train split 80/20
-train,val=train_test_split(train,test_size=0.2)
+train,test=train_test_split(nrrd_image_paths,test_size=0.2) # Train/Test split 80/20
+train,val=train_test_split(train,test_size=0.2) # Val/Train split 80/20
 
 print("______")
 print("Training paths:", train)
@@ -66,18 +46,13 @@ print("Testing paths:", test)
 print("")
 print("Validation paths:", val)
 
-##### Make dataset ####
 
 ### change name of current dataset folder to dataset_date_time
-
-# datetime object containing current date and time
 now = datetime.now()
-# dd/mm/YY H:M:S
-dt_string = now.strftime("_%d-%m-%Y %H-%M")
+dt_string = now.strftime("_%d-%m-%Y %H-%M") # dd/mm/YY H:M:S
 os.rename(sav_path,sav_path + dt_string)
 
-### create new dataset folder from dataset_template
-# calling the shutil.copytree() method and passing the src,dst
+#create new dataset folder from dataset_template
 shutil.copytree(sav_path + "_template",sav_path)
 
 ### Script 
@@ -97,12 +72,9 @@ for n in nrrd_image_paths:
         p_paths.append(point_json_paths[i])
     j += 1
 
-    # original slika
+    # original slika + točke
     data_arr, orig_image_shape, orig_img_ratio = yolov8_functions.preprocess_image(n, filter_val)
-
-    # array original točk:
-    points = yolov8_functions.create_point_array(p_paths, faktor_preslikave)
-    #print("Point coordinates", points)
+    points = yolov8_functions.create_point_array(p_paths, faktor_preslikave)    # array original točk:
 
     # filename creation
     name = yolov8_functions.filename_creation(path, n, ".nrrd")
@@ -113,19 +85,12 @@ for n in nrrd_image_paths:
 
     # Loči podatke na train/test
     if(n in train):
-        print("Training dataset")
         data = "train"
-        yolov8_functions.main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data)
     elif(n in val):
-        print("Validation dataset")
         data = "val"
-        yolov8_functions.main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data)
     else:
-        print("Testing dataset")
         data = "test"
-        yolov8_functions.main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data)
 
-print("")
-print("#################")
+    yolov8_functions.main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data)
+
 print("Script is done!")
-print("")

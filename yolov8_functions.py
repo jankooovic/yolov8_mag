@@ -346,46 +346,27 @@ def full_image_save_predict(points, img, filename):
     plt.close()
 
 def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
-
-   # define square side size - prilagodi glede na velikost objekta
-    square_side = image_shape[0]*square
-
-    fig, ax = plt.subplots()
-
+    square_side = image_shape[0]*square # define square side size
     height = image_shape[0]
-    two_thirds = math.ceil(height*(2/3))
-    one_third = math.ceil(height*(1/3))
+    two_thirds = math.ceil(height * 2 / 3)
+    one_third = math.ceil(height / 3)
 
     # točka na sliki + izrez kvadrata iz slike
     if point_name == 'FHC':
         image_part = img[0:one_third,:]
-        # plot points
-        ax.plot(point[0], point[1], marker='.', color="white")
-        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
-        ax.add_patch(rect)
-
     elif point_name in ['TKC','FNOC']:
         image_part = img[one_third:two_thirds,:]
-        # plot points
-        point = [point[0], point[1]-one_third]
-        ax.plot(point[0], point[1], marker='.', color="white")
-        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
-        ax.add_patch(rect)
-
+        point = [point[0], point[1] - one_third]
     elif point_name == 'TML':
         image_part = img[two_thirds:height,:]
-        # plot points
-        point = [point[0], point[1]-two_thirds]
-        ax.plot(point[0], point[1], marker='.', color="white")
-        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
-        ax.add_patch(rect)
-
+        point = [point[0], point[1] - two_thirds]
     elif point_name == 'aF1':
-        image_part = img[0:math.ceil(height/2),:]
-        # plot points
-        ax.plot(point[0], point[1], marker='.', color="white")
-        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
-        ax.add_patch(rect)
+        image_part = img[0:math.ceil(height / 2),:]
+    
+    fig, ax = plt.subplots()
+    ax.plot(*point, marker='.', color="white")
+    rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
+    ax.add_patch(rect)
 
     plt.imshow(image_part)
     plt.savefig(filename + '.png')
