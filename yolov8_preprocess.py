@@ -79,7 +79,7 @@ for n in nrrd_image_paths:
     # filename creation
     name = yolov8_functions.filename_creation(path, n, ".nrrd")
     filename = sav_path + "/PNGs/" + name
-    print(filename)
+    print(name)
 
     # označi točke na sliki in shrani sliko v PNG
     yolov8_functions.save_image(orig_image_shape, square, points, data_arr, filename)
