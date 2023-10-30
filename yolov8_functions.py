@@ -41,7 +41,7 @@ def calc_circle_center(p1, p2, p3):
     In case the 3 points form a line, returns (None, infinity).
     """
     temp = p2[0]**2 + p2[1]**2
-    bc = (p1[0]**2 + p1[1]**2- temp) / 2
+    bc = (p1[0]**2 + p1[1]**2 - temp) / 2
     cd = (temp - p3[0]**2 - p3[1]**2) / 2
     det = (p1[0] - p2[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p2[1])
    
@@ -53,20 +53,47 @@ def calc_circle_center(p1, p2, p3):
     cy = ((p1[0] - p2[0]) * cd - (p2[0] - p3[0]) * bc) / det
     radius = np.sqrt((cx - p1[0])**2 + (cy - p1[1])**2)
 
-    return ((cx, cy), radius)
+    return (cx, cy), radius
 
 def get_points(json_file_path, scale_factor):
     with open(json_file_path) as f:
         data = json.load(f)
-    
+
     control_points = [i['position'] for i in data['markups'][0]['controlPoints']]
 
+    ### Get data from .json files
     if len(control_points) > 1:
-        center, _ = calc_circle_center(*map(np.abs, control_points[:3]))
-        points = [round(coord * scale_factor) for coord in center]
+        p = np.abs(control_points[0])
+        p1_x = p[0]
+        p1_z = p[2]
+        p = np.abs(control_points[1])
+        p2_x = p[0]
+        p2_z = p[2]
+        p = np.abs(control_points[2])
+        p3_x = p[0]
+        p3_z = p[2]
+
+        ### Get 3 points cirlce center and radius
+        center, radius = calc_circle_center((p1_x,p1_z), (p2_x,p2_z), (p3_x,p3_z))
+
+        # faktor za translacijo med RAS/LPS v voxels
+        center = (center[0] * scale_factor, center[1] * scale_factor)
+
+        # zaokroži na celo število
+        points = [round(center[0]), round(center[1])]
+        #print("FHC enter coordinates: " + str(center))
+
     else:
-        points = [round(coord * scale_factor) for coord in np.abs(control_points[0])]
-    
+        p = np.abs(control_points[0])
+        p1_x = p[0]
+        p1_z = p[2]
+
+        # faktor za translacijo med RAS/LPS v voxels
+        points = (p1_x * scale_factor, p1_z * scale_factor)
+
+        # zaokroži na celo število
+        points = [round(points[0]), round(points[1])]
+
     return points
 
 def create_point_array(paths, scale_factor):
