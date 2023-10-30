@@ -55,54 +55,18 @@ def calc_circle_center(p1, p2, p3):
 
     return ((cx, cy), radius)
 
-def get_points(json_file_path, faktor_preslikave):
-  
-    # Opening JSON file
-    f = open(json_file_path)
-    data = json.load(f)
-    f.close()
+def get_points(json_file_path, scale_factor):
+    with open(json_file_path) as f:
+        data = json.load(f)
+    
+    control_points = [i['position'] for i in data['markups'][0]['controlPoints']]
 
-    # Get control points data from json
-    controlPoints = data['markups'][0]['controlPoints']
-    controlPointsArray = []
-
-    # Iterating through control points
-    for i in controlPoints:
-        controlPointsArray.append(i['position'])
-
-    ### Get data from .json files
-    if len(controlPointsArray) > 1:
-        p = np.abs(controlPointsArray[0])
-        p1_x = p[0]
-        p1_z = p[2]
-        p = np.abs(controlPointsArray[1])
-        p2_x = p[0]
-        p2_z = p[2]
-        p = np.abs(controlPointsArray[2])
-        p3_x = p[0]
-        p3_z = p[2]
-
-        ### Get 3 points cirlce center and radius
-        center, radius = calc_circle_center((p1_x,p1_z), (p2_x,p2_z), (p3_x,p3_z))
-
-        # faktor za translacijo med RAS/LPS v voxels
-        center = (center[0] * faktor_preslikave, center[1] * faktor_preslikave)
-
-        # zaokroži na celo število
-        points = [round(center[0]), round(center[1])]
-        #print("FHC enter coordinates: " + str(center))
-
+    if len(control_points) > 1:
+        center, _ = calc_circle_center(*map(np.abs, control_points[:3]))
+        points = [round(coord * scale_factor) for coord in center]
     else:
-        p = np.abs(controlPointsArray[0])
-        p1_x = p[0]
-        p1_z = p[2]
-
-        # faktor za translacijo med RAS/LPS v voxels
-        points = (p1_x * faktor_preslikave, p1_z * faktor_preslikave)
-
-        # zaokroži na celo število
-        points = [round(points[0]), round(points[1])]
-
+        points = [round(coord * scale_factor) for coord in np.abs(control_points[0])]
+    
     return points
 
 def create_point_array(paths, scale_factor):
@@ -342,8 +306,8 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
 
 def dataset_archive(sav_path):
     now = datetime.now()
-    dt_string = now.strftime("_%d-%m-%Y %H-%M") # dd/mm/YY H:M:S
-    os.rename(sav_path,sav_path + dt_string)
+    date_time = now.strftime("_%d-%m-%Y %H-%M")
+    os.rename(sav_path,sav_path + date_time)
     shutil.copytree(sav_path + "_template",sav_path)    # copy dataset template to dataset
 
 def split_train_test_val_data(nrrd_image_paths):
