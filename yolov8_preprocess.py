@@ -109,7 +109,7 @@ for n in nrrd_image_paths:
     filename = sav_path + "/PNGs/" + name
 
     # označi točke na sliki in shrani sliko v PNG
-    yolov8_functions.show_save_full_image(orig_image_shape, square, points, data_arr, filename)
+    yolov8_functions.save_image(orig_image_shape, square, points, data_arr, filename)
 
     # Loči podatke na train/test
     if(n in train):
