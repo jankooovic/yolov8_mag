@@ -6,19 +6,13 @@ ToDo:
     - test črno bele slike
 """
 
+""" Train YOLOv8-pose model on the COCO128-pose dataset. """
 from ultralytics import YOLO
 
-"""
-Train YOLOv8-pose model on the COCO128-pose dataset.
-"""
-
 ### Load a model
-# build a new model from YAML
-model = YOLO('yolov8n-pose.yaml')  
-# load a pretrained model (recommended for training)
-model = YOLO('yolov8n-pose.pt')
-# build from YAML and transfer weights
-model = YOLO('yolov8n-pose.yaml').load('yolov8n-pose.pt') 
+model = YOLO('yolov8n-pose.yaml')   # build a new model from YAML
+model = YOLO('yolov8n-pose.pt')  # load a pretrained model
+model = YOLO('yolov8n-pose.yaml').load('yolov8n-pose.pt')   # build from YAML and transfer weights
 
 """
 # Re-Train the model:

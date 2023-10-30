@@ -1,3 +1,4 @@
+""" Functions library """
 import numpy as np
 import json
 import nrrd
@@ -11,8 +12,6 @@ import shutil
 from datetime import date
 from datetime import datetime
 from sklearn.model_selection import train_test_split
-
-#### Functions:
 
 def normalize_data(data):
     return (data - np.min(data)) / (np.max(data) - np.min(data))
