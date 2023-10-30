@@ -129,24 +129,15 @@ def filename_creation(path, name, word):
     filename = filename[1].replace(word,"")
     return filename
 
-def create_json_datafile(dict, name, p_name=""):
-    # Serializing json
-    json_object = json.dumps(dict, indent=4)
-
-    # Writing to sample.json
-    if (p_name == ""):
-        with open(name + '.json', "w") as outfile:
-            outfile.write(json_object)
-    else: 
-        with open(name + "_" + p_name + '.json', "w") as outfile:
+def create_json_datafile(data_dict, name, prefix=""):
+    json_object = json.dumps(data_dict, indent=4)
+    with open(f"{name}_{prefix}.json" if prefix else f"{name}.json", "w") as outfile:
             outfile.write(json_object)
 
 def get_zoomed_image_part(image_shape, square_size_ratio, point, img, filename):
     square_side = image_shape[0]*square_size_ratio  # define square side size
     square_image = img[int(point[1]-square_side/2):int(point[1]+square_side/2),int(point[0]-square_side/2):int(point[0]+square_side/2)]
     center = [dim // 2 for dim in square_image.shape]
-    #center = square_image.shape
-    #center = [int(center[0]/2),int(center[1]/2)]
     fig, ax = plt.subplots()
     ax.plot(*center, marker='.', color="white")
     plt.imshow(square_image)
@@ -297,44 +288,14 @@ def main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, s
 def get_dirs(path):
     return [str(item) for item in pathlib.Path(path).iterdir() if ".DS_Store" not in str(item)]
 
-def get_nrrd_paths(dirs, workingDirPath):
-    paths = []
-    for d in dirs:
-        d = workingDirPath + str(d) + '/'
-        d = pathlib.Path(d)
-        for item in d.iterdir():
-            i = str(item)
-            if (i.find(".nrrd") != -1):
-                paths.append(i)
-    
-    return paths
+def get_nrrd_paths(dirs, working_dir_path):
+    return [str(item) for d in dirs for item in pathlib.Path(f"{working_dir_path}{d}/").iterdir() if ".nrrd" in str(item)]
 
 def get_json_paths(dirs, point_names):
-    paths = []
-    for d in dirs:
-        d = pathlib.Path(d)
-        for item in d.iterdir():
-            i = str(item)
-            # ali je smiselno, da čekiram katere točke so na voljo?
-            if (str(i).find(".json") != -1):
-                for name in point_names:
-                    if(str(i).find(name) != -1):
-                        paths.append(str(i))
-    
-    return paths
+    return [str(item) for d in dirs for item in pathlib.Path(d).iterdir() if ".json" in str(item) and any(name in str(item) for name in point_names)]
 
 def get_jpg_paths(dirs, point_names, path, all_imgs):
-    paths = []
-    for d in dirs:
-        name = d.replace(path, "")
-        if name in point_names:
-            d = pathlib.Path(d+all_imgs)
-            for item in d.iterdir():
-                i = str(item)
-                if (str(i).find(".jpg") != -1):
-                    paths.append(str(i))
-
-    return paths
+    return [str(item) for d in dirs if d.replace(path, "") in point_names for item in pathlib.Path(f"{d}{all_imgs}").iterdir() if ".jpg" in str(item)]
 
 def get_paths_word(word, list_of_paths):
     return [path for path in list_of_paths if word in path]
