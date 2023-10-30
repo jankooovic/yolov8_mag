@@ -7,10 +7,10 @@
 
 
 # Paths:
-Original dataset -> ./data/RTG_dataset - this dataset is made by hand
-Dataset creation -> ./data/dataset
-Model training results -> /opt/homebrew/runs/pose/
-Prediction&Validation results -> ./data/predicted
+- Original dataset -> ./data/RTG_dataset - this dataset is made by hand
+- Dataset creation -> ./data/dataset
+- Model training results -> /opt/homebrew/runs/pose/
+- Prediction&Validation results -> ./data/predicted
 
 # Config Files:
 Path: Downloads/yolov8/data/dataset
