@@ -61,7 +61,6 @@ def get_points(json_file_path, scale_factor):
 
     control_points = [i['position'] for i in data['markups'][0]['controlPoints']]
 
-    ### Get data from .json files
     if len(control_points) > 1:
         p = np.abs(control_points[0])
         p1_x = p[0]
@@ -78,10 +77,7 @@ def get_points(json_file_path, scale_factor):
 
         # faktor za translacijo med RAS/LPS v voxels
         center = (center[0] * scale_factor, center[1] * scale_factor)
-
-        # zaokroži na celo število
         points = [round(center[0]), round(center[1])]
-        #print("FHC enter coordinates: " + str(center))
 
     else:
         p = np.abs(control_points[0])
@@ -90,8 +86,6 @@ def get_points(json_file_path, scale_factor):
 
         # faktor za translacijo med RAS/LPS v voxels
         points = (p1_x * scale_factor, p1_z * scale_factor)
-
-        # zaokroži na celo število
         points = [round(points[0]), round(points[1])]
 
     return points
