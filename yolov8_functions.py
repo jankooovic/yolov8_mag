@@ -133,24 +133,27 @@ def get_zoomed_image_part(image_shape, square_size_ratio, point, img, filename):
 def create_landmarks_file(points, img_shape, sqr, rat, filename, more_points ,point_name=""):
     data = []
 
-    # preveri za velikost slike v obeh smereh !!!!
     for idx, point in enumerate(points):
 
-        x_percent, y_percent = get_coordinate_percent(float(point), img_shape) # get cooridnate width/heigth percentage
+        if isinstance(point, int):
+            point = points
+
+        x_percent, y_percent = get_coordinate_percent(point, img_shape) # get cooridnate width/heigth percentage
 
         if x_percent >= 1 or y_percent >= 1:
             print("Error: x_percent >= 1 or y_percent >= 1")
             continue
 
         data.extend([idx,   # class
-                     x_percent, # square center X, X
-                     y_percent,
-                     sqr*rat,   # width
-                     sqr,   # heigth
-                     x_percent, # landmark X, Y
-                     y_percent,
-                     2, # visibility of point
-                     '\n']) # add next row
+                    x_percent, # square center X, X
+                    y_percent,
+                    sqr*rat,   # width
+                    sqr,   # heigth
+                    x_percent, # landmark X, Y
+                    y_percent,
+                    2, # visibility of point
+                    '\n']) # add next row
+        
 
     # saving the points to txt
     with open(f"{filename}_{point_name}.txt" if point_name else f"{filename}.txt", "w") as f:
