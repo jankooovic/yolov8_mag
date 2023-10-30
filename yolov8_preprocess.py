@@ -23,7 +23,6 @@ num_parts = 3   # number of parts on image
 # poti do direktorijev, kjer so nrrd datoteke
 directories = yolov8_functions.get_dirs(path)
 nrrd_image_paths = yolov8_functions.get_nrrd_paths(directories, workingDirPath)
-print( "nrrd_image_paths: ", nrrd_image_paths)
 point_json_paths = yolov8_functions.get_json_paths(directories, point_names)
 
 ### Make train, test and validate groups ###
@@ -39,7 +38,7 @@ all_num = len(nrrd_image_paths)
 train,test=train_test_split(nrrd_image_paths,test_size=0.2) # Train/Test split 80/20
 train,val=train_test_split(train,test_size=0.2) # Val/Train split 80/20
 
-print("______")
+print("")
 print("Training paths:", train)
 print("")
 print("Testing paths:", test)
@@ -56,15 +55,13 @@ os.rename(sav_path,sav_path + dt_string)
 shutil.copytree(sav_path + "_template",sav_path)
 
 ### Script 
+print("")
+print("Starting script!")
 
 j = 0
 u = len(point_names)
 # n = nrrd image path
-for n in nrrd_image_paths: 
-
-    print("______")
-    print("Nrrd image path:", n)
-    
+for n in nrrd_image_paths:   
     # poti do točk za posamezno sliko
     p_paths = []
     for i in range(u):
@@ -79,7 +76,6 @@ for n in nrrd_image_paths:
     # filename creation
     name = yolov8_functions.filename_creation(path, n, ".nrrd")
     filename = sav_path + "/PNGs/" + name
-    print(name)
 
     # označi točke na sliki in shrani sliko v PNG
     yolov8_functions.save_image(orig_image_shape, square, points, data_arr, filename)

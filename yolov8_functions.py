@@ -122,9 +122,7 @@ def save_image(image_shape, square_size_ratio, points, img, filename):
 
 def filename_creation(path, name, word):
     filename = name.rsplit("/",1)
-    #filename = name.replace(path,"")
-    filename = filename.replace(word,"")
-    #filename = filename.replace("/","")
+    filename = filename[1].replace(word,"")
     return filename
 
 def create_json_datafile(dict, name, p_name=""):
