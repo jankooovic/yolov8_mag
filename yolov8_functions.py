@@ -285,17 +285,6 @@ def get_jpg_paths(dirs, point_names, path, all_imgs):
 def get_paths_word(word, list_of_paths):
     return [path for path in list_of_paths if word in path]
 
-def full_image_save_predict(points, img, filename):
-    fig, ax = plt.subplots()
-
-    # plot points [FHC, TKC, TML, aF1]
-    for point in points: 
-        ax.plot(*point, marker='.', color="white")
-
-    plt.imshow(img)
-    plt.savefig(filename + '.png')
-    plt.close()
-
 def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     square_side = image_shape[0]*square # define square side size
     height = image_shape[0]
