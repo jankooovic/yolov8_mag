@@ -130,83 +130,31 @@ def get_zoomed_image_part(image_shape, square_size_ratio, point, img, filename):
     plt.close()
     return square_image
 
-def create_landmarks_file(point, img_shape, sqr, rat, filename, more_points ,point_name=""):
-    idx = 0
+def create_landmarks_file(points, img_shape, sqr, rat, filename, more_points ,point_name=""):
     data = []
 
     # preveri za velikost slike v obeh smereh !!!!
-    if more_points == 0:
+    for idx, point in enumerate(points):
 
-        # izračunaj procent sirine/visine na sliki za točko
-        x_percent, y_percent = get_coordinate_percent(point, img_shape)
+        x_percent, y_percent = get_coordinate_percent(point, img_shape) # get cooridnate width/heigth percentage
 
-        # alert in case of error
-        if x_percent >= 1:
-            print("Error: x_percent >= 1")
-        if y_percent >= 1:
-            print("Error: y_percent >= 1")
-        
-        # dodaj class
-        data.append(idx)
-        # dodaj vrednosti za točko in kvadrat
-        # square center X, X
-        data.append(x_percent)
-        data.append(y_percent)
-        # width
-        data.append(sqr*rat)
-        # heigth
-        data.append(sqr)
+        if x_percent >= 1 or y_percent >= 1:
+            print("Error: x_percent >= 1 or y_percent >= 1")
+            continue
 
-        # landmark X, Y
-        data.append(x_percent)
-        data.append(y_percent)
-        # visibility of point
-        data.append(2)
-
-        # add next row
-        data.append('\n')
-
-    else:
-        for p in point:
-
-            # izračunaj procent sirine/visine na sliki za točko
-            x_percent, y_percent = get_coordinate_percent(p, img_shape)
-
-            # alert in case of error
-            if x_percent >= 1:
-                print("Error: x_percent >= 1")
-            if y_percent >= 1:
-                print("Error: y_percent >= 1")
-
-             # dodaj class
-            data.append(idx)
-            # dodaj vrednosti za točko in kvadrat
-            # square center X, X
-            data.append(x_percent)
-            data.append(y_percent)
-            # width
-            data.append(sqr*rat)
-            # heigth
-            data.append(sqr)
-            # landmark X, Y
-            data.append(x_percent)
-            data.append(y_percent)
-            # visibility of point
-            data.append(2)
-            # add next row
-            data.append('\n')
-
-            idx += 1
+        data.extend([idx,   # class
+                     x_percent, # square center X, X
+                     y_percent,
+                     sqr*rat,   # width
+                     sqr,   # heigth
+                     x_percent, # landmark X, Y
+                     y_percent,
+                     2, # visibility of point
+                     '\n']) # add next row
 
     # saving the points to txt
-    if (point_name == ""):
-        with open(filename + '.txt', "w") as f:
-            for w in data:
-                f.write(str(w) + " ")
-    else:
-        with open(filename + '_' + point_name + '.txt', "w") as f:
-            for w in data:
-                f.write(str(w) + " ")
+    with open(f"{filename}_{point_name}.txt" if point_name else f"{filename}.txt", "w") as f:
+        f.write(" ".join(map(str, data)))
 
 def get_coordinate_percent(point, img_size):
     return point[0] / img_size[1], point[1] / img_size[0]
