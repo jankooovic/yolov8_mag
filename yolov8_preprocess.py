@@ -4,7 +4,7 @@ import yolov8_functions
 # Dataset path:
 workingDirPath = "/Users/jankovic/Documents/yolov8/"
 path = "./data/RTG_dataset/"
-sav_path = './data/dataset'
+save_path = './data/dataset'
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
 filter_val = 10000
 faktor_preslikave = 3.6
@@ -20,7 +20,7 @@ point_json_paths = yolov8_functions.get_json_paths(directories, point_names)
 train, test, val = yolov8_functions.split_train_test_val_data(nrrd_image_paths)
 
 # create dataset archive
-yolov8_functions.dataset_archive(sav_path)
+yolov8_functions.dataset_archive(save_path)
 
 # script 
 j = 0
@@ -50,6 +50,6 @@ for n in nrrd_image_paths:
     else:
         data = "test"
 
-    yolov8_functions.main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data)
+    yolov8_functions.main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data)
 
 print("Script is done!")

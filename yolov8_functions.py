@@ -162,64 +162,41 @@ def create_landmarks_file(points, img_shape, sqr, rat, filename, more_points ,po
 def get_coordinate_percent(point, img_size):
     return point[0] / img_size[1], point[1] / img_size[0]
 
-def main_func(sav_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data):
+def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data):
 
-        # Shrani sliko v JPG
-        filename = sav_path + "/ALL/images/" + data + "/" + name
-        matplotlib.image.imsave(filename + '.jpg', data_arr)
+    # save image to JPG
+    filename = f"{save_path}/ALL/images/{data}/{name}"
+    matplotlib.image.imsave(f"{filename}.jpg", data_arr)
 
-        # kreiraj JSON dataset
+    dictionary = {
+        "Image name": filename,
+        "Point names": point_names,
+        "Point coordinates": points,
+        "Image_size": orig_image_shape,
+    }
+
+    create_json_datafile(dictionary, f"{save_path}/JSON/{name}")
+    create_landmarks_file(points, orig_image_shape, square, orig_img_ratio, f"{save_path}/ALL/labels/{data}/{name}", 1)
+
+    # get smaller pictures of landmarks for cascade learning
+    for i, point in enumerate(points):
+
+        img, p_changed, changed_image_shape, changed_img_ratio = slice_image_3_parts(orig_image_shape, square, point, data_arr, point_names[i], f"{save_path}/PNGs/{name}_{point_names[i]}")
+
+        filename = f"{save_path}/{point_names[i]}/images/{data}/{name}_{point_names[i]}"
+        matplotlib.image.imsave(f"{filename}.jpg", img)
+
         dictionary = {
             "Image name": filename,
-            "Point names": point_names,
-            "Point coordinates": points,
+            "Point name": point_names[i],
+            "Point coordinates": point, #x&y coordinates are reversed
+            "Changed coordinates": p_changed,
             "Image_size": orig_image_shape,
+            "Zoomed_image_size": img.shape
         }
 
-        filename = sav_path + "/JSON/" + name
-        create_json_datafile(dictionary, filename)
-
-        # kreiraj txt zapis za točke
-        filename = sav_path + "/ALL/labels/" + data + "/" + name
-        create_landmarks_file(points, orig_image_shape, square, orig_img_ratio, filename, 1)
-
-        # izreži kvadrate na sliki za kaskadne predikcije
-        i = 0
-        for p in points:
-
-            # shrani sliko v PNG
-            filename = sav_path + "/PNGs/" + name + "_" + point_names[i]
-            #img = get_zoomed_image_part(orig_image_shape, square, p, data_arr, filename)
-
-            # slice image - remove img zgoraj!
-            img, p_changed, changed_image_shape, changed_img_ratio = slice_image_3_parts(orig_image_shape, square, p, data_arr, point_names[i], filename)
-
-            # Shrani sliko v JPG
-            filename = sav_path + "/" + point_names[i] + "/images/"  + data + "/" + name + "_" + point_names[i]
-            matplotlib.image.imsave(filename + '.jpg', img)
-
-            # kreiraj JSON dataset
-            # x in y koordinati v points sta obrnjeni
-            dictionary = {
-                "Image name": filename,
-                "Point name": point_names[i],
-                "Point coordinates": p,
-                "Changed coordinates": p_changed,
-                "Image_size": orig_image_shape,
-                "Zoomed_image_size": img.shape
-            }
-
-            filename = sav_path + "/JSON/" + name + "_" + point_names[i]
-            create_json_datafile(dictionary, filename)
-
-            # kreiraj txt zapis za točke
-            filename = sav_path + "/" + point_names[i] + "/labels/"  + data + "/" + name
-            # square je tukaj večji, ker je na sliki za učenje potem večji, 0.1 je premajhen
-            square = 0.2
-            create_landmarks_file(p_changed, changed_image_shape, square, changed_img_ratio, filename, 0, point_names[i])
-            square = 0.1
-
-            i += 1
+        create_json_datafile(dictionary, f"{save_path}/JSON/{name}_{point_names[i]}")
+        create_landmarks_file(p_changed, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/{point_names[i]}/labels/{data}/{name}", 0)
 
 def get_dirs(path):
     return [str(item) for item in pathlib.Path(path).iterdir() if ".DS_Store" not in str(item)]
@@ -265,11 +242,11 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     
     return image_part, point, image_part.shape, (image_part.shape[0] / image_part.shape[1])
 
-def dataset_archive(sav_path):
+def dataset_archive(save_path):
     now = datetime.now()
     date_time = now.strftime("_%d-%m-%Y %H-%M")
-    os.rename(sav_path,sav_path + date_time)
-    shutil.copytree(sav_path + "_template",sav_path)    # copy dataset template to dataset
+    os.rename(save_path,save_path + date_time)
+    shutil.copytree(save_path + "_template",save_path)    # copy dataset template to dataset
 
 def split_train_test_val_data(nrrd_image_paths):
     train,test=train_test_split(nrrd_image_paths,test_size=0.2) # Train/Test split 80/20
