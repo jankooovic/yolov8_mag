@@ -111,7 +111,7 @@ def save_image(image_shape, square_size_ratio, points, img, filename):
     # plot points [FHC, TKC, TML, aF1]
     for point in points: 
         ax.plot(*point, marker='.', color="white")
-        rect = patches.Rectangle((p[0]-square_side/2, p[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
+        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
         ax.add_patch(rect)
 
     plt.imshow(img)
