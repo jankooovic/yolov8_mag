@@ -5,6 +5,9 @@
 2. Use script yolov8_train.py to retrain the YOLOV8 model
 3. Use script yolov8_predict_evaluate.py to predict the points and evaluate model accuracy
 
+# Installing
+pip install -r requirements.txt
+
 
 # Paths:
 - Original dataset -> ./data/RTG_dataset - this dataset is made by hand
