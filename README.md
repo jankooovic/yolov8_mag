@@ -1,5 +1,4 @@
 # Instructions:
-
 0. Go to directory yolov8 - scripts are run fromyolov8 directory
 1. Use script yolov8_preprocess.py to create a dataset for training
 2. Use script yolov8_train.py to retrain the YOLOV8 model
