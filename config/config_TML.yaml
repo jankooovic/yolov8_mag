@@ -1,7 +1,10 @@
 # Data
 path: /Users/jankovic/Documents/yolov8/data/dataset/TML
+path: C:\Users\jank\Documents\Seafile\yolov8_new_location\data\dataset\TML\
 train: images/train  # train images (relative to 'path')
+train: images\train  # train images (relative to 'path')
 val: images/val  # val images (relative to 'path')
+val: images\val  # val images (relative to 'path')
 
 # Keypoints
 kpt_shape: [1, 3]  # [number of keypoints in data, number of dim]
