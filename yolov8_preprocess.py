@@ -42,6 +42,8 @@ for n in nrrd_image_paths:
     filename = save_path + "/PNGs/" + name
     yolov8_functions.save_image(orig_image_shape, square, points, data_arr, filename)
 
+    print("Processing image: " + name)
+
     # split data
     if(n in train):
         data = "train"
