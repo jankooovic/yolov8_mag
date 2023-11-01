@@ -253,7 +253,6 @@ def split_train_test_val_data(nrrd_image_paths):
     train,val=train_test_split(train,test_size=0.2) # Train/Val split 80/20
     return train, test, val
 
-
 def full_image_save_predict(points, img, filename):
     fig, ax = plt.subplots()
     # plot points [FHC, TKC, TML, aF1]
