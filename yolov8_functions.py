@@ -130,7 +130,7 @@ def get_zoomed_image_part(image_shape, square_size_ratio, point, img, filename):
     plt.close()
     return square_image
 
-def create_landmarks_file(points, img_shape, sqr, rat, filename, more_points ,point_name=""):
+def create_landmarks_file(points, img_shape, sqr, rat, filename, point_name=""):
     data = []
 
     for idx, point in enumerate(points):
@@ -154,7 +154,10 @@ def create_landmarks_file(points, img_shape, sqr, rat, filename, more_points ,po
                     2, # visibility of point
                     '\n']) # add next row
         
-
+        # end this loop if this is only one point
+        if len(points) == 2:
+            break
+        
     # saving the points to txt
     with open(f"{filename}_{point_name}.txt" if point_name else f"{filename}.txt", "w") as f:
         f.write(" ".join(map(str, data)))
@@ -176,7 +179,7 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
     }
 
     create_json_datafile(dictionary, f"{save_path}/JSON/{name}")
-    create_landmarks_file(points, orig_image_shape, square, orig_img_ratio, f"{save_path}/ALL/labels/{data}/{name}", 1)
+    create_landmarks_file(points, orig_image_shape, square, orig_img_ratio, f"{save_path}/ALL/labels/{data}/{name}")
 
     # get smaller pictures of landmarks for cascade learning
     for i, point in enumerate(points):
@@ -196,7 +199,7 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
         }
 
         create_json_datafile(dictionary, f"{save_path}/JSON/{name}_{point_names[i]}")
-        create_landmarks_file(p_changed, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/{point_names[i]}/labels/{data}/{name}", 0)
+        create_landmarks_file(p_changed, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/{point_names[i]}/labels/{data}/{name}")
 
 def get_dirs(path):
     return [str(item) for item in pathlib.Path(path).iterdir() if ".DS_Store" not in str(item)]
