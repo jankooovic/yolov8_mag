@@ -17,7 +17,7 @@ model_path_tkc = "/opt/homebrew/runs/pose/train_all_imgsize_640/weights/best.pt"
 model_path_af1 = "/opt/homebrew/runs/pose/train_all_imgsize_640/weights/best.pt"
 model_path_fhc = "/opt/homebrew/runs/pose/train_all_imgsize_640/weights/best.pt"
 """
-################################ - premakni v direktorij yolov8/models - ko imem boljše rezultate
+################################ - premakni v direktorij yolov8/models - ko imam boljše rezultate
 model_path_all = "/opt/homebrew/runs/pose/train_all_imgsize_960/weights/best.pt"
 model_path_fhc = "/opt/homebrew/runs/pose/train_fhc_imgsize_960/weights/best.pt"
 model_path_af1 = "/opt/homebrew/runs/pose/train_af1_imgsize_960/weights/best.pt"
@@ -98,3 +98,9 @@ for img_path in fhc_paths:
     }
 
     yolov8_functions.create_json_datafile(dictionary, filename)
+
+
+
+# 1. predict
+# 2. cascade - optional
+# 3. compare and report results
