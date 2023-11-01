@@ -1,11 +1,3 @@
-"""
-ToDo:
-- test prametrov učenja 
-    - saturacija = 0 - ne zmaegli delov slike
-    - batch = default, 1, -1(autobatch) - itak imam samo 7 slik :D - nima veze nad 7 slik autobatch/defualt je isto
-    - test črno bele slike
-"""
-
 """ Train YOLOv8-pose model on the COCO128-pose dataset. """
 from ultralytics import YOLO
 

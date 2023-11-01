@@ -21,9 +21,6 @@ model_paths = [
     "./runs/pose/trained_TML_960_intel/weights/best.pt"
 ]
 
-#model_paths = ["./runs/pose/train_ALL_960_M1/weights/best.pt"]
-#model_paths = ["./runs/pose/trained_ALL_960_intel/weights/best.pt"]
-
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
 
@@ -93,7 +90,3 @@ for directory in directories:
         }
 
         yolov8_functions.create_json_datafile(dictionary, filename)
-
-# 1. predict
-# 2. cascade - optional
-# 3. compare and report results
