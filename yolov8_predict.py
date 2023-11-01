@@ -59,7 +59,7 @@ for directory in directories:
         # load correct model of yolov8
         yolov8_model = YOLO(model)  # load a custom model
 
-        # Run inference on image with arguments
+        # Run inference on image with arguments - same imgsize as training
         results = yolov8_model.predict(img_path,imgsz=960)  # predict on an image 
         
         landmarks = [] # landmarks list
