@@ -38,7 +38,7 @@ for n in nrrd_image_paths:
     # original image & points
     data_arr, orig_image_shape, orig_img_ratio = yolov8_functions.preprocess_image(n, filter_val)
     points = yolov8_functions.create_point_array(p_paths, faktor_preslikave)
-    name = yolov8_functions.filename_creation(path, n, ".nrrd")
+    name = yolov8_functions.filename_creation(n, ".nrrd")
     filename = save_path + "/PNGs/" + name
     yolov8_functions.save_image(orig_image_shape, square, points, data_arr, filename)
 

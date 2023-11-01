@@ -109,7 +109,7 @@ def save_image(image_shape, square_size_ratio, points, img, filename):
     plt.clf()
     plt.close()
 
-def filename_creation(path, name, word):
+def filename_creation(name, word):
     filename = name.rsplit("/",1)
     filename = filename[1].replace(word,"")
     return filename
@@ -253,7 +253,7 @@ def split_train_test_val_data(nrrd_image_paths):
     train,val=train_test_split(train,test_size=0.2) # Train/Val split 80/20
     return train, test, val
 
-def full_image_save_predict(points, img, filename):
+def save_prediction_image(points, img, filename):
     fig, ax = plt.subplots()
     # plot points [FHC, TKC, TML, aF1]
     for point in points: 
