@@ -13,12 +13,12 @@ test_img_path = "images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL']
 
 model_paths = [
-    "./runs/pose/ALL_imgsize_960/weights/best.pt",
-    "./runs/pose/FHC_imgsize_960/weights/best.pt",
-    "./runs/pose/aF1_imgsize_960/weights/best.pt",
-    "./runs/pose/FNOC_imgsize_960/weights/best.pt",
-    "./runs/pose/TKC_imgsize_960/weights/best.pt",
-    "./runs/pose/TML_imgsize_960/weights/best.pt"
+    "./runs/pose/train_ALL_960_intel/weights/best.pt",
+    "./runs/pose/train_FHC_960_intel/weights/best.pt",
+    "./runs/pose/train_aF1_960_intel/weights/best.pt",
+    "./runs/pose/train_FNOC_960_intel/weights/best.pt",
+    "./runs/pose/train_TKC_960_intel/weights/best.pt",
+    "./runs/pose/train_TML_960_intel/weights/best.pt"
 ]
 
 model_paths = ["./runs/pose/train_ALL_960_M1/weights/best.pt"]
@@ -28,6 +28,7 @@ directories = yolov8_functions.get_dirs(path)
 # script
 for directory in directories:
     print("Directory path:", directory + "/" + test_img_path)
+        # naredi da naredi kopijo direktorija in doda čas + točko - poglej v preprocess
 
     # select correct point name based on directory
     point_name = ""
@@ -81,7 +82,6 @@ for directory in directories:
         filename = sav_path + name
         print("Name: ",name)
         print("Filename: ",filename)
-        # naredi da ksamodejno kreira mapo glede na to kero točko imam in doda še čas !
 
         # read image
         img = cv2.imread(img_path)
