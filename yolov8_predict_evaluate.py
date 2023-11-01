@@ -8,27 +8,30 @@ import yolov8_functions
 # Dataset path:
 workingDirPath = "/Users/jankovic/Documents/yolov8/"
 path = "./data/dataset/"
-sav_path = "./data/predicted/"
-test_img_path = "images/test/"
+save_path = "./data/predicted"
+test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL']
 
 model_paths = [
-    "./runs/pose/train_ALL_960_intel/weights/best.pt",
-    "./runs/pose/train_FHC_960_intel/weights/best.pt",
-    "./runs/pose/train_aF1_960_intel/weights/best.pt",
-    "./runs/pose/train_FNOC_960_intel/weights/best.pt",
-    "./runs/pose/train_TKC_960_intel/weights/best.pt",
-    "./runs/pose/train_TML_960_intel/weights/best.pt"
+    "./runs/pose/trained_ALL_960_intel/weights/best.pt",
+    "./runs/pose/trained_FHC_960_intel/weights/best.pt",
+    "./runs/pose/trained_aF1_960_intel/weights/best.pt",
+    "./runs/pose/trained_FNOC_960_intel/weights/best.pt",
+    "./runs/pose/trained_TKC_960_intel/weights/best.pt",
+    "./runs/pose/trained_TML_960_intel/weights/best.pt"
 ]
 
-model_paths = ["./runs/pose/train_ALL_960_M1/weights/best.pt"]
+#model_paths = ["./runs/pose/train_ALL_960_M1/weights/best.pt"]
+#model_paths = ["./runs/pose/trained_ALL_960_intel/weights/best.pt"]
+
+# create dataset archive
+yolov8_functions.dataset_archive(save_path)
 
 directories = yolov8_functions.get_dirs(path)
 
 # script
 for directory in directories:
-    print("Directory path:", directory + "/" + test_img_path)
-        # naredi da naredi kopijo direktorija in doda čas + točko - poglej v preprocess
+    print("Directory path:", directory + test_img_path)
 
     # select correct point name based on directory
     point_name = ""
@@ -41,7 +44,7 @@ for directory in directories:
     if skipLoop:
         continue
 
-    image_paths = yolov8_functions.get_jpg_paths("./" + directory + "/" + test_img_path)
+    image_paths = yolov8_functions.get_jpg_paths("./" + directory + test_img_path)
 
     # select correct model based on point
     for img_path in image_paths:
@@ -59,13 +62,11 @@ for directory in directories:
         # load correct model of yolov8
         yolov8_model = YOLO(model)  # load a custom model
 
-        print("Model loaded:", model)
         # Run inference on image with arguments
         results = yolov8_model.predict(img_path,imgsz=960)  # predict on an image 
         
         landmarks = [] # landmarks list
         for result in results:
-            #print(result.keypoints)
 
             for keypoint_indx, keypoint in enumerate(result.keypoints):
                 point = keypoint.xy.tolist()
@@ -73,15 +74,9 @@ for directory in directories:
                 y = point[0][0][1]
                 landmark = [x,y]
                 landmarks.append(landmark)
-                #print("X: ", x, "Y: ", y)
-
-        print("Landmarks: ",landmarks)
-
 
         name = yolov8_functions.filename_creation(img_path, ".jpg")
-        filename = sav_path + name
-        print("Name: ",name)
-        print("Filename: ",filename)
+        filename = save_path + "/" + name
 
         # read image
         img = cv2.imread(img_path)
