@@ -210,11 +210,8 @@ def get_nrrd_paths(dirs, working_dir_path):
 def get_json_paths(dirs, point_names):
     return [str(item) for d in dirs for item in pathlib.Path(d).iterdir() if ".json" in str(item) and any(name in str(item) for name in point_names)]
 
-def get_jpg_paths(dirs, point_names, path, all_imgs):
-    return [str(item) for d in dirs if d.replace(path, "") in point_names for item in pathlib.Path(f"{d}{all_imgs}").iterdir() if ".jpg" in str(item)]
-
-def get_paths_word(word, list_of_paths):
-    return [path for path in list_of_paths if word in path]
+def get_jpg_paths(directory):
+    return [str(item) for item in pathlib.Path(directory).iterdir() if ".jpg" in str(item)]
 
 def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     square_side = image_shape[0]*square # define square side size
@@ -257,4 +254,11 @@ def split_train_test_val_data(nrrd_image_paths):
     return train, test, val
 
 
-
+def full_image_save_predict(points, img, filename):
+    fig, ax = plt.subplots()
+    # plot points [FHC, TKC, TML, aF1]
+    for point in points: 
+        ax.plot(*point, marker='.', color="white")
+    plt.imshow(img)
+    plt.savefig(filename + '.png')
+    plt.close()
