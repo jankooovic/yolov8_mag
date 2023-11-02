@@ -1,13 +1,13 @@
 # Instructions:
-0. Go to directory yolov8 - scripts are run fromyolov8 directory
+0. Go to directory yolov8 and run yolov8_framework.py
+___
 1. Use script yolov8_preprocess.py to create a dataset for training
 2. Use script yolov8_train.py to retrain the YOLOV8 model
 3. Use script yolov8_predict.py to predict the points and evaluate model accuracy
 4. Use script yolov8_evaluate.py to evaluate model accuracy
 
-# Installing
+# Installing dependencies
 pip install -r requirements.txt
-
 
 # Paths:
 - Original dataset -> ./data/RTG_dataset - this dataset is made by hand
@@ -16,7 +16,7 @@ pip install -r requirements.txt
 - Prediction&Validation results -> ./data/predicted
 
 # Config Files:
-Path: Downloads/yolov8/data/dataset
+Path: ./config
 - config_aF1.yaml
 - config_ALL.yaml
 - config_TKC.yaml
