@@ -7,6 +7,7 @@ import math
 # Dataset path:
 json_test_path = "./data/dataset/JSON/"
 json_predict_path = "./data/predicted/"
+json_save_path = "./data/evaluation/"
 landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
 
 
@@ -87,8 +88,10 @@ for idx, path in enumerate(to_evaluate_test_paths):
         data = json.load(f)
         predicted_coordinates = data['Point coordinates']
 
-    # compare point cooridnates
     print("##### Path:", path)
+    print("Image size:", "[" + str(img_size[1]) + "," + str(img_size[0]) + "]")
+
+    # compare point cooridnates
     for idx, point in enumerate(test_coordinates):
         
         # compare predicted points to a test point
@@ -104,15 +107,27 @@ for idx, path in enumerate(to_evaluate_test_paths):
                 print("Point name:", point_names[idx])
                 print("Test point X:", test_coordinates[idx][coor_x], "Predicted point X:", math.ceil(predicted_coordinates[i][coor_x]))
                 print("Test point Y:", test_coordinates[idx][coor_y], "Predicted point Y:", math.ceil(predicted_coordinates[i][coor_y]))
-                print("Percentage match X:", abs(100 - percent_x))
-                print("Percentage match Y:", abs(100 - percent_y))
-                print("Pixel error X:", abs(test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x]))
-                print("Pixel error Y:", abs(test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y]))
-                print("Pixel error X in %:", 100*abs((test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])/img_size[0])) 
-                print("Pixel error Y in %:", 100*abs((test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])/img_size[0]))
-                print("Image size:", "[" + str(img_size[1]) + "," + str(img_size[0]) + "]")
+                print("Percentage missmatch X:", "{:.4f}".format(abs(100 - percent_x)), "Y:", "{:.4f}".format(abs(100 - percent_y)))
+                print("Pixel error X:", "{:.4f}".format(abs(test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])), "Y:", "{:.4f}".format(abs(test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])))
+                print("Percent pixel error X:", "{:.4f}".format(100*abs((test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])/img_size[0])), "Y:", "{:.4f}".format(100*abs((test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])/img_size[0]))) 
+        
+        """
+        # Save JSON file with data
+        filename = img_names_test[idx]
+        dictionary = {
+            "Image name": filename,
+            "Point names": landmark_names,
+            "Test point coordinates": [test_coordinates[idx][coor_x], test_coordinates[idx][coor_y]],
+            "Predicted point coordinates": [math.ceil(predicted_coordinates[i][coor_x]), math.ceil(predicted_coordinates[i][coor_x])],
+            "Pixel error X": abs(test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x]),
+            "Pixel error Y": abs(test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y]),
+            "Percent pixel error X": 100*abs((test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])/img_size[0]),
+            "Percent pixel error Y": 100*abs((test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])/img_size[0]),
+            "Image_size": img_size,
+        }
 
-
+        yolov8_functions.create_json_datafile(dictionary, filename)
+        """
     # save to Json format for report
 
     # create report
