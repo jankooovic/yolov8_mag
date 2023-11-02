@@ -90,7 +90,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
         data = json.load(f)
         predicted_coordinates = data['Point coordinates']
 
-    print("##### Path:", path)
+    print("Path:", path)
     #print("Image size:", "[" + str(img_size[1]) + "," + str(img_size[0]) + "]")
 
     dictionary = {
