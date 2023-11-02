@@ -6,7 +6,6 @@ import numpy as np
 import yolov8_functions
 
 # Dataset path:
-workingDirPath = "/Users/jankovic/Documents/yolov8/"
 path = "./data/dataset/"
 save_path = "./data/predicted"
 test_img_path = "/images/test/"
