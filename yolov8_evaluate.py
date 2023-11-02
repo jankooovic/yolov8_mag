@@ -7,9 +7,11 @@ import math
 # Dataset path:
 json_test_path = "./data/dataset/JSON/"
 json_predict_path = "./data/predicted/"
-json_save_path = "./data/evaluation/"
+json_save_path = "./data/evaluation"
 landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
 
+# create dataset archive
+yolov8_functions.dataset_archive(json_save_path)
 
 # load Json files
 
@@ -21,7 +23,7 @@ json_paths_predicted = []
 # remove path before
 img_names_predicted =  []
 for path in json_paths_predicted:
-    image_name = yolov8_functions.filename_creation(path, "", sign="\\")    # change according to linux or windows
+    image_name = yolov8_functions.filename_creation(path, "")    # change sign="\\" according to linux or windows
     img_names_predicted.append(image_name)
 
 # json paths to test folder
@@ -58,7 +60,7 @@ for path in json_paths_test:
 img_names_test =  []
 img_test_paths = []
 for path in json_paths_test_compare:
-    image_name = yolov8_functions.filename_creation(path, "", sign="\\")    # change according to linux or windows
+    image_name = yolov8_functions.filename_creation(path, "")    # change , sign="\\" according to linux or windows
     img_names_test.append(image_name)
     img_test_paths.append(path)
 
@@ -88,8 +90,14 @@ for idx, path in enumerate(to_evaluate_test_paths):
         data = json.load(f)
         predicted_coordinates = data['Point coordinates']
 
-    print("##### Path:", path)
-    print("Image size:", "[" + str(img_size[1]) + "," + str(img_size[0]) + "]")
+    #print("##### Path:", path)
+    #print("Image size:", "[" + str(img_size[1]) + "," + str(img_size[0]) + "]")
+
+    dictionary = {
+        "Image name": path,
+        "Point names": landmark_names,
+        "Image_size": img_size,
+        }
 
     # compare point cooridnates
     for idx, point in enumerate(test_coordinates):
@@ -101,73 +109,35 @@ for idx, path in enumerate(to_evaluate_test_paths):
             percent_y = yolov8_functions.percentage(predicted_coordinates[i][coor_y], test_coordinates[idx][coor_y]) 
             percent_x = yolov8_functions.percentage(predicted_coordinates[i][coor_x], test_coordinates[idx][coor_x]) 
 
-            # naredi average za vse točke, ki jih dobiš
-
             if percent_y > 90 and percent_y < 110 and percent_x > 90 and percent_x < 110:
-                print("Point name:", point_names[idx])
-                print("Test point X:", test_coordinates[idx][coor_x], "Predicted point X:", math.ceil(predicted_coordinates[i][coor_x]))
-                print("Test point Y:", test_coordinates[idx][coor_y], "Predicted point Y:", math.ceil(predicted_coordinates[i][coor_y]))
-                print("Percentage missmatch X:", "{:.4f}".format(abs(100 - percent_x)), "Y:", "{:.4f}".format(abs(100 - percent_y)))
-                print("Pixel error X:", "{:.4f}".format(abs(test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])), "Y:", "{:.4f}".format(abs(test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])))
-                print("Percent pixel error X:", "{:.4f}".format(100*abs((test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])/img_size[0])), "Y:", "{:.4f}".format(100*abs((test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])/img_size[0]))) 
-        
+                test_point = [test_coordinates[idx][coor_x], test_coordinates[idx][coor_y]]
+                predicted_point = [math.ceil(predicted_coordinates[i][coor_x]), math.ceil(predicted_coordinates[i][coor_y])]
+                percent_missmatch = [abs(100 - percent_x), abs(100 - percent_y)]
+                pixel_error = [abs(test_point[0] - predicted_point[0]), abs(test_point[1] - predicted_point[1])]
+                pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])]
+                #print("Point name:", point_names[idx])
+                #print("Test point X:", test_point[0], "Predicted point X:", predicted_point[0])
+                #print("Test point Y:", test_point[1], "Predicted point Y:", predicted_point[1])
+                #print("Percentage missmatch X:", "{:.4f}".format(percent_missmatch[0]), "Y:", "{:.4f}".format(percent_missmatch[1]))
+                #print("Pixel error X:", "{:.4f}".format(pixel_error[0]), "Y:", "{:.4f}".format(pixel_error[1]))
+                #print("Percent pixel error X:", "{:.4f}".format(pixel_error_percents[0]), "Y:", "{:.4f}".format(pixel_error_percents[1])) 
+                
+                dictionary.update({
+                            point_names[idx]:{
+                                "Test point coordinates": test_point,
+                                "Predicted point coordinates": predicted_point,
+                                "Percentage missmatch [x,y]": percent_missmatch,
+                                "Pixel error [x,y]": pixel_error,
+                                "Percent pixel error [x,y]": pixel_error_percents,
+                                },
+                })
 
     # Save JSON file with data
-    # dodaj, da točke yloži v dictionary in dodaj, average izračune
-    # se da narediti, da se dodaja v dictionary stvari??? https://sentry.io/answers/python-dictionary-add-keys/
-
-    dictionary = {
-        "Image name": path,
-        "Point names": landmark_names,
-        "Image_size": img_size,
-        "FHC":{
-            "Test point coordinates": "",
-            "Predicted point coordinates": "",
-            "Pixel error X": "",
-            "Pixel error Y": "",
-            "Percent pixel error X": "",
-            "Percent pixel error Y": "",
-        },
-        "aF1":{
-            "Test point coordinates": "",
-            "Predicted point coordinates": "",
-            "Pixel error X": "",
-            "Pixel error Y": "",
-            "Percent pixel error X": "",
-            "Percent pixel error Y": "",
-        },
-        "FNOC":{
-            "Test point coordinates": "",
-            "Predicted point coordinates": "",
-            "Pixel error X": "",
-            "Pixel error Y": "",
-            "Percent pixel error X": "",
-            "Percent pixel error Y": "",
-        },
-        "TKC":{
-            "Test point coordinates": "",
-            "Predicted point coordinates": "",
-            "Pixel error X": "",
-            "Pixel error Y": "",
-            "Percent pixel error X": "",
-            "Percent pixel error Y": "",
-        },
-        "TML":{
-            "Test point coordinates": "",
-            "Predicted point coordinates": "",
-            "Pixel error X": "",
-            "Pixel error Y": "",
-            "Percent pixel error X": "",
-            "Percent pixel error Y": "",
-        },
-    }
-
-    """
+    filename = json_save_path + "/" + yolov8_functions.filename_creation(path, "")
     yolov8_functions.create_json_datafile(dictionary, filename)
-    """
-    # save to Json format for report
 
     # create report
+    # average izračune
 
 
 
