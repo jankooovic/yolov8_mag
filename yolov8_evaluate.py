@@ -111,23 +111,60 @@ for idx, path in enumerate(to_evaluate_test_paths):
                 print("Pixel error X:", "{:.4f}".format(abs(test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])), "Y:", "{:.4f}".format(abs(test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])))
                 print("Percent pixel error X:", "{:.4f}".format(100*abs((test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])/img_size[0])), "Y:", "{:.4f}".format(100*abs((test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])/img_size[0]))) 
         
-        """
-        # Save JSON file with data
-        filename = img_names_test[idx]
-        dictionary = {
-            "Image name": filename,
-            "Point names": landmark_names,
-            "Test point coordinates": [test_coordinates[idx][coor_x], test_coordinates[idx][coor_y]],
-            "Predicted point coordinates": [math.ceil(predicted_coordinates[i][coor_x]), math.ceil(predicted_coordinates[i][coor_x])],
-            "Pixel error X": abs(test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x]),
-            "Pixel error Y": abs(test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y]),
-            "Percent pixel error X": 100*abs((test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])/img_size[0]),
-            "Percent pixel error Y": 100*abs((test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])/img_size[0]),
-            "Image_size": img_size,
-        }
 
-        yolov8_functions.create_json_datafile(dictionary, filename)
-        """
+    # Save JSON file with data
+    # dodaj, da točke yloži v dictionary in dodaj, average izračune
+    # se da narediti, da se dodaja v dictionary stvari??? https://sentry.io/answers/python-dictionary-add-keys/
+
+    dictionary = {
+        "Image name": path,
+        "Point names": landmark_names,
+        "Image_size": img_size,
+        "FHC":{
+            "Test point coordinates": "",
+            "Predicted point coordinates": "",
+            "Pixel error X": "",
+            "Pixel error Y": "",
+            "Percent pixel error X": "",
+            "Percent pixel error Y": "",
+        },
+        "aF1":{
+            "Test point coordinates": "",
+            "Predicted point coordinates": "",
+            "Pixel error X": "",
+            "Pixel error Y": "",
+            "Percent pixel error X": "",
+            "Percent pixel error Y": "",
+        },
+        "FNOC":{
+            "Test point coordinates": "",
+            "Predicted point coordinates": "",
+            "Pixel error X": "",
+            "Pixel error Y": "",
+            "Percent pixel error X": "",
+            "Percent pixel error Y": "",
+        },
+        "TKC":{
+            "Test point coordinates": "",
+            "Predicted point coordinates": "",
+            "Pixel error X": "",
+            "Pixel error Y": "",
+            "Percent pixel error X": "",
+            "Percent pixel error Y": "",
+        },
+        "TML":{
+            "Test point coordinates": "",
+            "Predicted point coordinates": "",
+            "Pixel error X": "",
+            "Pixel error Y": "",
+            "Percent pixel error X": "",
+            "Percent pixel error Y": "",
+        },
+    }
+
+    """
+    yolov8_functions.create_json_datafile(dictionary, filename)
+    """
     # save to Json format for report
 
     # create report
