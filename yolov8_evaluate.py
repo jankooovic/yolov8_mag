@@ -133,7 +133,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
                 })
 
     # Save JSON file with data
-    filename = json_save_path + "/" + yolov8_functions.filename_creation(path, "")
+    filename = json_save_path + "/" + yolov8_functions.filename_creation(path, ".json")
     yolov8_functions.create_json_datafile(dictionary, filename)
 
     # create report
