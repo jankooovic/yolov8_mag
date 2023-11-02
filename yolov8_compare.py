@@ -12,18 +12,6 @@ save_path = "./data/predicted"
 test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL']
 
-model_paths = [
-    "./runs/pose/trained_ALL_960_intel/weights/best.pt",
-    "./runs/pose/trained_FHC_960_intel/weights/best.pt",
-    "./runs/pose/trained_aF1_960_intel/weights/best.pt",
-    "./runs/pose/trained_FNOC_960_intel/weights/best.pt",
-    "./runs/pose/trained_TKC_960_intel/weights/best.pt",
-    "./runs/pose/trained_TML_960_intel/weights/best.pt"
-]
-
-#model_paths = ["./runs/pose/train_ALL_960_M1/weights/best.pt"]
-#model_paths = ["./runs/pose/trained_ALL_960_intel/weights/best.pt"]
-
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
 
