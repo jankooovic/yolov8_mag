@@ -4,3 +4,4 @@ scikit_learn==1.3.2
 scipy==1.11.3
 SimpleITK==2.3.0
 ultralytics==8.0.203
+pynrrd==1.0.0

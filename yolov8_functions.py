@@ -109,8 +109,8 @@ def save_image(image_shape, square_size_ratio, points, img, filename):
     plt.clf()
     plt.close()
 
-def filename_creation(name, word):
-    filename = name.rsplit("/",1)
+def filename_creation(name, word, sign="/"):
+    filename = name.rsplit(sign,1)
     filename = filename[1].replace(word,"")
     return filename
 

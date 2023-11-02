@@ -21,6 +21,8 @@ model_paths = [
     "./runs/pose/trained_TML_960_intel/weights/best.pt"
 ]
 
+model_paths = ["./runs/pose/trained_ALL_960_intel/weights/best.pt"]
+
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
 
