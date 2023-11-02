@@ -1,4 +1,3 @@
-
 """ Use a trained YOLOv8n-pose model to run predictions on images. """
 from ultralytics import YOLO
 import cv2
