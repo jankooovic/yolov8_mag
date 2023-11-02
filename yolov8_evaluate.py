@@ -100,6 +100,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
         }
 
     # compare point coordinates
+    point_index = 0
     for idx, point in enumerate(test_coordinates):
         
         # compare predicted points to a test point
@@ -123,7 +124,8 @@ for idx, path in enumerate(to_evaluate_test_paths):
                 #print("Percent pixel error X:", "{:.4f}".format(pixel_error_percents[0]), "Y:", "{:.4f}".format(pixel_error_percents[1])) 
                 
                 dictionary.update({
-                            point_names[idx]:{
+                            "Point_" + str(point_index):{
+                                "Point_name": point_names[idx],
                                 "Test point coordinates": test_point,
                                 "Predicted point coordinates": predicted_point,
                                 "Percentage missmatch [x,y]": percent_missmatch,
@@ -131,13 +133,11 @@ for idx, path in enumerate(to_evaluate_test_paths):
                                 "Percent pixel error [x,y]": pixel_error_percents,
                                 },
                 })
+                point_index += 1
 
     # Save JSON file with data
     filename = json_save_path + "/" + yolov8_functions.filename_creation(path, ".json")
     yolov8_functions.create_json_datafile(dictionary, filename)
-
-    # create report
-    # average izračune
 
 
 
