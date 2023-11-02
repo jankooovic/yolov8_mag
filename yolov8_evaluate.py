@@ -99,7 +99,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
         "Image_size": img_size,
         }
 
-    # compare point cooridnates
+    # compare point coordinates
     for idx, point in enumerate(test_coordinates):
         
         # compare predicted points to a test point
