@@ -11,6 +11,7 @@ path = "./data/dataset/"
 save_path = "./data/predicted"
 test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL']
+landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
 
 model_paths = [
     "./runs/pose/trained_ALL_960_intel/weights/best.pt",
@@ -84,7 +85,7 @@ for directory in directories:
         # Save JSON file with data
         dictionary = {
             "Image name": filename,
-            "Point names": point_names,
+            "Point names": landmark_names,
             "Point coordinates": landmarks,
             "Image_size": img_shape,
         }
