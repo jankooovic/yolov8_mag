@@ -2,6 +2,7 @@
 """ Compare results from original RTG anotations and predicted RTG anotations """
 import yolov8_functions
 import json
+import math
 
 # Dataset path:
 json_test_path = "./data/dataset/JSON/"
@@ -68,30 +69,54 @@ for idx, img_path in enumerate(img_test_paths):
     else:
         continue
 
-print("Test length:", len(img_names_test), "Test paths length:", len(img_test_paths), "Predicted Length:", len(img_names_predicted), "Test evaluation paths:", len(to_evaluate_test_paths))
 for idx, path in enumerate(to_evaluate_test_paths):
-    print("Test path:",path, "Predicted path:", json_paths_predicted[idx])
 
-    # get point cooridnates from JSON 
-
-    # Test points
+    # Test points json
     test_coordinates = 0
+    point_names = 0
+    img_size = 0
     with open(to_evaluate_test_paths[idx]) as f:
         data = json.load(f)
         test_coordinates = data['Point coordinates']
+        point_names = data['Point names']
+        img_size =  data['Image_size']  # x,y are swapped
 
-    # Predict points
+    # Predict points json
     predicted_coordinates = 0
     with open(json_paths_predicted[idx]) as f:
         data = json.load(f)
         predicted_coordinates = data['Point coordinates']
 
-    # compare point cooridnates - uporabim samo tiste, ki so si podobne ???
-    
+    # compare point cooridnates
+    print("##### Path:", path)
+    for idx, point in enumerate(test_coordinates):
+        
+        # compare predicted points to a test point
+        for i, x in enumerate(predicted_coordinates):
+            coor_y = 1
+            coor_x = 0
+            percent_y = yolov8_functions.percentage(predicted_coordinates[i][coor_y], test_coordinates[idx][coor_y]) 
+            percent_x = yolov8_functions.percentage(predicted_coordinates[i][coor_x], test_coordinates[idx][coor_x]) 
 
-    # caculate error in pixels, percentage and x,y values comapred to image size
+            # naredi average za vse točke, ki jih dobiš
+
+            if percent_y > 90 and percent_y < 110 and percent_x > 90 and percent_x < 110:
+                print("Point name:", point_names[idx])
+                print("Test point X:", test_coordinates[idx][coor_x], "Predicted point X:", math.ceil(predicted_coordinates[i][coor_x]))
+                print("Test point Y:", test_coordinates[idx][coor_y], "Predicted point Y:", math.ceil(predicted_coordinates[i][coor_y]))
+                print("Percentage match X:", abs(100 - percent_x))
+                print("Percentage match Y:", abs(100 - percent_y))
+                print("Pixel error X:", abs(test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x]))
+                print("Pixel error Y:", abs(test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y]))
+                print("Pixel error X in %:", 100*abs((test_coordinates[idx][coor_x] - predicted_coordinates[i][coor_x])/img_size[0])) 
+                print("Pixel error Y in %:", 100*abs((test_coordinates[idx][coor_y] - predicted_coordinates[i][coor_y])/img_size[0]))
+                print("Image size:", "[" + str(img_size[1]) + "," + str(img_size[0]) + "]")
+
 
     # save to Json format for report
 
     # create report
+
+
+
 

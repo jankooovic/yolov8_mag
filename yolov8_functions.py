@@ -261,3 +261,6 @@ def save_prediction_image(points, img, filename):
     plt.imshow(img)
     plt.savefig(filename + '.png')
     plt.close()
+
+def percentage(part, whole):
+    return 100 * float(part)/float(whole)
