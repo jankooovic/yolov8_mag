@@ -263,4 +263,4 @@ def save_prediction_image(points, img, filename):
     plt.close()
 
 def percentage(part, whole):
-    return 100 * (float(part)/float(whole))
+    return (float(part)/float(whole) * 100)
