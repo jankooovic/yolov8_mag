@@ -111,8 +111,8 @@ for idx, path in enumerate(to_evaluate_test_paths):
                     im = np.array(image)[p[1]-half_side:p[1]+half_side,p[0]-half_side:p[0]+half_side]
         
                     fig, ax = plt.subplots()
-                    ax.plot(half_side, half_side, marker='x', color="red")  # test point
-                    ax.plot(half_side + (p[0] - pp[0]),half_side + (p[1] - pp[1]), marker='+', color="black")  # predicted point
+                    ax.plot(half_side, half_side, marker='x', color="black")  # test point
+                    ax.plot(half_side + (p[0] - pp[0]),half_side + (p[1] - pp[1]), marker='+', color="red")  # predicted point
 
                     plt.imshow(im, cmap="gray")
                     plt.savefig(filename + "_" + landmark_names[i] + '.png')
