@@ -3,8 +3,11 @@
 import yolov8_functions
 import json
 import math
+import matplotlib.pyplot as plt
+from PIL import Image
 
 # Dataset path:
+test_images_path =  "./data/dataset/ALL/images/test/"
 json_test_path = "./data/dataset/JSON/"
 json_predict_path = "./data/predicted/"
 json_save_path = "./data/evaluation"
@@ -26,6 +29,9 @@ img_test_paths = [path for path in json_paths_test_compare]
 # get only evaluation paths from test paths
 to_evaluate_test_paths = [img_path for idx, img_path in enumerate(img_test_paths) if img_names_test[idx] in img_names_predicted]
 
+# get test images
+test_images = yolov8_functions.get_dirs(test_images_path)
+
 for idx, path in enumerate(to_evaluate_test_paths):
 
     # Test points json
@@ -38,7 +44,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
         point_names = data['Point names']
         img_size =  data['Image_size']  # x,y are swapped
 
-    # Predict points json
+    # Predicted points json
     predicted_coordinates = 0
     with open(json_paths_predicted[idx]) as f:
         data = json.load(f)
@@ -52,6 +58,18 @@ for idx, path in enumerate(to_evaluate_test_paths):
         }
 
     # compare point coordinates
+    """ ToDo:
+    - sive slike
+    - dodam referenčne točke s simbolom +
+    - prediktirane točke imajo svoje barve
+
+    # odprem testne slike v ./data/dataset/ALL/images/test - done
+        # če imam ime od trenutnih točk v direktoriju vzamem to sliko - done
+    # naredi sivinsko sliko - done
+    # označi točke - barve in simboli - done
+    # shrani sliko - lepši format
+    """
+
     point_index = 0
     for idx, point in enumerate(test_coordinates):
         for i, x in enumerate(predicted_coordinates): # compare predicted points to a test point
@@ -80,9 +98,29 @@ for idx, path in enumerate(to_evaluate_test_paths):
                 point_index += 1
 
     # Save JSON file with data
-    filename = json_save_path + "/" + yolov8_functions.filename_creation(path, ".json")
+    name = yolov8_functions.filename_creation(path, ".json")
+    filename = json_save_path + "/" + name
     yolov8_functions.create_json_datafile(dictionary, filename)
 
+    # open image based on point name
+    for img in test_images:
+        if "./" + img == test_images_path + name + ".jpg":
 
+            image = Image.open(img).convert("L")
 
+            fig, ax = plt.subplots()
+            # plot reference points
+            for point in test_coordinates: 
+                ax.plot(*point, marker='+', color="white")
+            
+            # plot predicted points
+            for point in predicted_coordinates: 
+                ax.plot(*point, marker='.', color="red")  # naredi, da imajo točke druge abrve
 
+            plt.imshow(image, cmap="gray")
+            # plt.show()
+            plt.savefig(filename + '.png')
+            plt.cla()
+            plt.clf()
+            plt.close()
+            
