@@ -271,11 +271,11 @@ def save_evaluation_image(image, filename, test_coordinates, predicted_coordinat
     fig, ax = plt.subplots()
     # plot reference points
     for point in test_coordinates: 
-        ax.plot(*point, marker='+', color="white")
+        ax.plot(*point, marker='o', color="white")
     
     # plot predicted points
     for point in predicted_coordinates: 
-        ax.plot(*point, marker='.', color="red")  # naredi, da imajo točke druge abrve
+        ax.plot(*point, marker='+', color="red")  # naredi, da imajo točke druge abrve
 
     plt.imshow(image, cmap="gray")
     # plt.show()
