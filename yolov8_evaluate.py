@@ -57,18 +57,6 @@ for idx, path in enumerate(to_evaluate_test_paths):
         }
 
     # compare point coordinates
-    """ ToDo:
-    - sive slike
-    - dodam referenčne točke s simbolom +
-    - prediktirane točke imajo svoje barve
-
-    # odprem testne slike v ./data/dataset/ALL/images/test - done
-        # če imam ime od trenutnih točk v direktoriju vzamem to sliko - done
-    # naredi sivinsko sliko - done
-    # označi točke - barve in simboli - done
-    # shrani sliko - lepši format ali subformate slike, kjer se vidi, razliko med točkami
-    """
-
     point_index = 0
     for idx, point in enumerate(test_coordinates):
         for i, x in enumerate(predicted_coordinates): # compare predicted points to a test point
@@ -109,3 +97,4 @@ for idx, path in enumerate(to_evaluate_test_paths):
             yolov8_functions.save_evaluation_image(image, filename, test_coordinates, predicted_coordinates)
             
             # naredi, da se pokažejo manjše slike, ki imajo razlike med referenčno in prediktirano točko
+            # razmisli, kaj vse bi narisal na sliko (pixli in oznaka s črto x,y)
