@@ -67,7 +67,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
         # če imam ime od trenutnih točk v direktoriju vzamem to sliko - done
     # naredi sivinsko sliko - done
     # označi točke - barve in simboli - done
-    # shrani sliko - lepši format
+    # shrani sliko - lepši format ali subformate slike, kjer se vidi, razliko med točkami
     """
 
     point_index = 0
