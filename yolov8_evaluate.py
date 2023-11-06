@@ -3,6 +3,8 @@
 import yolov8_functions
 import json
 import math
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 # Dataset path:
@@ -11,6 +13,7 @@ json_test_path = "./data/dataset/JSON/"
 json_predict_path = "./data/predicted/"
 json_save_path = "./data/evaluation"
 landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
+square_size_ratio = 0.05
 
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
@@ -95,6 +98,27 @@ for idx, path in enumerate(to_evaluate_test_paths):
             
             image = yolov8_functions.open_image(img)
             yolov8_functions.save_evaluation_image(image, filename, test_coordinates, predicted_coordinates)
-            
-            # naredi, da se pokažejo manjše slike, ki imajo razlike med referenčno in prediktirano točko
-            # razmisli, kaj vse bi narisal na sliko (pixli in oznaka s črto x,y)
+
+""" Naredi, da se točke vidijo bližje - primerjava med predicted in testnimi
+            image_shape = np.array(image).shape # x and y are switched
+            third = math.ceil(image_shape[0]/3)
+
+            for p in test_coordinates:
+                p = np.array(p)
+
+                if p[1] < third:
+                    im = np.array(image)[:third,:]
+                elif third < p[1] < third*2:
+                    p = [p[0],p[1]-third]
+                    im = np.array(image)[third:third*2,:]
+                elif third*2 < p[1]:
+                    p = [p[0],p[1]-third*2]
+                    im = np.array(image)[third*2:,:]
+      
+                fig, ax = plt.subplots()
+                ax.plot(*p, marker='+', color="red")
+
+                plt.imshow(im, cmap="gray")
+                plt.show()
+                plt.close()
+"""

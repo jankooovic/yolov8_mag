@@ -283,6 +283,7 @@ def save_evaluation_image(image, filename, test_coordinates, predicted_coordinat
     plt.cla()
     plt.clf()
     plt.close()
+    return image
 
 def open_image(path):
     return Image.open(path).convert("L")
