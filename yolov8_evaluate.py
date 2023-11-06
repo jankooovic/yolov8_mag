@@ -13,64 +13,18 @@ landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
 
-# load Json files
-
-# json paths to predicted folder
-json_paths = yolov8_functions.get_dirs(json_predict_path)
-json_paths_predicted = []
-[json_paths_predicted.append(directory) for directory in json_paths if ".json" in str(directory)]
-
-# remove path before
-img_names_predicted =  []
-for path in json_paths_predicted:
-    image_name = yolov8_functions.filename_creation(path, "")    # change sign="\\" according to linux or windows
-    img_names_predicted.append(image_name)
-
-# json paths to test folder
-json_paths = yolov8_functions.get_dirs(json_test_path)
-json_paths_test = []
-for path in json_paths:
-    skipLoop = False
-
-    for name in landmark_names:
-        if name in path:
-            skipLoop = True
-
-    if skipLoop:
-        continue
-
-    json_paths_test.append(path)
-
+# Load json files
+json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_predict_path) if ".json" in str(directory)]
+img_names_predicted =  [yolov8_functions.filename_creation(path, "") for path in json_paths_predicted] # change sign="\\" according to linux or windows
 
 # get only paths that are to be evaluated from test
-json_paths_test_compare = []
-for path in json_paths_test:
-    skipLoop = True
-
-    for name in img_names_predicted:
-        if name in path:
-            skipLoop = False
-
-    if skipLoop:
-        continue
-
-    json_paths_test_compare.append(path)
-
-# remove path before
-img_names_test =  []
-img_test_paths = []
-for path in json_paths_test_compare:
-    image_name = yolov8_functions.filename_creation(path, "")    # change , sign="\\" according to linux or windows
-    img_names_test.append(image_name)
-    img_test_paths.append(path)
+json_paths_test = [path for path in yolov8_functions.get_dirs(json_test_path) if not any(name in path for name in landmark_names)]
+json_paths_test_compare = [path for path in json_paths_test if any(name in path for name in img_names_predicted)]
+img_names_test =  [yolov8_functions.filename_creation(path, "") for path in json_paths_test_compare]
+img_test_paths = [path for path in json_paths_test_compare]
 
 # get only evaluation paths from test paths
-to_evaluate_test_paths = []
-for idx, img_path in enumerate(img_test_paths):
-    if img_names_test[idx] in img_names_predicted:
-        to_evaluate_test_paths.append(img_path)
-    else:
-        continue
+to_evaluate_test_paths = [img_path for idx, img_path in enumerate(img_test_paths) if img_names_test[idx] in img_names_predicted]
 
 for idx, path in enumerate(to_evaluate_test_paths):
 
@@ -78,7 +32,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
     test_coordinates = 0
     point_names = 0
     img_size = 0
-    with open(to_evaluate_test_paths[idx]) as f:
+    with open(path) as f:
         data = json.load(f)
         test_coordinates = data['Point coordinates']
         point_names = data['Point names']
@@ -91,8 +45,6 @@ for idx, path in enumerate(to_evaluate_test_paths):
         predicted_coordinates = data['Point coordinates']
 
     print("Path:", path)
-    #print("Image size:", "[" + str(img_size[1]) + "," + str(img_size[0]) + "]")
-
     dictionary = {
         "Image name": path,
         "Point names": landmark_names,
@@ -102,26 +54,18 @@ for idx, path in enumerate(to_evaluate_test_paths):
     # compare point coordinates
     point_index = 0
     for idx, point in enumerate(test_coordinates):
-        
-        # compare predicted points to a test point
-        for i, x in enumerate(predicted_coordinates):
+        for i, x in enumerate(predicted_coordinates): # compare predicted points to a test point
             coor_y = 1
             coor_x = 0
             percent_y = yolov8_functions.percentage(predicted_coordinates[i][coor_y], test_coordinates[idx][coor_y]) 
             percent_x = yolov8_functions.percentage(predicted_coordinates[i][coor_x], test_coordinates[idx][coor_x]) 
 
-            if percent_y > 90 and percent_y < 110 and percent_x > 90 and percent_x < 110:
+            if 90 < percent_y < 110 and 90 < percent_x < 110:
                 test_point = [test_coordinates[idx][coor_x], test_coordinates[idx][coor_y]]
                 predicted_point = [math.ceil(predicted_coordinates[i][coor_x]), math.ceil(predicted_coordinates[i][coor_y])]
                 percent_missmatch = [abs(100 - percent_x), abs(100 - percent_y)]
                 pixel_error = [abs(test_point[0] - predicted_point[0]), abs(test_point[1] - predicted_point[1])]
-                pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])]
-                #print("Point name:", point_names[idx])
-                #print("Test point X:", test_point[0], "Predicted point X:", predicted_point[0])
-                #print("Test point Y:", test_point[1], "Predicted point Y:", predicted_point[1])
-                #print("Percentage missmatch X:", "{:.4f}".format(percent_missmatch[0]), "Y:", "{:.4f}".format(percent_missmatch[1]))
-                #print("Pixel error X:", "{:.4f}".format(pixel_error[0]), "Y:", "{:.4f}".format(pixel_error[1]))
-                #print("Percent pixel error X:", "{:.4f}".format(pixel_error_percents[0]), "Y:", "{:.4f}".format(pixel_error_percents[1])) 
+                pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])] 
                 
                 dictionary.update({
                             "Point_" + str(point_index):{
