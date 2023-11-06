@@ -3,8 +3,7 @@
 import yolov8_functions
 import json
 import math
-import matplotlib.pyplot as plt
-from PIL import Image
+
 
 # Dataset path:
 test_images_path =  "./data/dataset/ALL/images/test/"
@@ -105,22 +104,8 @@ for idx, path in enumerate(to_evaluate_test_paths):
     # open image based on point name
     for img in test_images:
         if "./" + img == test_images_path + name + ".jpg":
-
-            image = Image.open(img).convert("L")
-
-            fig, ax = plt.subplots()
-            # plot reference points
-            for point in test_coordinates: 
-                ax.plot(*point, marker='+', color="white")
             
-            # plot predicted points
-            for point in predicted_coordinates: 
-                ax.plot(*point, marker='.', color="red")  # naredi, da imajo točke druge abrve
-
-            plt.imshow(image, cmap="gray")
-            # plt.show()
-            plt.savefig(filename + '.png')
-            plt.cla()
-            plt.clf()
-            plt.close()
+            image = yolov8_functions.open_image(img)
+            yolov8_functions.save_evaluation_image(image, filename, test_coordinates, predicted_coordinates)
             
+            # naredi, da se pokažejo manjše slike, ki imajo razlike med referenčno in prediktirano točko

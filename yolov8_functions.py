@@ -12,6 +12,7 @@ import shutil
 from datetime import date
 from datetime import datetime
 from sklearn.model_selection import train_test_split
+from PIL import Image
 
 def normalize_data(data):
     return (data - np.min(data)) / (np.max(data) - np.min(data))
@@ -264,3 +265,24 @@ def save_prediction_image(points, img, filename):
 
 def percentage(part, whole):
     return (float(part)/float(whole) * 100)
+
+def save_evaluation_image(image, filename, test_coordinates, predicted_coordinates):
+
+    fig, ax = plt.subplots()
+    # plot reference points
+    for point in test_coordinates: 
+        ax.plot(*point, marker='+', color="white")
+    
+    # plot predicted points
+    for point in predicted_coordinates: 
+        ax.plot(*point, marker='.', color="red")  # naredi, da imajo točke druge abrve
+
+    plt.imshow(image, cmap="gray")
+    # plt.show()
+    plt.savefig(filename + '.png')
+    plt.cla()
+    plt.clf()
+    plt.close()
+
+def open_image(path):
+    return Image.open(path).convert("L")
