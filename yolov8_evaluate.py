@@ -20,7 +20,7 @@ img_names_predicted =  [yolov8_functions.filename_creation(path, "") for path in
 # get only paths that are to be evaluated from test
 json_paths_test = [path for path in yolov8_functions.get_dirs(json_test_path) if not any(name in path for name in landmark_names)]
 json_paths_test_compare = [path for path in json_paths_test if any(name in path for name in img_names_predicted)]
-img_names_test =  [yolov8_functions.filename_creation(path, "") for path in json_paths_test_compare]
+img_names_test =  [yolov8_functions.filename_creation(path, "") for path in json_paths_test_compare] # change sign="\\" according to linux or windows
 img_test_paths = [path for path in json_paths_test_compare]
 
 # get only evaluation paths from test paths
