@@ -32,17 +32,6 @@ for directory in directories:
     print("Directory path:", directory + test_img_path)
 
     # select correct point name based on directory
-    """
-    point_name = ""
-    skipLoop = True
-    for name in point_names:
-        if name in directory:
-            point_name = name
-            skipLoop = False
-    
-    if skipLoop:
-        continue
-    """
     point_name = next((name for name in point_names if name in directory), None)
 
     if point_name is None:
@@ -52,17 +41,6 @@ for directory in directories:
 
     # select correct model based on point
     for img_path in image_paths:
-        """
-        model = ""
-        skipLoop2 = True
-        for model_path in model_paths:
-            if point_name in model_path:
-                model = model_path
-                skipLoop2 = False
-    
-        if skipLoop2:
-            continue
-        """
         model_path = model_paths.get(point_name, None)
     
         if model_path is None:
