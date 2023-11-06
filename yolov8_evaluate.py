@@ -12,8 +12,8 @@ test_images_path =  "./data/dataset/ALL/images/test/"
 json_test_path = "./data/dataset/JSON/"
 json_predict_path = "./data/predicted/"
 json_save_path = "./data/evaluation"
-landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
-square_size_ratio = 0.05
+landmark_names = ['FHC', 'aF1', 'TKC', 'FNOC', 'TML']
+square_size_ratio = 0.1
 
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
@@ -58,34 +58,32 @@ for idx, path in enumerate(to_evaluate_test_paths):
         "Point names": landmark_names,
         "Image_size": img_size,
         }
+    # sort points based on y coordinates [FHC, aF1, TKC, FNOC, TML]
+    test_coordinates = sorted(test_coordinates, key=lambda point: point[1])
+    predicted_coordinates = sorted(predicted_coordinates, key=lambda point: point[1])
 
     # compare point coordinates
-    point_index = 0
     for idx, point in enumerate(test_coordinates):
-        for i, x in enumerate(predicted_coordinates): # compare predicted points to a test point
-            coor_y = 1
-            coor_x = 0
-            percent_y = yolov8_functions.percentage(predicted_coordinates[i][coor_y], test_coordinates[idx][coor_y]) 
-            percent_x = yolov8_functions.percentage(predicted_coordinates[i][coor_x], test_coordinates[idx][coor_x]) 
+        coor_y = 1
+        coor_x = 0
+        percent_y = yolov8_functions.percentage(predicted_coordinates[idx][coor_y], test_coordinates[idx][coor_y]) 
+        percent_x = yolov8_functions.percentage(predicted_coordinates[idx][coor_x], test_coordinates[idx][coor_x]) 
 
-            if 90 < percent_y < 110 and 90 < percent_x < 110:
-                test_point = [test_coordinates[idx][coor_x], test_coordinates[idx][coor_y]]
-                predicted_point = [math.ceil(predicted_coordinates[i][coor_x]), math.ceil(predicted_coordinates[i][coor_y])]
-                percent_missmatch = [abs(100 - percent_x), abs(100 - percent_y)]
-                pixel_error = [abs(test_point[0] - predicted_point[0]), abs(test_point[1] - predicted_point[1])]
-                pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])] 
-                
-                dictionary.update({
-                            "Point_" + str(point_index):{
-                                "Point_name": point_names[idx],
-                                "Test point coordinates": test_point,
-                                "Predicted point coordinates": predicted_point,
-                                "Percentage missmatch [x,y]": percent_missmatch,
-                                "Pixel error [x,y]": pixel_error,
-                                "Percent pixel error [x,y]": pixel_error_percents,
-                                },
-                })
-                point_index += 1
+        test_point = [test_coordinates[idx][coor_x], test_coordinates[idx][coor_y]]
+        predicted_point = [math.ceil(predicted_coordinates[idx][coor_x]), math.ceil(predicted_coordinates[idx][coor_y])]
+        percent_missmatch = [abs(100 - percent_x), abs(100 - percent_y)]
+        pixel_error = [abs(test_point[0] - predicted_point[0]), abs(test_point[1] - predicted_point[1])]
+        pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])] 
+        
+        dictionary.update({
+                    "Point_name_" + landmark_names[idx]:{
+                        "Test point coordinates": test_point,
+                        "Predicted point coordinates": predicted_point,
+                        "Percentage missmatch [x,y]": percent_missmatch,
+                        "Pixel error [x,y]": pixel_error,
+                        "Percent pixel error [x,y]": pixel_error_percents,
+                        },
+        })
 
     # Save JSON file with data
     name = yolov8_functions.filename_creation(path, ".json")
@@ -98,27 +96,27 @@ for idx, path in enumerate(to_evaluate_test_paths):
             
             image = yolov8_functions.open_image(img)
             yolov8_functions.save_evaluation_image(image, filename, test_coordinates, predicted_coordinates)
-
-""" Naredi, da se točke vidijo bližje - primerjava med predicted in testnimi
             image_shape = np.array(image).shape # x and y are switched
-            third = math.ceil(image_shape[0]/3)
+            square_side = image_shape[0]*square_size_ratio
+            half_side = math.ceil(square_side/2)
 
-            for p in test_coordinates:
-                p = np.array(p)
+            for i, p in enumerate(test_coordinates):
+                    coor_y = 1
+                    coor_x = 0
+                    pp = predicted_coordinates[i]
+                    percent_y = yolov8_functions.percentage(pp[coor_y], p[coor_y])
+                    percent_x = yolov8_functions.percentage(pp[coor_x], p[coor_x])
 
-                if p[1] < third:
-                    im = np.array(image)[:third,:]
-                elif third < p[1] < third*2:
-                    p = [p[0],p[1]-third]
-                    im = np.array(image)[third:third*2,:]
-                elif third*2 < p[1]:
-                    p = [p[0],p[1]-third*2]
-                    im = np.array(image)[third*2:,:]
-      
-                fig, ax = plt.subplots()
-                ax.plot(*p, marker='+', color="red")
+                    p = np.array(p)
+                    im = np.array(image)[p[1]-half_side:p[1]+half_side,p[0]-half_side:p[0]+half_side]
+        
+                    fig, ax = plt.subplots()
+                    ax.plot(half_side, half_side, marker='x', color="red")  # test point
+                    ax.plot(half_side + (p[0] - pp[0]),half_side + (p[1] - pp[1]), marker='+', color="black")  # predicted point
 
-                plt.imshow(im, cmap="gray")
-                plt.show()
-                plt.close()
-"""
+                    plt.imshow(im, cmap="gray")
+                    plt.savefig(filename + "_" + landmark_names[i] + '.png')
+                    #plt.show()
+                    plt.close()
+
+
