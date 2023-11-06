@@ -76,7 +76,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
         pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])] 
         
         dictionary.update({
-                    "Point_name_" + landmark_names[idx]:{
+                    landmark_names[idx]:{
                         "Test point coordinates": test_point,
                         "Predicted point coordinates": predicted_point,
                         "Percentage missmatch [x,y]": percent_missmatch,
