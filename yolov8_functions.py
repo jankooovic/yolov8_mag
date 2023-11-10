@@ -170,7 +170,7 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
 
     # save image to JPG
     filename = f"{save_path}/ALL/images/{data}/{name}"
-    matplotlib.image.imsave(f"{filename}.jpg", data_arr)
+    matplotlib.image.imsave(f"{filename}.jpg", data_arr, cmap="gray")
 
     dictionary = {
         "Image name": filename,
@@ -188,7 +188,7 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
         img, p_changed, changed_image_shape, changed_img_ratio = slice_image_3_parts(orig_image_shape, square, point, data_arr, point_names[i], f"{save_path}/PNGs/{name}_{point_names[i]}")
 
         filename = f"{save_path}/{point_names[i]}/images/{data}/{name}_{point_names[i]}"
-        matplotlib.image.imsave(f"{filename}.jpg", img)
+        matplotlib.image.imsave(f"{filename}.jpg", img, cmap="gray")
 
         dictionary = {
             "Image name": filename,
