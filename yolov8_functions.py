@@ -104,7 +104,7 @@ def save_image(image_shape, square_size_ratio, points, img, filename):
         rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
         ax.add_patch(rect)
 
-    plt.imshow(img)
+    plt.imshow(img, cmap="gray")
     plt.savefig(filename + '.png')  # save image&markers to png
     plt.cla()
     plt.clf()
@@ -126,7 +126,7 @@ def get_zoomed_image_part(image_shape, square_size_ratio, point, img, filename):
     center = [dim // 2 for dim in square_image.shape]
     fig, ax = plt.subplots()
     ax.plot(*center, marker='.', color="white")
-    plt.imshow(square_image)
+    plt.imshow(square_image, cmap="gray")
     plt.savefig(filename + '.png')
     plt.close()
     return square_image
@@ -237,7 +237,7 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
     ax.add_patch(rect)
 
-    plt.imshow(image_part)
+    plt.imshow(image_part, cmap="gray")
     plt.savefig(filename + '.png')
     plt.close()
     
@@ -259,7 +259,7 @@ def save_prediction_image(points, img, filename):
     # plot points [FHC, TKC, TML, aF1]
     for point in points: 
         ax.plot(*point, marker='.', color="white")
-    plt.imshow(img)
+    plt.imshow(img, cmap="gray")
     plt.savefig(filename + '.png')
     plt.close()
 
