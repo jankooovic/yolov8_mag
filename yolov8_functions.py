@@ -305,6 +305,9 @@ def scatter_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     plt.ylabel('True Coordinates')
     plt.title(name)
     plt.savefig(sav_path + "/" + name + '.png')
+    plt.cla()
+    plt.clf()
+    plt.close()
     #plt.show()
 
 def residual_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
@@ -316,6 +319,9 @@ def residual_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     plt.ylabel('Residuals')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
+    plt.cla()
+    plt.clf()
+    plt.close()
     #plt.show()
 
 def histogram_of_errors(errors, coordinate, sav_path):
@@ -325,6 +331,9 @@ def histogram_of_errors(errors, coordinate, sav_path):
     plt.ylabel('Frequency')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
+    plt.cla()
+    plt.clf()
+    plt.close()
     #plt.show()
 
 def qq_plot(errors, coordinate, sav_path):
@@ -335,6 +344,9 @@ def qq_plot(errors, coordinate, sav_path):
     plt.ylabel('Sample Quantiles')
     plt.title(name)
     plt.savefig(sav_path + "/" + name + '.png')
+    plt.cla()
+    plt.clf()
+    plt.close()
     #plt.show()
 
 def bland_altman_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
@@ -347,6 +359,9 @@ def bland_altman_plot(measured_coordinates, true_coordinates, coordinate, sav_pa
     plt.ylabel('Differences (Measured - True)')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
+    plt.cla()
+    plt.clf()
+    plt.close()
     #plt.show()
 
 def box_plot(errors, coordinate, sav_path):
@@ -356,6 +371,9 @@ def box_plot(errors, coordinate, sav_path):
     plt.ylabel('Distribution')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
+    plt.cla()
+    plt.clf()
+    plt.close()
     #plt.show()
 
 def heatmap(measured_coordinates, true_coordinates, coordinate, sav_path):
@@ -366,6 +384,9 @@ def heatmap(measured_coordinates, true_coordinates, coordinate, sav_path):
     plt.ylabel('True Coordinates')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
+    plt.cla()
+    plt.clf()
+    plt.close()
     #plt.show()
 
 def extract_points(array):

@@ -66,6 +66,15 @@ for idx, path in enumerate(to_evaluate_test_paths):
     for idx, point in enumerate(test_coordinates):
         coor_y = 1
         coor_x = 0
+
+        # check for missing coordinates
+        if idx >= len(predicted_coordinates):
+            predicted_coordinates.append([1,1])
+            print("Missing coordinates on picture:", path) 
+        if idx >= len(test_coordinates):
+            test_coordinates.append([1,1])
+            print("To many coordinates on picture:", path) 
+
         percent_y = yolov8_functions.percentage(predicted_coordinates[idx][coor_y], test_coordinates[idx][coor_y]) 
         percent_x = yolov8_functions.percentage(predicted_coordinates[idx][coor_x], test_coordinates[idx][coor_x]) 
 

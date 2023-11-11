@@ -10,7 +10,8 @@ save_path = "./data/predicted"
 test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL']
 landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
-model_paths = { "ALL" : "./runs/pose/train_ALL_960_grayscale/weights/best.pt" }
+model_paths = { "ALL" : "./runs/pose/train_ALL_1280_grayscale/weights/best.pt" }
+imgsize = 960 # check if the same as trained model
 
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
@@ -40,7 +41,7 @@ for directory in directories:
         yolov8_model = YOLO(model_path)  # load a custom model
 
         # Run inference on image with arguments - same imgsize as training
-        results = yolov8_model.predict(img_path,imgsz=1280)  # predict on an image 
+        results = yolov8_model.predict(img_path,imgsz=imgsize)  # predict on an image 
         
         landmarks = [] # landmarks list
         for result in results:
