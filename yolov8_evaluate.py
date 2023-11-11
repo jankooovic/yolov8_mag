@@ -13,7 +13,7 @@ json_save_path = "./data/evaluation"
 statistics_path = "./data/evaluation/statistics"
 landmark_names = ['FHC', 'aF1', 'TKC', 'FNOC', 'TML']
 square_size_ratio = 0.1
-predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr = [], [], [], [], []
+predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped = [], [], [], [], [], []
 
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
@@ -58,22 +58,28 @@ for idx, path in enumerate(to_evaluate_test_paths):
         "Point names": landmark_names,
         "Image_size": img_size,
         }
+    
     # sort points based on y coordinates [FHC, aF1, TKC, FNOC, TML]
     test_coordinates = sorted(test_coordinates, key=lambda point: point[1])
     predicted_coordinates = sorted(predicted_coordinates, key=lambda point: point[1])
+
+    # check for missing coordinates
+    for idx, point in enumerate(test_coordinates):
+        if idx >= len(predicted_coordinates):
+            predicted_coordinates.append([1,1])
+            print("Missing coordinates on picture:", path) 
+            skipped.append(path)
+            continue
+        if idx >= len(test_coordinates):
+            test_coordinates.append([1,1])
+            print("To many coordinates on picture:", path) 
+            skipped.append(path)
+            continue
 
     # compare point coordinates
     for idx, point in enumerate(test_coordinates):
         coor_y = 1
         coor_x = 0
-
-        # check for missing coordinates
-        if idx >= len(predicted_coordinates):
-            predicted_coordinates.append([1,1])
-            print("Missing coordinates on picture:", path) 
-        if idx >= len(test_coordinates):
-            test_coordinates.append([1,1])
-            print("To many coordinates on picture:", path) 
 
         percent_y = yolov8_functions.percentage(predicted_coordinates[idx][coor_y], test_coordinates[idx][coor_y]) 
         percent_x = yolov8_functions.percentage(predicted_coordinates[idx][coor_x], test_coordinates[idx][coor_x]) 
@@ -140,6 +146,7 @@ dictionary = {
     "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
     "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
     "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
+    "Skipped images:": skipped
 }
 
 # Save JSON file with data
