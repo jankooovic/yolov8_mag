@@ -6,7 +6,6 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 # Dataset path:
 test_images_path =  "./data/dataset/ALL/images/test/"
 json_test_path = "./data/dataset/JSON/"
