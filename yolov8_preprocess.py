@@ -2,7 +2,7 @@
 import yolov8_functions
 
 # Dataset path:
-workingDirPath = "/Users/jankovic/Documents/yolov8/"
+workingDirPath = "./"
 path = "./data/RTG_dataset/"
 save_path = './data/dataset'
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
