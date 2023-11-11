@@ -1,4 +1,3 @@
-
 """ Compare results from original RTG anotations and predicted RTG anotations """
 import yolov8_functions
 import json
