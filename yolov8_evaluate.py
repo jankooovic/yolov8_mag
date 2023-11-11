@@ -10,11 +10,10 @@ test_images_path =  "./data/dataset/ALL/images/test/"
 json_test_path = "./data/dataset/JSON/"
 json_predict_path = "./data/predicted/"
 json_save_path = "./data/evaluation"
+statistics_path = "./data/evaluation/statistics"
 landmark_names = ['FHC', 'aF1', 'TKC', 'FNOC', 'TML']
 square_size_ratio = 0.1
-missmatchErr_arr = []
-pixelErr_arr = []
-pixelPercentErr_arr = []
+predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr = [], [], [], [], []
 
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
@@ -79,11 +78,14 @@ for idx, path in enumerate(to_evaluate_test_paths):
         missmatchErr_arr.append(percent_missmatch)
         pixelErr_arr.append(pixel_error)
         pixelPercentErr_arr.append(pixel_error_percents)
+
+        predictedCoord_arr.append(predicted_point)
+        anotatedCoord_arr.append(test_point)
         
         dictionary.update({
                     landmark_names[idx]:{
-                        "Test point coordinates": test_point,
-                        "Predicted point coordinates": predicted_point,
+                        "Test point coordinates [x,y]": test_point,
+                        "Predicted point coordinates [x,y]": predicted_point,
                         "Percentage missmatch [x,y]": percent_missmatch,
                         "Pixel error [x,y]": pixel_error,
                         "Percent pixel error [x,y]": pixel_error_percents,
@@ -124,13 +126,34 @@ for idx, path in enumerate(to_evaluate_test_paths):
                     #plt.show()
                     plt.close()
 
+# Error statistics
 dictionary = {
-    "Average missmatch error": yolov8_functions.get_average(missmatchErr_arr),
-    "Average pixel error": yolov8_functions.get_average(pixelErr_arr),
-    "Average pixel error percentage": yolov8_functions.get_average(pixelPercentErr_arr),
+    "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
+    "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
+    "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
 }
 
 # Save JSON file with data
-filename = json_save_path + "/" + "errors.json"
+filename = statistics_path + "/" + "errors"
 yolov8_functions.create_json_datafile(dictionary, filename)
 
+measured_data_x, measured_data_y = yolov8_functions.extract_points(predictedCoord_arr)
+true_data_x, true_data_y = yolov8_functions.extract_points(anotatedCoord_arr)
+
+# x coordinate
+yolov8_functions.scatter_plot(measured_data_x, true_data_x, "X", statistics_path)
+yolov8_functions.residual_plot(measured_data_x, true_data_x, "X", statistics_path)
+yolov8_functions.histogram_of_errors(measured_data_x - true_data_x, "X", statistics_path)
+yolov8_functions.qq_plot(measured_data_x - true_data_x, "X", statistics_path)
+yolov8_functions.bland_altman_plot(measured_data_x, true_data_x, "X", statistics_path)
+yolov8_functions.box_plot(measured_data_x - true_data_x, "X", statistics_path)
+yolov8_functions.heatmap(measured_data_x, true_data_x, "X", statistics_path)
+
+# y coordinat
+yolov8_functions.scatter_plot(measured_data_y, true_data_y, "Y", statistics_path)
+yolov8_functions.residual_plot(measured_data_y, true_data_y, "Y", statistics_path)
+yolov8_functions.histogram_of_errors(measured_data_y - true_data_y, "Y", statistics_path)
+yolov8_functions.qq_plot(measured_data_y - true_data_y, "Y", statistics_path)
+yolov8_functions.bland_altman_plot(measured_data_y, true_data_y, "Y", statistics_path)
+yolov8_functions.box_plot(measured_data_y - true_data_y, "Y", statistics_path)
+yolov8_functions.heatmap(measured_data_y, true_data_y, "Y", statistics_path)

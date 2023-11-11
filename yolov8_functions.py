@@ -13,6 +13,7 @@ from datetime import date
 from datetime import datetime
 from sklearn.model_selection import train_test_split
 from PIL import Image
+import seaborn as sns
 
 def normalize_data(data):
     return (data - np.min(data)) / (np.max(data) - np.min(data))
@@ -289,8 +290,84 @@ def open_image(path):
     return Image.open(path).convert("L")
 
 def get_average(err_arr):
-    err_avg = 0
-    for err in err_arr:
-        err_avg =  err_avg + err
+    if not err_arr:
+        return 0, 0  # Handle empty array to avoid division by zero
     
-    return err_avg/len(err_arr)
+    err_avg_x = sum(err[0] for err in err_arr) / len(err_arr)
+    err_avg_y = sum(err[1] for err in err_arr) / len(err_arr)
+    
+    return err_avg_x, err_avg_y
+
+def scatter_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
+    name = 'Scatter Plot of Measured vs. True Coordinates'  + ' for ' + coordinate
+    plt.scatter(measured_coordinates, true_coordinates, s=20, alpha=0.7)
+    plt.xlabel('Measured Coordinates')
+    plt.ylabel('True Coordinates')
+    plt.title(name)
+    plt.savefig(sav_path + "/" + name + '.png')
+    plt.show()
+
+def residual_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
+    name = 'Residual Plot' + ' for ' + coordinate
+    residuals = measured_coordinates - true_coordinates
+    plt.scatter(measured_coordinates, residuals, s=20, alpha=0.7)
+    plt.axhline(0, color='red', linestyle='--')
+    plt.xlabel('Measured Coordinates')
+    plt.ylabel('Residuals')
+    plt.title(name)
+    plt.savefig(sav_path + "/" + name+ '.png')
+    plt.show()
+
+def histogram_of_errors(errors, coordinate, sav_path):
+    name = 'Histogram of Errors' + ' for ' + coordinate
+    plt.hist(errors, bins=20, edgecolor='black')
+    plt.xlabel('Errors')
+    plt.ylabel('Frequency')
+    plt.title(name)
+    plt.savefig(sav_path + "/" + name+ '.png')
+    plt.show()
+
+def qq_plot(errors, coordinate, sav_path):
+    name = 'Q-Q Plot' + ' for ' + coordinate
+    from scipy.stats import probplot
+    probplot(errors, plot=plt)
+    plt.xlabel('Theoretical Quantiles')
+    plt.ylabel('Sample Quantiles')
+    plt.title(name)
+    plt.savefig(sav_path + "/" + name + '.png')
+    plt.show()
+
+def bland_altman_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
+    name = 'Bland-Altman Plot' + ' for ' + coordinate
+    differences = measured_coordinates - true_coordinates
+    averages = (measured_coordinates + true_coordinates) / 2
+    plt.scatter(averages, differences, s=20, alpha=0.7)
+    plt.axhline(0, color='red', linestyle='--')
+    plt.xlabel('Averages of Measured and True Coordinates')
+    plt.ylabel('Differences (Measured - True)')
+    plt.title(name)
+    plt.savefig(sav_path + "/" + name+ '.png')
+    plt.show()
+
+def box_plot(errors, coordinate, sav_path):
+    name = 'Box Plot of Errors' + ' for ' + coordinate
+    plt.boxplot(errors)
+    plt.xlabel('Error')
+    plt.ylabel('Distribution')
+    plt.title(name)
+    plt.savefig(sav_path + "/" + name+ '.png')
+    plt.show()
+
+def heatmap(measured_coordinates, true_coordinates, coordinate, sav_path):
+    name = 'Error Heatmap' + ' for ' + coordinate
+    plt.hist2d(measured_coordinates, true_coordinates, bins=30, cmap='Blues')
+    plt.colorbar()
+    plt.xlabel('Measured Coordinates')
+    plt.ylabel('True Coordinates')
+    plt.title(name)
+    plt.savefig(sav_path + "/" + name+ '.png')
+    plt.show()
+
+def extract_points(array):
+    x_vals, y_vals = zip(*array)
+    return np.array(x_vals),np.array(y_vals)
