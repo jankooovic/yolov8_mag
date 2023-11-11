@@ -126,7 +126,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
                     #plt.show()
                     plt.close()
 
-# Error statistics
+# Error statistics - explanation in -/documents/graphs_explanation.txt
 dictionary = {
     "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
     "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
