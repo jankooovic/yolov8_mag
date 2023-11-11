@@ -279,7 +279,7 @@ def save_evaluation_image(image, filename, test_coordinates, predicted_coordinat
         ax.plot(*point, marker='+', color="red")  # naredi, da imajo točke druge abrve
 
     plt.imshow(image, cmap="gray")
-    # plt.show()
+    # #plt.show()
     plt.savefig(filename + '.png')
     plt.cla()
     plt.clf()
@@ -305,7 +305,7 @@ def scatter_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     plt.ylabel('True Coordinates')
     plt.title(name)
     plt.savefig(sav_path + "/" + name + '.png')
-    plt.show()
+    #plt.show()
 
 def residual_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     name = 'Residual Plot' + ' for ' + coordinate
@@ -316,7 +316,7 @@ def residual_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     plt.ylabel('Residuals')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
-    plt.show()
+    #plt.show()
 
 def histogram_of_errors(errors, coordinate, sav_path):
     name = 'Histogram of Errors' + ' for ' + coordinate
@@ -325,7 +325,7 @@ def histogram_of_errors(errors, coordinate, sav_path):
     plt.ylabel('Frequency')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
-    plt.show()
+    #plt.show()
 
 def qq_plot(errors, coordinate, sav_path):
     name = 'Q-Q Plot' + ' for ' + coordinate
@@ -335,7 +335,7 @@ def qq_plot(errors, coordinate, sav_path):
     plt.ylabel('Sample Quantiles')
     plt.title(name)
     plt.savefig(sav_path + "/" + name + '.png')
-    plt.show()
+    #plt.show()
 
 def bland_altman_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     name = 'Bland-Altman Plot' + ' for ' + coordinate
@@ -347,7 +347,7 @@ def bland_altman_plot(measured_coordinates, true_coordinates, coordinate, sav_pa
     plt.ylabel('Differences (Measured - True)')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
-    plt.show()
+    #plt.show()
 
 def box_plot(errors, coordinate, sav_path):
     name = 'Box Plot of Errors' + ' for ' + coordinate
@@ -356,7 +356,7 @@ def box_plot(errors, coordinate, sav_path):
     plt.ylabel('Distribution')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
-    plt.show()
+    #plt.show()
 
 def heatmap(measured_coordinates, true_coordinates, coordinate, sav_path):
     name = 'Error Heatmap' + ' for ' + coordinate
@@ -366,7 +366,7 @@ def heatmap(measured_coordinates, true_coordinates, coordinate, sav_path):
     plt.ylabel('True Coordinates')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
-    plt.show()
+    #plt.show()
 
 def extract_points(array):
     x_vals, y_vals = zip(*array)

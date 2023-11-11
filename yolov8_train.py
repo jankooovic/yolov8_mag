@@ -35,7 +35,7 @@ for config in config_files:
         data=config,
         pretrained=True,
         epochs=300,
-        imgsz=960,
+        imgsz=1280,
         #batch=-1,
         hsv_h = 0.015,
         hsv_s = 0.1,
