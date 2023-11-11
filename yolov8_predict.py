@@ -40,7 +40,7 @@ for directory in directories:
         yolov8_model = YOLO(model_path)  # load a custom model
 
         # Run inference on image with arguments - same imgsize as training
-        results = yolov8_model.predict(img_path,imgsz=960)  # predict on an image 
+        results = yolov8_model.predict(img_path,imgsz=1280)  # predict on an image 
         
         landmarks = [] # landmarks list
         for result in results:
