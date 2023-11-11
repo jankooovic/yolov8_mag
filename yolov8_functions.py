@@ -287,3 +287,10 @@ def save_evaluation_image(image, filename, test_coordinates, predicted_coordinat
 
 def open_image(path):
     return Image.open(path).convert("L")
+
+def get_average(err_arr):
+    err_avg = 0
+    for err in err_arr:
+        err_avg =  err_avg + err
+    
+    return err_avg/len(err_arr)

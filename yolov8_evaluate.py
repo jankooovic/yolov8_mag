@@ -12,6 +12,9 @@ json_predict_path = "./data/predicted/"
 json_save_path = "./data/evaluation"
 landmark_names = ['FHC', 'aF1', 'TKC', 'FNOC', 'TML']
 square_size_ratio = 0.1
+missmatchErr_arr = []
+pixelErr_arr = []
+pixelPercentErr_arr = []
 
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
@@ -72,6 +75,10 @@ for idx, path in enumerate(to_evaluate_test_paths):
         percent_missmatch = [abs(100 - percent_x), abs(100 - percent_y)]
         pixel_error = [abs(test_point[0] - predicted_point[0]), abs(test_point[1] - predicted_point[1])]
         pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])] 
+
+        missmatchErr_arr.append(percent_missmatch)
+        pixelErr_arr.append(pixel_error)
+        pixelPercentErr_arr.append(pixel_error_percents)
         
         dictionary.update({
                     landmark_names[idx]:{
@@ -117,4 +124,13 @@ for idx, path in enumerate(to_evaluate_test_paths):
                     #plt.show()
                     plt.close()
 
+dictionary = {
+    "Average missmatch error": yolov8_functions.get_average(missmatchErr_arr),
+    "Average pixel error": yolov8_functions.get_average(pixelErr_arr),
+    "Average pixel error percentage": yolov8_functions.get_average(pixelPercentErr_arr),
+}
+
+# Save JSON file with data
+filename = json_save_path + "/" + "errors.json"
+yolov8_functions.create_json_datafile(dictionary, filename)
 
