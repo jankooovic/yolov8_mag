@@ -159,17 +159,49 @@ true_data_x, true_data_y = yolov8_functions.extract_points(anotatedCoord_arr)
 # x coordinate
 yolov8_functions.scatter_plot(measured_data_x, true_data_x, "X", statistics_path)
 yolov8_functions.residual_plot(measured_data_x, true_data_x, "X", statistics_path)
-yolov8_functions.histogram_of_errors(measured_data_x - true_data_x, "X", statistics_path)
-yolov8_functions.qq_plot(measured_data_x - true_data_x, "X", statistics_path)
+yolov8_functions.histogram_of_errors(true_data_x - measured_data_x, "X", statistics_path)
+yolov8_functions.qq_plot(true_data_x - measured_data_x, "X", statistics_path)
 yolov8_functions.bland_altman_plot(measured_data_x, true_data_x, "X", statistics_path)
-yolov8_functions.box_plot(measured_data_x - true_data_x, "X", statistics_path)
+yolov8_functions.box_plot(true_data_x - measured_data_x, "X", statistics_path)
 yolov8_functions.heatmap(measured_data_x, true_data_x, "X", statistics_path)
+yolov8_functions.violin_plot_of_differences(measured_data_x, true_data_x, "X", statistics_path)
 
-# y coordinat
+diff_range, diff_iqr = yolov8_functions.range_and_iqr_of_differences(measured_data_x, true_data_x)
+diff_std_dev = yolov8_functions.standard_deviation_of_differences(measured_data_x, true_data_x)
+diff_cv = yolov8_functions.coefficient_of_variation_of_differences(measured_data_x, true_data_x)
+
+dictionary = {
+    "Difference range" : float(diff_range),
+    "Difference IQR (Interquartile Range)" : float(diff_iqr),
+    "Difference Standard Deviation" : float(diff_std_dev),
+    "Difference Coefficient of Variation" : float(diff_cv),
+}
+
+# Save JSON file with data
+filename = statistics_path + "/" + "variability_X"
+yolov8_functions.create_json_datafile(dictionary, filename)
+
+# y coordinate
 yolov8_functions.scatter_plot(measured_data_y, true_data_y, "Y", statistics_path)
 yolov8_functions.residual_plot(measured_data_y, true_data_y, "Y", statistics_path)
-yolov8_functions.histogram_of_errors(measured_data_y - true_data_y, "Y", statistics_path)
-yolov8_functions.qq_plot(measured_data_y - true_data_y, "Y", statistics_path)
+yolov8_functions.histogram_of_errors(true_data_y - measured_data_y, "Y", statistics_path)
+yolov8_functions.qq_plot(true_data_y - measured_data_y, "Y", statistics_path)
 yolov8_functions.bland_altman_plot(measured_data_y, true_data_y, "Y", statistics_path)
-yolov8_functions.box_plot(measured_data_y - true_data_y, "Y", statistics_path)
+yolov8_functions.box_plot(true_data_y - measured_data_y, "Y", statistics_path)
 yolov8_functions.heatmap(measured_data_y, true_data_y, "Y", statistics_path)
+yolov8_functions.violin_plot_of_differences(measured_data_y, true_data_y, "Y", statistics_path)
+
+diff_range, diff_iqr = yolov8_functions.range_and_iqr_of_differences(measured_data_y, true_data_y)
+diff_std_dev = yolov8_functions.standard_deviation_of_differences(measured_data_y, true_data_y)
+diff_cv = yolov8_functions.coefficient_of_variation_of_differences(measured_data_y, true_data_y)
+
+dictionary = {
+    "Difference range" : float(diff_range),
+    "Difference IQR (Interquartile Range)" : float(diff_iqr),
+    "Difference Standard Deviation" : float(diff_std_dev),
+    "Difference Coefficient of Variation" : float(diff_cv),
+}
+
+# Save JSON file with data
+filename = statistics_path + "/" + "variability_Y"
+yolov8_functions.create_json_datafile(dictionary, filename)

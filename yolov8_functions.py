@@ -299,7 +299,7 @@ def get_average(err_arr):
     return err_avg_x, err_avg_y
 
 def scatter_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
-    name = 'Scatter Plot of Measured vs. True Coordinates'  + ' for ' + coordinate
+    name = 'Scatter Plot of Measured vs. True Coordinates for ' + coordinate
     plt.scatter(measured_coordinates, true_coordinates, s=20, alpha=0.7)
     plt.xlabel('Measured Coordinates')
     plt.ylabel('True Coordinates')
@@ -311,7 +311,7 @@ def scatter_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     #plt.show()
 
 def residual_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
-    name = 'Residual Plot' + ' for ' + coordinate
+    name = 'Residual Plot for ' + coordinate
     residuals = measured_coordinates - true_coordinates
     plt.scatter(measured_coordinates, residuals, s=20, alpha=0.7)
     plt.axhline(0, color='red', linestyle='--')
@@ -325,7 +325,7 @@ def residual_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     #plt.show()
 
 def histogram_of_errors(errors, coordinate, sav_path):
-    name = 'Histogram of Errors' + ' for ' + coordinate
+    name = 'Histogram of Errors for ' + coordinate
     plt.hist(errors, bins=20, edgecolor='black')
     plt.xlabel('Errors')
     plt.ylabel('Frequency')
@@ -337,7 +337,7 @@ def histogram_of_errors(errors, coordinate, sav_path):
     #plt.show()
 
 def qq_plot(errors, coordinate, sav_path):
-    name = 'Q-Q Plot' + ' for ' + coordinate
+    name = 'Q-Q Plot for ' + coordinate
     from scipy.stats import probplot
     probplot(errors, plot=plt)
     plt.xlabel('Theoretical Quantiles')
@@ -350,7 +350,7 @@ def qq_plot(errors, coordinate, sav_path):
     #plt.show()
 
 def bland_altman_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
-    name = 'Bland-Altman Plot' + ' for ' + coordinate
+    name = 'Bland-Altman Plot for ' + coordinate
     differences = measured_coordinates - true_coordinates
     averages = (measured_coordinates + true_coordinates) / 2
     plt.scatter(averages, differences, s=20, alpha=0.7)
@@ -365,7 +365,7 @@ def bland_altman_plot(measured_coordinates, true_coordinates, coordinate, sav_pa
     #plt.show()
 
 def box_plot(errors, coordinate, sav_path):
-    name = 'Box Plot of Errors' + ' for ' + coordinate
+    name = 'Box Plot of Errors for ' + coordinate
     plt.boxplot(errors)
     plt.xlabel('Error')
     plt.ylabel('Distribution')
@@ -377,7 +377,7 @@ def box_plot(errors, coordinate, sav_path):
     #plt.show()
 
 def heatmap(measured_coordinates, true_coordinates, coordinate, sav_path):
-    name = 'Error Heatmap' + ' for ' + coordinate
+    name = 'Error Heatmap for ' + coordinate
     plt.hist2d(measured_coordinates, true_coordinates, bins=30, cmap='Blues')
     plt.colorbar()
     plt.xlabel('Measured Coordinates')
@@ -392,3 +392,32 @@ def heatmap(measured_coordinates, true_coordinates, coordinate, sav_path):
 def extract_points(array):
     x_vals, y_vals = zip(*array)
     return np.array(x_vals),np.array(y_vals)
+
+def range_and_iqr_of_differences(x_coordinates, y_coordinates):
+    differences = y_coordinates - x_coordinates
+    diff_range = np.ptp(differences)
+    diff_iqr = np.percentile(differences, 75) - np.percentile(differences, 25)
+    return diff_range, diff_iqr
+
+def standard_deviation_of_differences(x_coordinates, y_coordinates):
+    differences = y_coordinates - x_coordinates
+    return np.std(differences)
+
+def coefficient_of_variation_of_differences(x_coordinates, y_coordinates):
+    differences = y_coordinates - x_coordinates
+    mean_difference = np.mean(differences)
+    std_dev_difference = np.std(differences)
+    return (std_dev_difference / mean_difference) * 100
+
+
+def violin_plot_of_differences(x_coordinates, y_coordinates, coordinate, sav_path):
+    name = 'Violin Plot of Differences for ' + coordinate
+    differences = y_coordinates - x_coordinates
+    sns.violinplot(differences)
+    plt.ylabel('Differences (Y - X)')
+    plt.title(name)
+    plt.savefig(sav_path + "/" + name+ '.png')
+    #plt.show()
+    plt.cla()
+    plt.clf()
+    plt.close()
