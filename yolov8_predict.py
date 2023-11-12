@@ -13,7 +13,6 @@ landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
 imgsize = 1920 # check if the same as trained model
 model_paths = { "ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt" }
 
-
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
 
