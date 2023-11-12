@@ -106,6 +106,7 @@ def save_image(image_shape, square_size_ratio, points, img, filename):
         ax.add_patch(rect)
 
     plt.imshow(img, cmap="gray")
+    plt.title(filename)
     plt.savefig(filename + '.png')  # save image&markers to png
     plt.cla()
     plt.clf()
@@ -128,6 +129,7 @@ def get_zoomed_image_part(image_shape, square_size_ratio, point, img, filename):
     fig, ax = plt.subplots()
     ax.plot(*center, marker='.', color="white")
     plt.imshow(square_image, cmap="gray")
+    plt.title(filename)
     plt.savefig(filename + '.png')
     plt.close()
     return square_image
@@ -171,6 +173,7 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
 
     # save image to JPG
     filename = f"{save_path}/ALL/images/{data}/{name}"
+    plt.title(filename)
     matplotlib.image.imsave(f"{filename}.jpg", data_arr, cmap="gray")
 
     dictionary = {
@@ -239,6 +242,7 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     ax.add_patch(rect)
 
     plt.imshow(image_part, cmap="gray")
+    plt.title(filename)
     plt.savefig(filename + '.png')
     plt.close()
     
@@ -261,6 +265,7 @@ def save_prediction_image(points, img, filename):
     for point in points: 
         ax.plot(*point, marker='.', color="white")
     plt.imshow(img, cmap="gray")
+    plt.title(filename)
     plt.savefig(filename + '.png')
     plt.close()
 
@@ -279,6 +284,7 @@ def save_evaluation_image(image, filename, test_coordinates, predicted_coordinat
         ax.plot(*point, marker='+', color="red")  # naredi, da imajo točke druge abrve
 
     plt.imshow(image, cmap="gray")
+    plt.title(filename)
     # #plt.show()
     plt.savefig(filename + '.png')
     plt.cla()
@@ -414,7 +420,7 @@ def violin_plot_of_differences(x_coordinates, y_coordinates, coordinate, sav_pat
     name = 'Violin Plot of Differences for ' + coordinate
     differences = y_coordinates - x_coordinates
     sns.violinplot(differences)
-    plt.ylabel('Differences (Y - X)')
+    plt.ylabel('Differences (True - Measured)')
     plt.title(name)
     plt.savefig(sav_path + "/" + name+ '.png')
     #plt.show()

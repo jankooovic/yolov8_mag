@@ -10,7 +10,7 @@ save_path = "./data/predicted"
 test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL']
 landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
-model_paths = { "ALL" : "./runs/pose/train_ALL_1280_grayscale/weights/best.pt" }
+model_paths = { "ALL" : "./runs/pose/train_ALL_960_grayscale/weights/best.pt" }
 imgsize = 960 # check if the same as trained model
 
 # create dataset archive
