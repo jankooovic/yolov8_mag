@@ -14,6 +14,8 @@ statistics_path = "./data/evaluation/statistics"
 landmark_names = ['FHC', 'aF1', 'TKC', 'FNOC', 'TML']
 square_size_ratio = 0.1
 predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped = [], [], [], [], [], []
+coor_y = 1
+coor_x = 0
 
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
@@ -35,6 +37,8 @@ to_evaluate_test_paths = [img_path for idx, img_path in enumerate(img_test_paths
 test_images = yolov8_functions.get_dirs(test_images_path)
 
 for idx, path in enumerate(to_evaluate_test_paths):
+
+    skip = False
 
     # Test points json
     test_coordinates = 0
@@ -65,21 +69,40 @@ for idx, path in enumerate(to_evaluate_test_paths):
 
     # check for missing coordinates
     for idx, point in enumerate(test_coordinates):
+
+        # check for missing predicted coordinates
         if idx >= len(predicted_coordinates):
-            predicted_coordinates.append([1,1])
-            print("Missing coordinates on picture:", path) 
-            skipped.append(path)
-            continue
+            text = "Missing coordinates on picture:"
+            skip = True
+
         if idx >= len(test_coordinates):
-            test_coordinates.append([1,1])
-            print("To many coordinates on picture:", path) 
-            skipped.append(path)
-            continue
+            text = "To many coordinates on picture:"
+            skip = True
+        
+        # check if points were predicted correctly
+        percent_y = yolov8_functions.percentage(predicted_coordinates[idx][coor_y], test_coordinates[idx][coor_y]) 
+        percent_x = yolov8_functions.percentage(predicted_coordinates[idx][coor_x], test_coordinates[idx][coor_x]) 
+        
+        if (90 > percent_y):
+            text = "Predicted coordinate missmatch:"
+            skip = True
+        elif(110 < percent_y):
+            text = "Predicted coordinate missmatch:"
+            skip = True
+        elif(110 < percent_x):
+            text = "Predicted coordinate missmatch:"
+            skip = True
+        elif(90 > percent_x):
+            text = "Predicted coordinate missmatch:"
+            skip = True
+    
+    if (skip):
+        print(text, path)
+        skipped.append(path)
+        continue
 
     # compare point coordinates
     for idx, point in enumerate(test_coordinates):
-        coor_y = 1
-        coor_x = 0
 
         percent_y = yolov8_functions.percentage(predicted_coordinates[idx][coor_y], test_coordinates[idx][coor_y]) 
         percent_x = yolov8_functions.percentage(predicted_coordinates[idx][coor_x], test_coordinates[idx][coor_x]) 
@@ -141,67 +164,68 @@ for idx, path in enumerate(to_evaluate_test_paths):
                     #plt.show()
                     plt.close()
 
-# Error statistics - explanation in -/documents/graphs_explanation.txt
-dictionary = {
-    "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
-    "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
-    "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
-    "Skipped images:": skipped
-}
+if (len(predictedCoord_arr) != 0):
+    # Error statistics - explanation in -/documents/graphs_explanation.txt
+    dictionary = {
+        "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
+        "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
+        "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
+        "Skipped images:": skipped
+    }
 
-# Save JSON file with data
-filename = statistics_path + "/" + "errors"
-yolov8_functions.create_json_datafile(dictionary, filename)
+    # Save JSON file with data
+    filename = statistics_path + "/" + "errors"
+    yolov8_functions.create_json_datafile(dictionary, filename)
 
-measured_data_x, measured_data_y = yolov8_functions.extract_points(predictedCoord_arr)
-true_data_x, true_data_y = yolov8_functions.extract_points(anotatedCoord_arr)
+    measured_data_x, measured_data_y = yolov8_functions.extract_points(predictedCoord_arr)
+    true_data_x, true_data_y = yolov8_functions.extract_points(anotatedCoord_arr)
 
-# x coordinate
-yolov8_functions.scatter_plot(measured_data_x, true_data_x, "X", statistics_path)
-yolov8_functions.residual_plot(measured_data_x, true_data_x, "X", statistics_path)
-yolov8_functions.histogram_of_errors(true_data_x - measured_data_x, "X", statistics_path)
-yolov8_functions.qq_plot(true_data_x - measured_data_x, "X", statistics_path)
-yolov8_functions.bland_altman_plot(measured_data_x, true_data_x, "X", statistics_path)
-yolov8_functions.box_plot(true_data_x - measured_data_x, "X", statistics_path)
-yolov8_functions.heatmap(measured_data_x, true_data_x, "X", statistics_path)
-yolov8_functions.violin_plot_of_differences(measured_data_x, true_data_x, "X", statistics_path)
+    # x coordinate
+    yolov8_functions.scatter_plot(measured_data_x, true_data_x, "X", statistics_path)
+    yolov8_functions.residual_plot(measured_data_x, true_data_x, "X", statistics_path)
+    yolov8_functions.histogram_of_errors(true_data_x - measured_data_x, "X", statistics_path)
+    yolov8_functions.qq_plot(true_data_x - measured_data_x, "X", statistics_path)
+    yolov8_functions.bland_altman_plot(measured_data_x, true_data_x, "X", statistics_path)
+    yolov8_functions.box_plot(true_data_x - measured_data_x, "X", statistics_path)
+    yolov8_functions.heatmap(measured_data_x, true_data_x, "X", statistics_path)
+    yolov8_functions.violin_plot_of_differences(measured_data_x, true_data_x, "X", statistics_path)
 
-diff_range, diff_iqr = yolov8_functions.range_and_iqr_of_differences(measured_data_x, true_data_x)
-diff_std_dev = yolov8_functions.standard_deviation_of_differences(measured_data_x, true_data_x)
-diff_cv = yolov8_functions.coefficient_of_variation_of_differences(measured_data_x, true_data_x)
+    diff_range, diff_iqr = yolov8_functions.range_and_iqr_of_differences(measured_data_x, true_data_x)
+    diff_std_dev = yolov8_functions.standard_deviation_of_differences(measured_data_x, true_data_x)
+    diff_cv = yolov8_functions.coefficient_of_variation_of_differences(measured_data_x, true_data_x)
 
-dictionary = {
-    "Difference range" : float(diff_range),
-    "Difference IQR (Interquartile Range)" : float(diff_iqr),
-    "Difference Standard Deviation" : float(diff_std_dev),
-    "Difference Coefficient of Variation" : float(diff_cv),
-}
+    dictionary = {
+        "Difference range" : float(diff_range),
+        "Difference IQR (Interquartile Range)" : float(diff_iqr),
+        "Difference Standard Deviation" : float(diff_std_dev),
+        "Difference Coefficient of Variation" : float(diff_cv),
+    }
 
-# Save JSON file with data
-filename = statistics_path + "/" + "variability_X"
-yolov8_functions.create_json_datafile(dictionary, filename)
+    # Save JSON file with data
+    filename = statistics_path + "/" + "variability_X"
+    yolov8_functions.create_json_datafile(dictionary, filename)
 
-# y coordinate
-yolov8_functions.scatter_plot(measured_data_y, true_data_y, "Y", statistics_path)
-yolov8_functions.residual_plot(measured_data_y, true_data_y, "Y", statistics_path)
-yolov8_functions.histogram_of_errors(true_data_y - measured_data_y, "Y", statistics_path)
-yolov8_functions.qq_plot(true_data_y - measured_data_y, "Y", statistics_path)
-yolov8_functions.bland_altman_plot(measured_data_y, true_data_y, "Y", statistics_path)
-yolov8_functions.box_plot(true_data_y - measured_data_y, "Y", statistics_path)
-yolov8_functions.heatmap(measured_data_y, true_data_y, "Y", statistics_path)
-yolov8_functions.violin_plot_of_differences(measured_data_y, true_data_y, "Y", statistics_path)
+    # y coordinate
+    yolov8_functions.scatter_plot(measured_data_y, true_data_y, "Y", statistics_path)
+    yolov8_functions.residual_plot(measured_data_y, true_data_y, "Y", statistics_path)
+    yolov8_functions.histogram_of_errors(true_data_y - measured_data_y, "Y", statistics_path)
+    yolov8_functions.qq_plot(true_data_y - measured_data_y, "Y", statistics_path)
+    yolov8_functions.bland_altman_plot(measured_data_y, true_data_y, "Y", statistics_path)
+    yolov8_functions.box_plot(true_data_y - measured_data_y, "Y", statistics_path)
+    yolov8_functions.heatmap(measured_data_y, true_data_y, "Y", statistics_path)
+    yolov8_functions.violin_plot_of_differences(measured_data_y, true_data_y, "Y", statistics_path)
 
-diff_range, diff_iqr = yolov8_functions.range_and_iqr_of_differences(measured_data_y, true_data_y)
-diff_std_dev = yolov8_functions.standard_deviation_of_differences(measured_data_y, true_data_y)
-diff_cv = yolov8_functions.coefficient_of_variation_of_differences(measured_data_y, true_data_y)
+    diff_range, diff_iqr = yolov8_functions.range_and_iqr_of_differences(measured_data_y, true_data_y)
+    diff_std_dev = yolov8_functions.standard_deviation_of_differences(measured_data_y, true_data_y)
+    diff_cv = yolov8_functions.coefficient_of_variation_of_differences(measured_data_y, true_data_y)
 
-dictionary = {
-    "Difference range" : float(diff_range),
-    "Difference IQR (Interquartile Range)" : float(diff_iqr),
-    "Difference Standard Deviation" : float(diff_std_dev),
-    "Difference Coefficient of Variation" : float(diff_cv),
-}
+    dictionary = {
+        "Difference range" : float(diff_range),
+        "Difference IQR (Interquartile Range)" : float(diff_iqr),
+        "Difference Standard Deviation" : float(diff_std_dev),
+        "Difference Coefficient of Variation" : float(diff_cv),
+    }
 
-# Save JSON file with data
-filename = statistics_path + "/" + "variability_Y"
-yolov8_functions.create_json_datafile(dictionary, filename)
+    # Save JSON file with data
+    filename = statistics_path + "/" + "variability_Y"
+    yolov8_functions.create_json_datafile(dictionary, filename)
