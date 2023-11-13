@@ -1,5 +1,6 @@
 """ Prepare pictures and data for YoloV8 training. """
 import yolov8_functions
+import math
 
 # Dataset path:
 workingDirPath = "./"
@@ -7,7 +8,7 @@ path = "./data/RTG_dataset/"
 save_path = './data/dataset'
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
 filter_val = 10000
-faktor_preslikave = 3.6
+map_factor = 3.6
 square = 0.1    # square size
 num_parts = 3   # number of parts on image
 
@@ -37,7 +38,7 @@ for n in nrrd_image_paths:
 
     # original image & points
     data_arr, orig_image_shape, orig_img_ratio = yolov8_functions.preprocess_image(n, filter_val)
-    points = yolov8_functions.create_point_array(p_paths, faktor_preslikave)
+    points = yolov8_functions.create_point_array(p_paths, map_factor)
     name = yolov8_functions.filename_creation(n, ".nrrd")
     filename = save_path + "/PNGs/" + name
     yolov8_functions.save_image(orig_image_shape, square, points, data_arr, filename)
