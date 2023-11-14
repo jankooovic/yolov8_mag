@@ -133,7 +133,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
                         },
         })
 
-            # Open and save Slicer point template
+        # Open and save Slicer point template
         with open(slicerPointTemplate) as f:
             data = json.load(f)
         data['markups'][0]['controlPoints'][0]['label'] = landmark_names[idx]
