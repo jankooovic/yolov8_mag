@@ -57,6 +57,24 @@ def calc_circle_center(p1, p2, p3):
 
     return (cx, cy), radius
 
+def get_sPoints(paths, scale_factor):
+    points = []
+    for path in paths:
+        with open(path) as f:
+            data = json.load(f)
+        control_points = [i['position'] for i in data['markups'][0]['controlPoints']]
+
+        p = np.abs(control_points[0])
+        p1_x = p[0]
+        p1_z = p[2]
+        p = np.abs(control_points[1])
+        p2_x = p[0]
+        p2_z = p[2]
+
+        point = [[round(p1_x*scale_factor), round(p1_z*scale_factor)],[round(p2_x*scale_factor), round(p2_z*scale_factor)]]
+        points.append(point)
+    return points
+
 def get_points(json_file_path, scale_factor):
     with open(json_file_path) as f:
         data = json.load(f)
@@ -80,7 +98,7 @@ def get_points(json_file_path, scale_factor):
         # faktor za translacijo med RAS/LPS v voxels
         center = (center[0] * scale_factor, center[1] * scale_factor)
         points = [round(center[0]), round(center[1])]
-        
+
     else:
         p = np.abs(control_points[0])
         p1_x = p[0]
@@ -169,7 +187,7 @@ def create_landmarks_file(points, img_shape, sqr, rat, filename, point_name=""):
 def get_coordinate_percent(point, img_size):
     return point[0] / img_size[1], point[1] / img_size[0]
 
-def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data):
+def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data, s_points):
 
     # save image to JPG
     filename = f"{save_path}/ALL/images/{data}/{name}"
@@ -180,11 +198,14 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
         "Image name": filename,
         "Point names": point_names,
         "Point coordinates": points,
+        "sTMA, sFMDA coordinates": s_points,
         "Image_size": orig_image_shape,
     }
 
     create_json_datafile(dictionary, f"{save_path}/JSON/{name}")
     create_landmarks_file(points, orig_image_shape, square, orig_img_ratio, f"{save_path}/ALL/labels/{data}/{name}")
+
+    # dodaj še s_points v ločen landmark file + ločen save_path na foro spodnjega
 
     # get smaller pictures of landmarks for cascade learning
     for i, point in enumerate(points):

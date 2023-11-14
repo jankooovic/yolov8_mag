@@ -8,6 +8,7 @@ path = "./data/RTG_dataset/"
 save_path = './data/dataset'
 point_names_all = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'sFMDA', 'sTMA']
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
+sPoints_SavePath = './data/dataset/Points/'
 filter_val = 10000
 map_factor = 3.6
 square = 0.1    # square size
@@ -37,8 +38,6 @@ for n in nrrd_image_paths:
         p_paths.append(point_json_paths[i])
     j += 1
 
-
-    all_paths = p_paths
     #remove sfmda and stma paths
     s_paths = []
     for idx, path in enumerate(p_paths):
@@ -63,8 +62,9 @@ for n in nrrd_image_paths:
     else:
         data = "test"
     
-    ### s_points slika + točke, da se vidijo
+    ### s_points slika + točke, da se vidijo - all_paths???
+    s_points = yolov8_functions.get_sPoints(s_paths, map_factor)
 
-    yolov8_functions.main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data)
+    yolov8_functions.main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data, s_points)
 
 print("Script is done!")
