@@ -155,7 +155,6 @@ def get_zoomed_image_part(image_shape, square_size_ratio, point, img, filename):
 def create_landmarks_file(points, img_shape, sqr, rat, filename, point_name=""):
     data = [] 
     n = 0
-
     for idx, point in enumerate(points):
 
         if isinstance(point, int):
@@ -213,11 +212,14 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
     # dodaj še s_points v ločen landmark file + ločen save_path na foro spodnjega
     # delal bo tko kokr za tkc/fnoc
     # obe točke za sfdma in stma
+    s_points_changes = []
+    img_part = 0
     for i, point_arr in enumerate(s_points):
         img, p_changed, changed_image_shape, changed_img_ratio = sPoints_imageParts(orig_image_shape, square, point_arr, data_arr, f"{save_path}/PNGs/{name}_{s_points_names[i]}")
         
         filename = f"{save_path}/{s_points_names[i]}/images/{data}/{name}_{s_points_names[i]}"
         matplotlib.image.imsave(f"{filename}.jpg", img, cmap="gray")
+        s_points_changes.append(p_changed)
 
         dictionary = {
             "Image name": filename,
@@ -228,9 +230,26 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
             "Zoomed_image_size": img.shape
         }
 
-        # popravi, da imaš obe točki zapisnai v coco dateset + json
         create_json_datafile(dictionary, f"{save_path}/JSON/{name}_{s_points_names[i]}")
         create_landmarks_file(p_changed, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/{s_points_names[i]}/labels/{data}/{name}", s_points_names[i])
+
+        if i == 1:
+            img_part = img
+
+    filename = f"{save_path}/sPoints/images/{data}/{name}_sPoints"
+    matplotlib.image.imsave(f"{filename}.jpg", img_part, cmap="gray")
+    s_points_changes = s_points_changes[0] + s_points_changes[1]
+    dictionary = {
+        "Image name": filename,
+        "Point name": s_points_names,
+        "Point coordinates": s_points,
+        "Changed coordinates": s_points_changes,
+        "Image_size": orig_image_shape,
+        "Zoomed_image_size": img.shape
+    }
+    
+    create_json_datafile(dictionary, f"{save_path}/JSON/{name}_sPoints")
+    create_landmarks_file(s_points_changes, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/sPoints/labels/{data}/{name}")
 
 
     # get smaller pictures of landmarks for cascade learning
