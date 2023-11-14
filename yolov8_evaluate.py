@@ -39,14 +39,6 @@ to_evaluate_test_paths = [img_path for idx, img_path in enumerate(img_test_paths
 # get test images
 test_images = yolov8_functions.get_dirs(test_images_path)
 
-"""# Open Slicer point template
-with open(slicerPointTemplate) as f:
-    data = json.load(f)"""
-#print(data['markups'][0]['controlPoints'][0]['position'])
-#data['markups'][0]['controlPoints'][0]['position'] = [9,3452,134523]
-#control_points = [i['position'] for i in data['markups'][0]['controlPoints']]
-#print(control_points)
-
 for idx, path in enumerate(to_evaluate_test_paths):
 
     skip = False
