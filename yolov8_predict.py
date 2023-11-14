@@ -8,8 +8,10 @@ import yolov8_functions
 path = "./data/dataset/"
 save_path = "./data/predicted"
 test_img_path = "/images/test/"
+point_names_all = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'sFMDA', 'sTMA']
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL']
 landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
+sPoint_names = ['sTMA', 'sFMDA']
 imgsize = 1920 # check if the same as trained model
 model_paths = { "ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt" }
 
