@@ -153,7 +153,8 @@ def get_zoomed_image_part(image_shape, square_size_ratio, point, img, filename):
     return square_image
 
 def create_landmarks_file(points, img_shape, sqr, rat, filename, point_name=""):
-    data = []
+    data = [] 
+    n = 0
 
     for idx, point in enumerate(points):
 
@@ -177,7 +178,11 @@ def create_landmarks_file(points, img_shape, sqr, rat, filename, point_name=""):
                     '\n']) # add next row
         
         # end this loop if this is only one point
-        if len(points) == 2:
+        if (point_name == 'sTMA'):
+            n = 1
+        elif (point_name == 'sFMDA'):
+            n = 1
+        elif len(points) == 2:
             break
         
     # saving the points to txt
@@ -187,7 +192,7 @@ def create_landmarks_file(points, img_shape, sqr, rat, filename, point_name=""):
 def get_coordinate_percent(point, img_size):
     return point[0] / img_size[1], point[1] / img_size[0]
 
-def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data, s_points):
+def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data, s_points, s_points_names):
 
     # save image to JPG
     filename = f"{save_path}/ALL/images/{data}/{name}"
@@ -206,6 +211,27 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
     create_landmarks_file(points, orig_image_shape, square, orig_img_ratio, f"{save_path}/ALL/labels/{data}/{name}")
 
     # dodaj še s_points v ločen landmark file + ločen save_path na foro spodnjega
+    # delal bo tko kokr za tkc/fnoc
+    # obe točke za sfdma in stma
+    for i, point_arr in enumerate(s_points):
+        img, p_changed, changed_image_shape, changed_img_ratio = sPoints_imageParts(orig_image_shape, square, point_arr, data_arr, f"{save_path}/PNGs/{name}_{s_points_names[i]}")
+        
+        filename = f"{save_path}/{s_points_names[i]}/images/{data}/{name}_{s_points_names[i]}"
+        matplotlib.image.imsave(f"{filename}.jpg", img, cmap="gray")
+
+        dictionary = {
+            "Image name": filename,
+            "Point name": s_points_names[i],
+            "Point coordinates": point_arr,
+            "Changed coordinates": p_changed,
+            "Image_size": orig_image_shape,
+            "Zoomed_image_size": img.shape
+        }
+
+        # popravi, da imaš obe točki zapisnai v coco dateset + json
+        create_json_datafile(dictionary, f"{save_path}/JSON/{name}_{s_points_names[i]}")
+        create_landmarks_file(p_changed, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/{s_points_names[i]}/labels/{data}/{name}", s_points_names[i])
+
 
     # get smaller pictures of landmarks for cascade learning
     for i, point in enumerate(points):
@@ -238,6 +264,33 @@ def get_json_paths(dirs, point_names):
 
 def get_jpg_paths(directory):
     return [str(item) for item in pathlib.Path(directory).iterdir() if ".jpg" in str(item)]
+
+def sPoints_imageParts(image_shape, square, points, img, filename):
+    n_points = []
+    square_side = image_shape[0]*square # define square side size
+    height = image_shape[0]
+    two_thirds = math.ceil(height * 2 / 3)
+    one_third = math.ceil(height / 3)
+
+    image_part = img[one_third:two_thirds,:]
+
+    # new point coordinates
+    for point in points: 
+        point = [point[0], point[1] - one_third]
+        n_points.append(point)
+
+    fig, ax = plt.subplots()
+    for point in n_points:
+        ax.plot(*point, marker='.', color="white")
+        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
+        ax.add_patch(rect)
+
+    plt.imshow(image_part, cmap="gray")
+    plt.title(filename)
+    plt.savefig(filename + '.png')
+    plt.close()
+
+    return image_part, n_points, image_part.shape, (image_part.shape[0] / image_part.shape[1])
 
 def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     square_side = image_shape[0]*square # define square side size

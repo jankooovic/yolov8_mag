@@ -8,7 +8,7 @@ path = "./data/RTG_dataset/"
 save_path = './data/dataset'
 point_names_all = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'sFMDA', 'sTMA']
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
-sPoints_SavePath = './data/dataset/Points/'
+sPoint_names = ['sTMA', 'sFMDA']
 filter_val = 10000
 map_factor = 3.6
 square = 0.1    # square size
@@ -62,9 +62,7 @@ for n in nrrd_image_paths:
     else:
         data = "test"
     
-    ### s_points slika + točke, da se vidijo - all_paths???
     s_points = yolov8_functions.get_sPoints(s_paths, map_factor)
-
-    yolov8_functions.main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data, s_points)
+    yolov8_functions.main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data, s_points, sPoint_names)
 
 print("Script is done!")
