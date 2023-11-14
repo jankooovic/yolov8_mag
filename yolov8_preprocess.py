@@ -6,6 +6,7 @@ import math
 workingDirPath = "./"
 path = "./data/RTG_dataset/"
 save_path = './data/dataset'
+point_names_all = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'sFMDA', 'sTMA']
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
 filter_val = 10000
 map_factor = 3.6
@@ -15,7 +16,7 @@ num_parts = 3   # number of parts on image
 # nrrd files paths
 directories = yolov8_functions.get_dirs(path)
 nrrd_image_paths = yolov8_functions.get_nrrd_paths(directories, workingDirPath)
-point_json_paths = yolov8_functions.get_json_paths(directories, point_names)
+point_json_paths = yolov8_functions.get_json_paths(directories, point_names_all)
 
 # Test = 20%, Train = 80%, Validate = 20% of Train
 train, test, val = yolov8_functions.split_train_test_val_data(nrrd_image_paths)
@@ -25,7 +26,7 @@ yolov8_functions.dataset_archive(save_path)
 
 # script 
 j = 0
-u = len(point_names)
+u = len(point_names_all)
 # n = nrrd image path
 for n in nrrd_image_paths:   
     
@@ -35,6 +36,13 @@ for n in nrrd_image_paths:
         i = i + (j*u)
         p_paths.append(point_json_paths[i])
     j += 1
+
+    #remove sfmda and stma paths
+    s_paths = []
+    for idx, path in enumerate(p_paths):
+        if ("sTMA" in path or "sFMDA" in path):
+            p_paths.pop(idx)
+            s_paths.append(path)
 
     # original image & points
     data_arr, orig_image_shape, orig_img_ratio = yolov8_functions.preprocess_image(n, filter_val)

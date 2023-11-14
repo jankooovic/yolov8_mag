@@ -80,7 +80,7 @@ def get_points(json_file_path, scale_factor):
         # faktor za translacijo med RAS/LPS v voxels
         center = (center[0] * scale_factor, center[1] * scale_factor)
         points = [round(center[0]), round(center[1])]
-
+        
     else:
         p = np.abs(control_points[0])
         p1_x = p[0]
