@@ -144,6 +144,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
             # Open and save Slicer point template
         with open(slicerPointTemplate) as f:
             data = json.load(f)
+        data['markups'][0]['controlPoints'][0]['label'] = landmark_names[idx]
         data['markups'][0]['controlPoints'][0]['position'] = [predicted_point[0]/map_factor,0.1,-predicted_point[1]/map_factor]
         point_name = yolov8_functions.filename_creation(path, ".json")
         point_filename = slicer_path + "/" + point_name + "_" + landmark_names[idx] + ".mrk"
