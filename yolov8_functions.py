@@ -249,7 +249,7 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
     }
     
     create_json_datafile(dictionary, f"{save_path}/JSON/{name}_sPoints")
-    create_landmarks_file(s_points_changes, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/sPoints/labels/{data}/{name}")
+    create_landmarks_file(s_points_changes, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/sPoints/labels/{data}/{name}_sPoints")
 
 
     # get smaller pictures of landmarks for cascade learning
