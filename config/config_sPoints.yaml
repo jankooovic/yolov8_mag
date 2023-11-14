@@ -1,10 +1,10 @@
 # MAC
-path: /Users/jankovic/Documents/yolov8/data/dataset/sFMDA
+path: /Users/jankovic/Documents/yolov8/data/dataset/sPoints
 train: images/train  # train images (relative to 'path')
 val: images/val  # val images (relative to 'path')
 
 # Windows
-path: C:\Users\jank\Documents\Seafile\yolov8_new_location\data\dataset\sFMDA\
+path: C:\Users\jank\Documents\Seafile\yolov8_new_location\data\dataset\sPoints\
 train: images\train\  # train images (relative to 'path')
 val: images\val\  # val images (relative to 'path')
 
@@ -16,8 +16,10 @@ flip_idx: [0] # What is the correct index when flipping image
 
 # Classes
 names:
-  0: sFMDA
-  1: sFMDA
+  0: sTMA
+  1: sTMA
+  2: sFMDA
+  3: sFMDA
   
 #names:
 #  0: FHC #hip
