@@ -31,12 +31,14 @@ u = len(point_names_all)
 for n in nrrd_image_paths:   
     
     # paths to points for single image
-    p_paths = []    
+    p_paths = []   
     for i in range(u):
         i = i + (j*u)
         p_paths.append(point_json_paths[i])
     j += 1
 
+
+    all_paths = p_paths
     #remove sfmda and stma paths
     s_paths = []
     for idx, path in enumerate(p_paths):
@@ -60,6 +62,8 @@ for n in nrrd_image_paths:
         data = "val"
     else:
         data = "test"
+    
+    ### s_points slika + točke, da se vidijo
 
     yolov8_functions.main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data)
 
