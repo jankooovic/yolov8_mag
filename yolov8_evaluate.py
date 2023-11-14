@@ -11,8 +11,11 @@ json_test_path = "./data/dataset/JSON/"
 json_predict_path = "./data/predicted/"
 json_save_path = "./data/evaluation"
 statistics_path = "./data/evaluation/statistics"
+slicer_path = "./data/evaluation/slicer"
+slicerPointTemplate = "./data/evaluation/slicer/pointTemplate.mrk.json"
 landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'TML']
 square_size_ratio = 0.1
+map_factor = 3.6
 predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped = [], [], [], [], [], []
 coor_y = 1
 coor_x = 0
@@ -35,6 +38,14 @@ to_evaluate_test_paths = [img_path for idx, img_path in enumerate(img_test_paths
 
 # get test images
 test_images = yolov8_functions.get_dirs(test_images_path)
+
+"""# Open Slicer point template
+with open(slicerPointTemplate) as f:
+    data = json.load(f)"""
+#print(data['markups'][0]['controlPoints'][0]['position'])
+#data['markups'][0]['controlPoints'][0]['position'] = [9,3452,134523]
+#control_points = [i['position'] for i in data['markups'][0]['controlPoints']]
+#print(control_points)
 
 for idx, path in enumerate(to_evaluate_test_paths):
 
@@ -130,6 +141,15 @@ for idx, path in enumerate(to_evaluate_test_paths):
                         },
         })
 
+            # Open and save Slicer point template
+        with open(slicerPointTemplate) as f:
+            data = json.load(f)
+        data['markups'][0]['controlPoints'][0]['position'] = [predicted_point[0]/map_factor,0.1,-predicted_point[1]/map_factor]
+        point_name = yolov8_functions.filename_creation(path, ".json")
+        point_filename = slicer_path + "/" + point_name + "_" + landmark_names[idx] + ".mrk"
+        yolov8_functions.create_json_datafile(data, point_filename)
+        f.close()
+        
     # Save JSON file with data
     name = yolov8_functions.filename_creation(path, ".json")
     filename = json_save_path + "/" + name
