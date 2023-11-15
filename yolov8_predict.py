@@ -12,7 +12,6 @@ point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sPoints']
 landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
 sPoint_names = ['sTMA', 'sFDMA']
 imgsize = 960 # check if the same as trained model
-#model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
 model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt", "sPoints":"./runs/pose/train_sPoints_" + str(imgsize) + "_grayscale/weights/best.pt"}
 
 # create dataset archive
