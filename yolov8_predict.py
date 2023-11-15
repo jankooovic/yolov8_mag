@@ -8,12 +8,12 @@ import yolov8_functions
 path = "./data/dataset/"
 save_path = "./data/predicted"
 test_img_path = "/images/test/"
-point_names_all = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'sFMDA', 'sTMA']
-point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL']
+point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sPoints']
 landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
-sPoint_names = ['sTMA', 'sFMDA']
-imgsize = 1920 # check if the same as trained model
-model_paths = { "ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt" }
+sPoint_names = ['sTMA', 'sFDMA']
+imgsize = 960 # check if the same as trained model
+#model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
+model_paths = {"sPoints":"./runs/pose/train_sPoints_" + str(imgsize) + "_grayscale/weights/best.pt"}
 
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
@@ -34,6 +34,7 @@ for directory in directories:
 
     # select correct model based on point
     for img_path in image_paths:
+        skip = False
         model_path = model_paths.get(point_name, None)
     
         if model_path is None:
@@ -50,11 +51,19 @@ for directory in directories:
 
             for keypoint_indx, keypoint in enumerate(result.keypoints):
                 point = keypoint.xy.tolist()
+                if point == [[]]:
+                    skip = True
+                    break
+
                 x = point[0][0][0]
                 y = point[0][0][1]
                 landmark = [x,y]
                 landmarks.append(landmark)
 
+        if skip:
+            print("Skipping over:", img_path)
+            continue
+            
         name = yolov8_functions.filename_creation(img_path, ".jpg")
         filename = save_path + "/" + name
 
@@ -65,11 +74,19 @@ for directory in directories:
         yolov8_functions.save_prediction_image(landmarks, temp, filename)
 
         # Save JSON file with data
-        dictionary = {
-            "Image name": filename,
-            "Point names": landmark_names,
-            "Point coordinates": landmarks,
-            "Image_size": img_shape,
-        }
+        if point_name == "sPoints":
+            dictionary = {
+                "Image name": filename,
+                "Point names": sPoint_names,
+                "Point coordinates": landmarks,
+                "Image_size": img_shape,
+            }
+        else:
+            dictionary = {
+                "Image name": filename,
+                "Point names": landmark_names,
+                "Point coordinates": landmarks,
+                "Image_size": img_shape,
+            }
 
         yolov8_functions.create_json_datafile(dictionary, filename)
