@@ -8,7 +8,6 @@ import matplotlib.image
 import pathlib
 import os
 import shutil
-from datetime import date
 from datetime import datetime
 from sklearn.model_selection import train_test_split
 from PIL import Image
