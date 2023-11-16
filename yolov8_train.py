@@ -23,9 +23,8 @@ batch = 16 number of images per batch (-1 for AutoBatch)
 Sample command: model.train(data='config.yaml', epochs=100, imgsz=640) 
 """
 
-### Treniraj model - per config file
+### Train model - per config file
 config_files = ['config/config_ALL.yaml']
-
 for config in config_files:
 
     print("Using config file:", config)
