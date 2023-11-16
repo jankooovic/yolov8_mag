@@ -57,31 +57,13 @@ def calc_circle_center(p1, p2, p3):
 
     return (cx, cy), radius
 
-def get_sPoints(paths, scale_factor):
-    points = []
-    for path in paths:
-        with open(path) as f:
-            data = json.load(f)
-        control_points = [i['position'] for i in data['markups'][0]['controlPoints']]
-
-        p = np.abs(control_points[0])
-        p1_x = p[0]
-        p1_z = p[2]
-        p = np.abs(control_points[1])
-        p2_x = p[0]
-        p2_z = p[2]
-
-        point = [[round(p1_x*scale_factor), round(p1_z*scale_factor)],[round(p2_x*scale_factor), round(p2_z*scale_factor)]]
-        points.append(point)
-    return points
-
 def get_points(json_file_path, scale_factor):
     with open(json_file_path) as f:
         data = json.load(f)
 
     control_points = [i['position'] for i in data['markups'][0]['controlPoints']]
 
-    if len(control_points) > 1:
+    if len(control_points) == 3:
         p = np.abs(control_points[0])
         p1_x = p[0]
         p1_z = p[2]
@@ -98,6 +80,20 @@ def get_points(json_file_path, scale_factor):
         # faktor za translacijo med RAS/LPS v voxels
         center = (center[0] * scale_factor, center[1] * scale_factor)
         points = [round(center[0]), round(center[1])]
+        return points, "good"
+    
+    elif len(control_points) == 2:
+        p = np.abs(control_points[0])
+        p1_x = p[0]
+        p1_z = p[2]
+        p = np.abs(control_points[1])
+        p2_x = p[0]
+        p2_z = p[2]
+
+        # faktor za translacijo med RAS/LPS v voxels
+        point1 = [round(p1_x*scale_factor), round(p1_z*scale_factor)]
+        point2 = [round(p2_x*scale_factor), round(p2_z*scale_factor)]
+        return [point1, point2], "sPoints"
 
     else:
         p = np.abs(control_points[0])
@@ -107,11 +103,19 @@ def get_points(json_file_path, scale_factor):
         # faktor za translacijo med RAS/LPS v voxels
         points = (p1_x * scale_factor, p1_z * scale_factor)
         points = [round(points[0]), round(points[1])]
-
-    return points
+        return points, "good"
 
 def create_point_array(paths, scale_factor):
-    return [get_points(path, scale_factor) for path in paths]
+    points = []
+    for path in paths:
+        ps, sP = get_points(path, scale_factor)
+        if sP == 'sPoints':
+            points.append(ps[0])
+            points.append(ps[1])
+        else:
+            points.append(ps)
+
+    return points
 
 def save_image(image_shape, square_size_ratio, points, img, filename):
     square_side = image_shape[0]*square_size_ratio  # define square side size
@@ -191,7 +195,7 @@ def create_landmarks_file(points, img_shape, sqr, rat, filename, point_name=""):
 def get_coordinate_percent(point, img_size):
     return point[0] / img_size[1], point[1] / img_size[0]
 
-def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data, s_points, s_points_names):
+def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data):
 
     # save image to JPG
     filename = f"{save_path}/ALL/images/{data}/{name}"
@@ -200,77 +204,18 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
 
     dictionary = {
         "Image name": filename,
-        "Point names": point_names,
-        "Point coordinates": points,
-        "sTMA, sFMDA coordinates": s_points,
+        'sTMA': points[0],
+        'FHC':points[1],
+        'sFMDA':points[2],
+        'TKC':points[3],
+        'TML':points[4],
+        'FNOC':points[5],
+        'aF1':points[6],
         "Image_size": orig_image_shape,
     }
 
     create_json_datafile(dictionary, f"{save_path}/JSON/{name}")
     create_landmarks_file(points, orig_image_shape, square, orig_img_ratio, f"{save_path}/ALL/labels/{data}/{name}")
-
-    # dodaj še s_points v ločen landmark file + ločen save_path na foro spodnjega
-    # delal bo tko kokr za tkc/fnoc
-    # obe točke za sfdma in stma
-    s_points_changes = []
-    img_part = 0
-    for i, point_arr in enumerate(s_points):
-        img, p_changed, changed_image_shape, changed_img_ratio = sPoints_imageParts(orig_image_shape, square, point_arr, data_arr, f"{save_path}/PNGs/{name}_{s_points_names[i]}")
-        
-        filename = f"{save_path}/{s_points_names[i]}/images/{data}/{name}_{s_points_names[i]}"
-        matplotlib.image.imsave(f"{filename}.jpg", img, cmap="gray")
-        s_points_changes.append(p_changed)
-
-        dictionary = {
-            "Image name": filename,
-            "Point name": s_points_names[i],
-            "Point coordinates": point_arr,
-            "Changed coordinates": p_changed,
-            "Image_size": orig_image_shape,
-            "Zoomed_image_size": img.shape
-        }
-
-        create_json_datafile(dictionary, f"{save_path}/JSON/{name}_{s_points_names[i]}")
-        create_landmarks_file(p_changed, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/{s_points_names[i]}/labels/{data}/{name}", s_points_names[i])
-
-        if i == 1:
-            img_part = img
-
-    filename = f"{save_path}/sPoints/images/{data}/{name}_sPoints"
-    matplotlib.image.imsave(f"{filename}.jpg", img_part, cmap="gray")
-    s_points_changes = s_points_changes[0] + s_points_changes[1]
-    dictionary = {
-        "Image name": filename,
-        "Point name": s_points_names,
-        "Point coordinates": s_points,
-        "Changed coordinates": s_points_changes,
-        "Image_size": orig_image_shape,
-        "Zoomed_image_size": img.shape
-    }
-    
-    create_json_datafile(dictionary, f"{save_path}/JSON/{name}_sPoints")
-    create_landmarks_file(s_points_changes, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/sPoints/labels/{data}/{name}_sPoints")
-
-
-    # get smaller pictures of landmarks for cascade learning
-    for i, point in enumerate(points):
-
-        img, p_changed, changed_image_shape, changed_img_ratio = slice_image_3_parts(orig_image_shape, square, point, data_arr, point_names[i], f"{save_path}/PNGs/{name}_{point_names[i]}")
-
-        filename = f"{save_path}/{point_names[i]}/images/{data}/{name}_{point_names[i]}"
-        matplotlib.image.imsave(f"{filename}.jpg", img, cmap="gray")
-
-        dictionary = {
-            "Image name": filename,
-            "Point name": point_names[i],
-            "Point coordinates": point, #x&y coordinates are reversed
-            "Changed coordinates": p_changed,
-            "Image_size": orig_image_shape,
-            "Zoomed_image_size": img.shape
-        }
-
-        create_json_datafile(dictionary, f"{save_path}/JSON/{name}_{point_names[i]}")
-        create_landmarks_file(p_changed, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/{point_names[i]}/labels/{data}/{name}", point_names[i])
 
 def get_dirs(path):
     return [str(item) for item in pathlib.Path(path).iterdir() if ".DS_Store" not in str(item)]
@@ -283,63 +228,6 @@ def get_json_paths(dirs, point_names):
 
 def get_jpg_paths(directory):
     return [str(item) for item in pathlib.Path(directory).iterdir() if ".jpg" in str(item)]
-
-def sPoints_imageParts(image_shape, square, points, img, filename):
-    n_points = []
-    square_side = image_shape[0]*square # define square side size
-    height = image_shape[0]
-    two_thirds = math.ceil(height * 2 / 3)
-    one_third = math.ceil(height / 3)
-
-    image_part = img[one_third:two_thirds,:]
-
-    # new point coordinates
-    for point in points: 
-        point = [point[0], point[1] - one_third]
-        n_points.append(point)
-
-    fig, ax = plt.subplots()
-    for point in n_points:
-        ax.plot(*point, marker='.', color="white")
-        rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
-        ax.add_patch(rect)
-
-    plt.imshow(image_part, cmap="gray")
-    plt.title(filename)
-    plt.savefig(filename + '.png')
-    plt.close()
-
-    return image_part, n_points, image_part.shape, (image_part.shape[0] / image_part.shape[1])
-
-def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
-    square_side = image_shape[0]*square # define square side size
-    height = image_shape[0]
-    two_thirds = math.ceil(height * 2 / 3)
-    one_third = math.ceil(height / 3)
-
-    # točka na sliki + izrez kvadrata iz slike
-    if point_name == 'FHC':
-        image_part = img[0:one_third,:]
-    elif point_name in ['TKC','FNOC']:
-        image_part = img[one_third:two_thirds,:]
-        point = [point[0], point[1] - one_third]
-    elif point_name == 'TML':
-        image_part = img[two_thirds:height,:]
-        point = [point[0], point[1] - two_thirds]
-    elif point_name == 'aF1':
-        image_part = img[0:math.ceil(height / 2),:]
-    
-    fig, ax = plt.subplots()
-    ax.plot(*point, marker='.', color="white")
-    rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
-    ax.add_patch(rect)
-
-    plt.imshow(image_part, cmap="gray")
-    plt.title(filename)
-    plt.savefig(filename + '.png')
-    plt.close()
-    
-    return image_part, point, image_part.shape, (image_part.shape[0] / image_part.shape[1])
 
 def dataset_archive(save_path):
     now = datetime.now()
@@ -507,7 +395,6 @@ def coefficient_of_variation_of_differences(x_coordinates, y_coordinates):
     mean_difference = np.mean(differences)
     std_dev_difference = np.std(differences)
     return (std_dev_difference / mean_difference) * 100
-
 
 def violin_plot_of_differences(x_coordinates, y_coordinates, coordinate, sav_path):
     name = 'Violin Plot of Differences for ' + coordinate
