@@ -1,6 +1,5 @@
 """ Prepare pictures and data for YoloV8 training. """
 import yolov8_functions
-import math
 
 # Dataset path:
 workingDirPath = "./"

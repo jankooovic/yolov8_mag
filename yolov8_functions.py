@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.image
 import pathlib
-import math
 import os
 import shutil
 from datetime import date
