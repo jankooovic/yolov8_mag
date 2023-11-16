@@ -8,11 +8,9 @@ import yolov8_functions
 path = "./data/dataset/"
 save_path = "./data/predicted"
 test_img_path = "/images/test/"
-point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sPoints']
-landmark_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1']
-sPoint_names = ['sTMA', 'sFDMA']
+point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sTMA', 'sFDMA']
 imgsize = 960 # check if the same as trained model
-model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt", "sPoints":"./runs/pose/train_sPoints_" + str(imgsize) + "_grayscale/weights/best.pt"}
+model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
 
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
@@ -73,19 +71,11 @@ for directory in directories:
         yolov8_functions.save_prediction_image(landmarks, temp, filename)
 
         # Save JSON file with data
-        if point_name == "sPoints":
-            dictionary = {
-                "Image name": filename,
-                "Point names": sPoint_names,
-                "Point coordinates": landmarks,
-                "Image_size": img_shape,
-            }
-        else:
-            dictionary = {
-                "Image name": filename,
-                "Point names": landmark_names,
-                "Point coordinates": landmarks,
-                "Image_size": img_shape,
-            }
+        dictionary = {
+            "Image name": filename,
+            "Point names": point_names,
+            "Point coordinates": landmarks,
+            "Image_size": img_shape,
+        }
 
         yolov8_functions.create_json_datafile(dictionary, filename)
