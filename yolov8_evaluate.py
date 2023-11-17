@@ -14,8 +14,7 @@ statistics_path = "./data/evaluation/statistics"
 slicer_path = "./data/evaluation/slicer_coordinates"
 slicerPointTemplate = "./data/evaluation/slicer_coordinates/pointTemplate.mrk.json"
 point_names_all = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'sFMDA', 'sTMA']
-sPoint_names = ['sTMA', 'sFMDA']
-landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'TML']
+landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTMA2','TML']
 square_size_ratio = 0.1
 map_factor = 3.6
 predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped = [], [], [], [], [], []
@@ -30,7 +29,7 @@ json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(jso
 img_names_predicted =  [yolov8_functions.filename_creation(path, "") for path in json_paths_predicted] # change sign="\\" according to linux or windows
 
 # get only paths that are to be evaluated from test
-json_paths_test = [path for path in yolov8_functions.get_dirs(json_test_path) if not any(name in path for name in landmark_names)]
+json_paths_test = [path for path in yolov8_functions.get_dirs(json_test_path) if not any(name in path for name in point_names_all)]
 json_paths_test_compare = [path for path in json_paths_test if any(name in path for name in img_names_predicted)]
 img_names_test =  [yolov8_functions.filename_creation(path, "") for path in json_paths_test_compare] # change sign="\\" according to linux or windows
 img_test_paths = [path for path in json_paths_test_compare]
@@ -42,18 +41,42 @@ to_evaluate_test_paths = [img_path for idx, img_path in enumerate(img_test_paths
 test_images = yolov8_functions.get_dirs(test_images_path)
 
 for idx, path in enumerate(to_evaluate_test_paths):
-
     skip = False
 
     # Test points json
-    test_coordinates = 0
-    point_names = 0
-    img_size = 0
+    test_coordinates = []
+    point_names = []
+    img_size = []
     with open(path) as f:
         data = json.load(f)
-        test_coordinates = data['Point coordinates']
-        point_names = data['Point names']
+        for coord in point_names_all:
+            if coord == 'sTMA':
+                stma1_x = data[coord][0]
+                stma1_y = data[coord][1]
+                stma2_x = data[coord][2]
+                stma2_y = data[coord][3]
+                stma1 = [stma1_x, stma1_y]
+                stma2 = [stma2_x, stma2_y]
+                test_coordinates.append(stma1)
+                point_names.append('sTMA1')
+                test_coordinates.append(stma2)
+                point_names.append('sTMA2')
+            elif coord == 'sFMDA':
+                stma1_x = data[coord][0]
+                stma1_y = data[coord][1]
+                stma2_x = data[coord][2]
+                stma2_y = data[coord][3]
+                stma1 = [stma1_x, stma1_y]
+                stma2 = [stma2_x, stma2_y]
+                test_coordinates.append(stma1)
+                point_names.append('sFDMA1')
+                test_coordinates.append(stma2)
+                point_names.append('sFDMA2')
+            else:
+                test_coordinates.append(data[coord])
+                point_names.append(coord)
         img_size =  data['Image_size']  # x,y are swapped
+        img_size = [img_size[1], img_size[0]]
 
     # Predicted points json
     predicted_coordinates = 0
@@ -64,13 +87,29 @@ for idx, path in enumerate(to_evaluate_test_paths):
     print("Path:", path)
     dictionary = {
         "Image name": path,
-        "Point names": landmark_names,
+        "Point names": point_names_all,
         "Image_size": img_size,
         }
     
-    # sort points based on y coordinates [FHC, aF1, TKC, FNOC, TML]
+    # sort points based on Y&X coordinates [FHC, aF1, TKC, FNOC, sFMDA, sTMA, TML] 
     test_coordinates = sorted(test_coordinates, key=lambda point: point[1])
     predicted_coordinates = sorted(predicted_coordinates, key=lambda point: point[1])
+    # round predicted coordinates
+    for idx, coord in enumerate(predicted_coordinates):
+        predicted_coordinates[idx] = [math.ceil(predicted_coordinates[idx][0]), math.ceil(predicted_coordinates[idx][1])]
+
+    # sort knee Points
+    test_sPoints = test_coordinates[2:8]
+    predicted_sPoints = predicted_coordinates[2:8]
+    # sort the 6 points based on X values
+    test_sPoints = sorted(test_sPoints, key=lambda point: point[0])
+    predicted_sPoints = sorted(predicted_sPoints, key=lambda point: point[0])
+    
+    test_sPoints = yolov8_functions.sort_sPoints(test_sPoints)
+    predicted_sPoints = yolov8_functions.sort_sPoints(predicted_sPoints)
+
+    test_coordinates[2:8] = test_sPoints
+    predicted_coordinates[2:8] = predicted_sPoints
 
     # check for missing coordinates
     for idx, point in enumerate(test_coordinates):
@@ -83,7 +122,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
         if idx >= len(test_coordinates):
             text = "To many coordinates on picture:"
             skip = True
-        
+
         # check if points were predicted correctly
         percent_y = yolov8_functions.percentage(predicted_coordinates[idx][coor_y], test_coordinates[idx][coor_y]) 
         percent_x = yolov8_functions.percentage(predicted_coordinates[idx][coor_x], test_coordinates[idx][coor_x]) 
@@ -100,7 +139,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
         elif(90 > percent_x):
             text = "Predicted coordinate missmatch:"
             skip = True
-    
+
     if (skip):
         print(text, path)
         skipped.append(path)
@@ -144,12 +183,12 @@ for idx, path in enumerate(to_evaluate_test_paths):
         point_filename = slicer_path + "/" + point_name + "_" + landmark_names[idx] + ".mrk"
         yolov8_functions.create_json_datafile(data, point_filename)
         f.close()
-        
+
     # Save JSON file with data
     name = yolov8_functions.filename_creation(path, ".json")
     filename = json_save_path + "/" + name
-    yolov8_functions.create_json_datafile(dictionary, filename)
-
+    #yolov8_functions.create_json_datafile(dictionary, filename)
+   
     # open image based on point name
     for img in test_images:
         if "./" + img == test_images_path + name + ".jpg":
@@ -178,7 +217,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
                     plt.savefig(filename + "_" + landmark_names[i] + '.png')
                     #plt.show()
                     plt.close()
-
+"""
 if (len(predictedCoord_arr) != 0):
     # Error statistics - explanation in -/documents/graphs_explanation.txt
     dictionary = {
@@ -244,3 +283,4 @@ if (len(predictedCoord_arr) != 0):
     # Save JSON file with data
     filename = statistics_path + "/" + "variability_Y"
     yolov8_functions.create_json_datafile(dictionary, filename)
+"""

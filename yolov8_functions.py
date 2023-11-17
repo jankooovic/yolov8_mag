@@ -202,13 +202,13 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
 
     dictionary = {
         "Image name": filename,
-        'sTMA': points[0],
-        'FHC':points[1],
-        'sFMDA':points[2],
-        'TKC':points[3],
-        'TML':points[4],
-        'FNOC':points[5],
-        'aF1':points[6],
+        'sTMA': points[0] + points[1],
+        'FHC':points[2],
+        'sFMDA':points[3] + points[4],
+        'TKC':points[5],
+        'TML':points[6],
+        'FNOC':points[7],
+        'aF1':points[8],
         "Image_size": orig_image_shape,
     }
 
@@ -405,3 +405,29 @@ def violin_plot_of_differences(x_coordinates, y_coordinates, coordinate, sav_pat
     plt.cla()
     plt.clf()
     plt.close()
+
+
+def sort_sPoints(test_sPoints):
+    # sfmda & stma + fnoc & tkc
+    s = [test_sPoints[0],test_sPoints[1],test_sPoints[4],test_sPoints[5]]
+    f = [test_sPoints[2], test_sPoints[3]]
+
+    # sort sFMDA & sTMA
+    if s[0][1] > s[1][1]:
+        tmp = s[0]
+        s[0] = s[1]
+        s[1] = tmp
+    if s[2][1] > s[3][1]:
+        tmp = s[2]
+        s[2] = s[3]
+        s[3] = tmp
+
+    # sort FNOC & TKC
+    if f[0][1] > f[1][1]:
+        tmp = f[0]
+        f[0] = f[1]
+        f[1] = tmp
+        
+    sPoints = f + s
+
+    return sPoints
