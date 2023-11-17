@@ -187,7 +187,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
     # Save JSON file with data
     name = yolov8_functions.filename_creation(path, ".json")
     filename = json_save_path + "/" + name
-    #yolov8_functions.create_json_datafile(dictionary, filename)
+    yolov8_functions.create_json_datafile(dictionary, filename)
    
     # open image based on point name
     for img in test_images:
@@ -217,7 +217,7 @@ for idx, path in enumerate(to_evaluate_test_paths):
                     plt.savefig(filename + "_" + landmark_names[i] + '.png')
                     #plt.show()
                     plt.close()
-"""
+
 if (len(predictedCoord_arr) != 0):
     # Error statistics - explanation in -/documents/graphs_explanation.txt
     dictionary = {
@@ -283,4 +283,3 @@ if (len(predictedCoord_arr) != 0):
     # Save JSON file with data
     filename = statistics_path + "/" + "variability_Y"
     yolov8_functions.create_json_datafile(dictionary, filename)
-"""
