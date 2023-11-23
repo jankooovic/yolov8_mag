@@ -17,7 +17,7 @@ point_names_all = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA', 'sTMA', 'TML']
 landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTMA2','TML']
 square_size_ratio = 0.1
 map_factor = 3.6
-predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped = [], [], [], [], [], []
+predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped, evaluated_images = [], [], [], [], [], [], []
 coor_y = 1
 coor_x = 0
 
@@ -26,21 +26,33 @@ yolov8_functions.dataset_archive(json_save_path)
 
 # Load json files
 json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_predict_path) if ".json" in str(directory)]
-img_names_predicted =  [yolov8_functions.filename_creation(path, "") for path in json_paths_predicted] # change sign="\\" according to linux or windows
 
 # get only paths that are to be evaluated from test
 json_paths_test = [path for path in yolov8_functions.get_dirs(json_test_path) if not any(name in path for name in point_names_all)]
-json_paths_test_compare = [path for path in json_paths_test if any(name in path for name in img_names_predicted)]
-img_names_test =  [yolov8_functions.filename_creation(path, "") for path in json_paths_test_compare] # change sign="\\" according to linux or windows
-img_test_paths = [path for path in json_paths_test_compare]
-
-# get only evaluation paths from test paths
-to_evaluate_test_paths = [img_path for idx, img_path in enumerate(img_test_paths) if img_names_test[idx] in img_names_predicted]
 
 # get test images
 test_images = yolov8_functions.get_dirs(test_images_path)
+img_names_test =  [yolov8_functions.filename_creation(path, "") for path in test_images]
+for i, img in enumerate(img_names_test):
+    img_names_test[i] = img.replace(".jpg","")
 
-for idx, path in enumerate(to_evaluate_test_paths):
+# get test json files
+json_names_test =  [yolov8_functions.filename_creation(path, "") for path in json_paths_test]
+for i, img in enumerate(json_names_test):
+    json_names_test[i] = img.replace(".json","")
+
+# get only evaluation paths from test paths
+to_evaluate_json_paths = []
+for i, p in enumerate(json_names_test):
+    for j, im in enumerate(img_names_test):
+        if p == im:
+            to_evaluate_json_paths.append(json_paths_test[i])
+
+# sort paths:
+to_evaluate_json_paths = sorted(to_evaluate_json_paths)
+json_paths_predicted = sorted(json_paths_predicted)
+
+for idx, path in enumerate(to_evaluate_json_paths):
     skip = False
 
     # Test points json
