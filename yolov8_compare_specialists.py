@@ -69,8 +69,8 @@ for idx, path in enumerate(paths_to_compare):
         del points_a[1]
 
         print("Slika:", path_i)
-        print("Igor točke:  ", points_i)
-        print("Andrej točke:", points_a)
+        #print("Igor točke:  ", points_i)
+        #print("Andrej točke:", points_a)
 
         # get image size
         nrrd_image_path = 0
