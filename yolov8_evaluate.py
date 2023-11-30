@@ -17,7 +17,7 @@ point_names_all = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA', 'sTMA', 'TML']
 landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTMA2','TML']
 square_size_ratio = 0.1
 map_factor = 3.6
-predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped, evaluated_images = [], [], [], [], [], [], []
+predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped, evaluated_images, mmmErr_arr = [], [], [], [], [], [], [], []
 coor_y = 1
 coor_x = 0
 
@@ -116,7 +116,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
     # sort the 6 points based on X values
     test_sPoints = sorted(test_sPoints, key=lambda point: point[0])
     predicted_sPoints = sorted(predicted_sPoints, key=lambda point: point[0])
-    
+
     test_sPoints = yolov8_functions.sort_sPoints(test_sPoints)
     predicted_sPoints = yolov8_functions.sort_sPoints(predicted_sPoints)
 
@@ -232,9 +232,16 @@ for idx, path in enumerate(to_evaluate_json_paths):
 
 if (len(predictedCoord_arr) != 0):
     # Error statistics - explanation in -/documents/graphs_explanation.txt
+    for i in pixelErr_arr:
+        x = math.ceil(i[coor_x]/ map_factor)
+        y = math.ceil(i[coor_y]/ map_factor)
+        p = [x,y]
+        mmmErr_arr.append(p)
+
     dictionary = {
         "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
         "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
+        "Average mm error [x,y]": yolov8_functions.get_average(mmmErr_arr),
         "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
         "Skipped images:": skipped
     }

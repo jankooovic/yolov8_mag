@@ -406,7 +406,6 @@ def violin_plot_of_differences(x_coordinates, y_coordinates, coordinate, sav_pat
     plt.clf()
     plt.close()
 
-
 def sort_sPoints(test_sPoints):
     # sfmda & stma + fnoc & tkc
     s = [test_sPoints[0],test_sPoints[1],test_sPoints[4],test_sPoints[5]]
