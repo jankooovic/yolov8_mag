@@ -1,6 +1,8 @@
 """ Train YOLOv8-pose model on the COCO128-pose dataset. """
 from ultralytics import YOLO
 
+imgsz = 1920
+
 ### Load a model
 model = YOLO('yolov8n-pose.yaml')   # build a new model from YAML
 model = YOLO('yolov8n-pose.pt')  # load a pretrained model
@@ -33,7 +35,7 @@ for config in config_files:
         data=config,
         pretrained=True,
         epochs=300,
-        imgsz=960, # check in predict so it is the same number!
+        imgsz=imgsz, # check in predict so it is the same number!
         #batch=-1,
         hsv_h = 0.015,
         hsv_s = 0.1,

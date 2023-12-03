@@ -17,11 +17,7 @@ pip install -r requirements.txt
 
 # Config Files:
 Path: ./config
-- config_aF1.yaml
 - config_ALL.yaml
-- config_TKC.yaml
-- config_TML.yaml
-- config_FHC.yaml
 
 # Github repository
 https://github.com/jankooovic/yolov8_mag.git
