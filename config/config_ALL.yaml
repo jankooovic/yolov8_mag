@@ -4,7 +4,7 @@ train: images/train  # train images (relative to 'path')
 val: images/val  # val images (relative to 'path')
 
 # Windows
-path: C:\Users\jank\Documents\Seafile\yolov8_new_location\data\dataset\ALL\
+path: /workspace/yolov8_mag\data\dataset\ALL\
 train: images\train\  # train images (relative to 'path')
 val: images\val\  # val images (relative to 'path')
 
