@@ -1,8 +1,6 @@
 """ Train YOLOv8-pose model on the COCO128-pose dataset. """
 from ultralytics import YOLO
 
-imgsz = 1920
-
 ### Load a model
 model = YOLO('yolov8n-pose.yaml')   # build a new model from YAML
 model = YOLO('yolov8n-pose.pt')  # load a pretrained model
@@ -22,28 +20,42 @@ fliplr = 0.5 image flip left-right (probability)
 imgsz = 640	image size as scalar or (h, w) list, i.e. (640, 480)
 batch = 16 number of images per batch (-1 for AutoBatch)
 
+optimizer = SGD, Adam, Adamax
+lr0 = 0.01 - 0.0001
+
 Sample command: model.train(data='config.yaml', epochs=100, imgsz=640) 
 """
 
-### Train model - per config file
+learning_rates = [0.1, 0.001, 0.0001]
+optimizers = ["adam", "SGD", "adamax"]
+img_sizes = [980, 1280, 1920, 2016, 3040, 3680]
+imgsz = 1920
 config_files = ['config/config_ALL.yaml']
+
+### Train model - per config file
 for config in config_files:
+    for optimizer in optimizers:
+        for lr in learning_rates:
 
-    print("Using config file:", config)
+            print("Using config file:", config)
+            print("using optimizer:", optimizer)
+            print("Using learning rate:", lr)
 
-    model.train(
-        data=config,
-        pretrained=True,
-        epochs=300,
-        imgsz=imgsz, # check in predict so it is the same number!
-        #batch=-1,
-        hsv_h = 0.015,
-        hsv_s = 0.1,
-        hsv_v = 0.05,
-        degrees=10,
-        scale=0.1,
-        perspective=0.0005,
-        translate=0,
-        fliplr=0,
-        mosaic=0
-        )
+            model.train(
+                data=config,
+                pretrained=True,
+                epochs=300,
+                imgsz=imgsz,
+                lr0 = lr,
+                optimizer=optimizer,
+                batch=16,
+                hsv_h = 0.015,
+                hsv_s = 0.1,
+                hsv_v = 0.05,
+                degrees=10,
+                scale=0.1,
+                perspective=0.001,
+                translate=0,
+                fliplr=0,
+                mosaic=0
+                )
