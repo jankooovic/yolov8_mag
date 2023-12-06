@@ -19,11 +19,11 @@ flip_idx: [0] # What is the correct index when flipping image
 
 # Classes
 names:
-  0: sTMA #knee
-  1: sTMA #knee
+  0: sTMA1 #knee
+  1: sTMA2 #knee
   2: FHC #hip
-  3: sFDMA #knee
-  4: sFDMA #knee
+  3: sFDMA1 #knee
+  4: sFDMA2 #knee
   5: TKC #knee
   6: TML #ankle
   7: FNOC #knee
