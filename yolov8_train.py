@@ -45,10 +45,12 @@ for config in config_files:
                 data=config,
                 pretrained=True,
                 epochs=300,
+                batch=16,
+                # Test parameters
                 imgsz=imgsz,
                 lr0 = lr,
                 optimizer=optimizer,
-                batch=16,
+                # Data augemntation parameters
                 hsv_h = 0.015,
                 hsv_s = 0.1,
                 hsv_v = 0.05,
