@@ -27,7 +27,7 @@ Sample command: model.train(data='config.yaml', epochs=100, imgsz=640)
 """
 
 learning_rates = [0.1, 0.001, 0.0001]
-optimizers = ["adam", "SGD", "adamax"]
+optimizers = ["Adam", "SGD", "Adamax"]
 img_sizes = [980, 1280, 1920, 2016, 3040, 3680]
 imgsz = 1920
 config_files = ['config/config_ALL.yaml']
