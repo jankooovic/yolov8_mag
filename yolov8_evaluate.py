@@ -110,6 +110,13 @@ for idx, path in enumerate(to_evaluate_json_paths):
     for idx, coord in enumerate(predicted_coordinates):
         predicted_coordinates[idx] = [math.ceil(predicted_coordinates[idx][0]), math.ceil(predicted_coordinates[idx][1])]
 
+    if len(test_coordinates) != 9 or len(predicted_coordinates) != 9:
+        print("Coordinates are not OK!")
+        print("Test coordinates:     ", test_coordinates)
+        print("Predicted coordinates:", predicted_coordinates)
+        skipped.append(path)
+        continue
+
     # sort knee Points
     test_sPoints = test_coordinates[2:8]
     predicted_sPoints = predicted_coordinates[2:8]
@@ -123,19 +130,14 @@ for idx, path in enumerate(to_evaluate_json_paths):
     test_coordinates[2:8] = test_sPoints
     predicted_coordinates[2:8] = predicted_sPoints
 
+    #print("Test coordinates     :", test_coordinates)
+    #print("Predicted coordinates:", predicted_coordinates)
+
     # check for missing coordinates
     for idx, point in enumerate(test_coordinates):
 
-        # check for missing predicted coordinates
-        if idx >= len(predicted_coordinates):
-            text = "Missing coordinates on picture:"
-            skip = True
-
-        if idx >= len(test_coordinates):
-            text = "To many coordinates on picture:"
-            skip = True
-
         # check if points were predicted correctly
+        
         percent_y = yolov8_functions.percentage(predicted_coordinates[idx][coor_y], test_coordinates[idx][coor_y]) 
         percent_x = yolov8_functions.percentage(predicted_coordinates[idx][coor_x], test_coordinates[idx][coor_x]) 
         
@@ -156,7 +158,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
         print(text, path)
         skipped.append(path)
         continue
-
+    
     # compare point coordinates
     for idx, point in enumerate(test_coordinates):
 
