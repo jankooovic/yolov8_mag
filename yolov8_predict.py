@@ -11,7 +11,7 @@ test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sTMA', 'sFDMA']
 imgsize = 1920 # check if the same as trained model
 model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
-model_paths = {"ALL" : "./runs/pose/train_SGD_noparams_01/weights/best.pt"}
+model_paths = {"ALL" : "./runs/pose/train3_SGD_params/weights/best.pt"}
 
 
 # create dataset archive
