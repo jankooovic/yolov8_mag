@@ -85,7 +85,8 @@ for directory in directories:
                     skipped_points.append(landmark)
                     skipped_labels.append(label)
                     continue
-
+                
+                # check for duplicate points
                 if label in labels:
                     name = landmark_names[label] + "_" + str(i)
                     i += 1
