@@ -15,6 +15,7 @@ imgsize = 3680 # check if the same as trained model
 model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
 model_paths = {"ALL" : "./runs/pose/train_SGD_3680_params/weights/best.pt"}
 skipped = []
+removed = []
 
 
 # create dataset archive
@@ -66,6 +67,8 @@ for directory in directories:
         labels = [] # labels list
         skipped_points = []
         skipped_labels = []
+        removed_points = []
+        removed_labels = []
         i = 0
         conf_box = []
         conf_pose = []
@@ -92,25 +95,17 @@ for directory in directories:
                 conf_box.append(float(result.boxes.conf[idx]))
                 conf_pose.append(float(result.keypoints.conf[idx]))
             
-            #
-            
-            print("Labels:", labels)
-            print("Landmarks:", landmarks)
-            """
-            print("Confidence box:", conf_box)
-            print("Confidence pose:", conf_pose)
-            """    
             # check landmarks for duplicates
             if len(labels) > 9:
 
                 duplicates = {x for x in labels if labels.count(x) > 1}
                 duplicates = list(duplicates)
-                #print("Duplicates:", duplicates)
 
                 # get array indexes for duplicates
+                remove_occurances = []
                 for dup in duplicates:
                     occurances = yolov8_functions.get_indices(dup, labels)
-                    #print("Occurances:", occurances)
+                    remove_occurances.append(occurances)
 
                     # get confidence for each duplicate
                     confs = []
@@ -120,29 +115,17 @@ for directory in directories:
                     
                     # get highest confidence of all duplicates or first highest confidence - upgrade to average
                     highest_conf_idx = confs.index(max(confs))
-                    remove_occurances = occurances
                     del remove_occurances[highest_conf_idx]
-                    print("To remove occurrences:", remove_occurances)
-                    print("Labels:", labels)
 
-                    # remove other occurances from labels, landmarks, etc
-                    j = 0
-                    idx_temp = len(remove_occurances)
-                    for idx in remove_occurances:
-                        if idx_temp < idx:
-                            j += 1
-                        del labels[idx-j]
-                        del landmarks[idx-j]
-                        del conf_box[idx-j]
-                        del conf_pose[idx-j]
-                        idx_temp = idx
-            
-            print("Labels:", labels)
-            print("Landmarks:", landmarks)
-            """
-            print("Confidence box:", conf_box)
-            print("Confidence pose:", conf_pose)
-            """
+                # remove other occurances from labels, landmarks, etc
+                remove_occurances.sort(reverse=True)
+                for idx in remove_occurances:
+                    removed_labels.append(labels[idx])
+                    del labels[idx]
+                    removed_points.append(landmarks[idx])
+                    del landmarks[idx]
+                    del conf_box[idx]
+                    del conf_pose[idx]
 
             for idx, landmark in enumerate(landmarks):
                 dictionary.update({
@@ -151,7 +134,9 @@ for directory in directories:
 
             dictionary.update({
                     "Skipped points":skipped_points,
-                    "Skipped labels:":skipped_labels,
+                    "Skipped labels":skipped_labels,
+                    "Removed points":removed_points,
+                    "removed labels":removed_labels
                 })
             
             if len(labels) < 9:
