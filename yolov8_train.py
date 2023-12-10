@@ -36,6 +36,7 @@ for model in models:
             imgsz=3680,
             pretrained=True,
             epochs=300,
+            patience=50,
             batch=16,
             lr0 = 0.01,
             optimizer=model,
