@@ -24,28 +24,25 @@ lr0 = 0.01
 Sample command: model.train(data='config.yaml', epochs=100, imgsz=640) 
 """
 
-img_sizes = [1920] #960, 1280, 1920, 2016, 3040, 3680
-degrees = [0, 10]
-scales = [0, 0.1]
-perspectives = [0, 0.001]
+img_sizes = [3680] #960, 1280, 1920, 2016, 3040, 3680
+models = ["SGD", "Adamax", "Adam"]
 config = 'config/config_ALL.yaml'
 
 ### Train model - per config file
-for imgsize in img_sizes:
-    for idx, perspective in enumerate(perspectives):
-
+for model in models:
+        
         model.train(
             data=config,
-            imgsz=imgsize,
+            imgsz=3680,
             pretrained=True,
             epochs=300,
             batch=16,
             lr0 = 0.01,
-            optimizer="Adam",
+            optimizer=model,
             # Data augemntation parameters
-            degrees=degrees[idx],
-            scale=scales[idx],
-            perspective=perspectives[idx],
+            degrees=10,
+            scale=0.1,
+            perspective=0.001,
             # annoyance
             translate=0,
             fliplr=0,
