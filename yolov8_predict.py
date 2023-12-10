@@ -63,12 +63,14 @@ for directory in directories:
             "Image_size": img_shape,
         }
         landmarks = [] # landmarks list
+        labels = [] # labels list
+        skipped_points = []
+        skipped_labels = []
+        i = 0
+        conf_box = []
+        conf_pose = []
 
         for result in results:
-            i = 0
-            labels = []
-            skipped_points = []
-            skipped_labels = []
             for idx, keypoint in enumerate(result.keypoints):
                 point = keypoint.xy.tolist()
 
@@ -77,39 +79,86 @@ for directory in directories:
                 landmark = [x,y]
 
                 # get label abd point names from result
-                label = result.boxes.cls[idx]
-                label = [int(s) for s in re.findall(r'\b\d+\b', str(label))]
-                label = label[0]
+                label = int(result.boxes.cls[idx])
+                label = landmark_names[label]
 
                 if landmark[0] < img_shape[0]*0.15 or landmark[0] > img_shape[0]*0.85:
                     skipped_points.append(landmark)
                     skipped_labels.append(label)
                     continue
-                
-                # check for duplicate points
-                if label in labels:
-                    name = landmark_names[label] + "_" + str(i)
-                    i += 1
-                else:
-                    labels.append(label)
-                    name = landmark_names[label]
 
+                labels.append(label)
                 landmarks.append(landmark)
-                dictionary.update({
-                    name:landmark,
-                })
+                conf_box.append(float(result.boxes.conf[idx]))
+                conf_pose.append(float(result.keypoints.conf[idx]))
             
+            #
+            
+            print("Labels:", labels)
+            print("Landmarks:", landmarks)
+            """
+            print("Confidence box:", conf_box)
+            print("Confidence pose:", conf_pose)
+            """    
+            # check landmarks for duplicates
+            if len(labels) > 9:
+
+                duplicates = {x for x in labels if labels.count(x) > 1}
+                duplicates = list(duplicates)
+                #print("Duplicates:", duplicates)
+
+                # get array indexes for duplicates
+                for dup in duplicates:
+                    occurances = yolov8_functions.get_indices(dup, labels)
+                    #print("Occurances:", occurances)
+
+                    # get confidence for each duplicate
+                    confs = []
+                    for idx in occurances:
+                        conf = conf_box[idx] + conf_pose[idx]
+                        confs.append(conf)
+                    
+                    # get highest confidence of all duplicates or first highest confidence - upgrade to average
+                    highest_conf_idx = confs.index(max(confs))
+                    remove_occurances = occurances
+                    del remove_occurances[highest_conf_idx]
+                    print("To remove occurrences:", remove_occurances)
+                    print("Labels:", labels)
+
+                    # remove other occurances from labels, landmarks, etc
+                    j = 0
+                    idx_temp = len(remove_occurances)
+                    for idx in remove_occurances:
+                        if idx_temp < idx:
+                            j += 1
+                        del labels[idx-j]
+                        del landmarks[idx-j]
+                        del conf_box[idx-j]
+                        del conf_pose[idx-j]
+                        idx_temp = idx
+            
+            print("Labels:", labels)
+            print("Landmarks:", landmarks)
+            """
+            print("Confidence box:", conf_box)
+            print("Confidence pose:", conf_pose)
+            """
+
+            for idx, landmark in enumerate(landmarks):
+                dictionary.update({
+                    labels[idx]:landmark,
+                })
 
             dictionary.update({
                     "Skipped points":skipped_points,
                     "Skipped labels:":skipped_labels,
                 })
             
-            if len(labels) != 9:
+            if len(labels) < 9:
                 skip = True
     
         if skip:
-            print("Skipping over:", img_path)
+            print("Skipping over because missing cooridnates:", img_path)
             skipped.append(img_path)
             continue
 

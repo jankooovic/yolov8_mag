@@ -430,3 +430,10 @@ def sort_sPoints(test_sPoints):
     sPoints = f + s
 
     return sPoints
+
+def get_indices(element, lst):
+    indices = []
+    for i in range(len(lst)):
+        if lst[i] == element:
+            indices.append(i)
+    return indices
