@@ -81,7 +81,7 @@ for directory in directories:
                 label = [int(s) for s in re.findall(r'\b\d+\b', str(label))]
                 label = label[0]
 
-                if landmark[0] < img_shape[0]*0.2 or landmark[0] > img_shape[0]*0.8:
+                if landmark[0] < img_shape[0]*0.15 or landmark[0] > img_shape[0]*0.85:
                     skipped_points.append(landmark)
                     skipped_labels.append(label)
                     continue
@@ -104,6 +104,7 @@ for directory in directories:
                     "Skipped points":skipped_points,
                     "Skipped labels:":skipped_labels,
                 })
+            
             if len(labels) != 9:
                 skip = True
     
