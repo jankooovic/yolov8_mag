@@ -3,15 +3,18 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 import yolov8_functions
+import re
 
 # Dataset path:
 path = "./data/dataset/"
 save_path = "./data/predicted"
 test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sTMA', 'sFDMA']
-imgsize = 1920 # check if the same as trained model
+landmark_names = ['sTMA1', 'sTMA2', 'FHC', 'sFMDA1', 'sFMDA2','TKC', 'TML', 'FNOC', 'aF1']
+imgsize = 3680 # check if the same as trained model
 model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
-model_paths = {"ALL" : "./runs/pose/train3_SGD_params/weights/best.pt"}
+model_paths = {"ALL" : "./runs/pose/train_SGD_3680_params/weights/best.pt"}
+skipped = []
 
 
 # create dataset archive
@@ -44,11 +47,26 @@ for directory in directories:
 
         # Run inference on image with arguments - same imgsize as training
         results = yolov8_model.predict(img_path,imgsz=imgsize)  # predict on an image 
-        
-        landmarks = [] # landmarks list
-        for result in results:
 
-            for keypoint_indx, keypoint in enumerate(result.keypoints):
+        name = yolov8_functions.filename_creation(img_path, ".jpg")
+        filename = save_path + "/" + name
+
+        # read image
+        img = cv2.imread(img_path)
+        temp = np.array(img)
+        img_shape = temp.shape
+        
+        # Save JSON file with data
+        dictionary = {
+            "Image name": filename,
+            "Image_size": img_shape,
+        }
+        landmarks = [] # landmarks list
+
+        for result in results:
+            i = 0
+            labels = []
+            for idx, keypoint in enumerate(result.keypoints):
                 point = keypoint.xy.tolist()
                 if point == [[]]:
                     skip = True
@@ -59,25 +77,33 @@ for directory in directories:
                 landmark = [x,y]
                 landmarks.append(landmark)
 
+                # get label abd point names from result
+                label = result.boxes.cls[idx]
+                label = [int(s) for s in re.findall(r'\b\d+\b', str(label))]
+                label = label[0]
+                if label in labels:
+                    print("Duplicate point found")
+                    name = landmark_names[label] + "_" + str(i)
+                    i += 1
+                else:
+                    labels.append(label)
+                    name = landmark_names[label]
+
+
+                dictionary.update({
+                    name:{
+                        "Predicted coordinates [x,y]": landmark,
+                        },
+                })
+    
         if skip:
             print("Skipping over:", img_path)
+            skipped.append(img_path)
             continue
-            
-        name = yolov8_functions.filename_creation(img_path, ".jpg")
-        filename = save_path + "/" + name
 
-        # read image
-        img = cv2.imread(img_path)
-        temp = np.array(img)
-        img_shape = temp.shape
+        dictionary.update({
+        "Skipped images":skipped,
+        })
+
         yolov8_functions.save_prediction_image(landmarks, temp, filename)
-
-        # Save JSON file with data
-        dictionary = {
-            "Image name": filename,
-            "Point names": point_names,
-            "Point coordinates": landmarks,
-            "Image_size": img_shape,
-        }
-
         yolov8_functions.create_json_datafile(dictionary, filename)
