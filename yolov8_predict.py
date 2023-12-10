@@ -55,6 +55,7 @@ for directory in directories:
         img = cv2.imread(img_path)
         temp = np.array(img)
         img_shape = temp.shape
+        img_shape = [img_shape[1], img_shape[0]]
         
         # Save JSON file with data
         dictionary = {
@@ -66,31 +67,42 @@ for directory in directories:
         for result in results:
             i = 0
             labels = []
+            skipped_points = []
+            skipped_labels = []
             for idx, keypoint in enumerate(result.keypoints):
                 point = keypoint.xy.tolist()
 
                 x = point[0][0][0]
                 y = point[0][0][1]
                 landmark = [x,y]
-                landmarks.append(landmark)
 
                 # get label abd point names from result
                 label = result.boxes.cls[idx]
                 label = [int(s) for s in re.findall(r'\b\d+\b', str(label))]
                 label = label[0]
+
+                if landmark[0] < img_shape[0]*0.2 or landmark[0] > img_shape[0]*0.8:
+                    skipped_points.append(landmark)
+                    skipped_labels.append(label)
+                    continue
+
                 if label in labels:
-                    print("Duplicate point found")
                     name = landmark_names[label] + "_" + str(i)
                     i += 1
                 else:
                     labels.append(label)
                     name = landmark_names[label]
 
-
+                landmarks.append(landmark)
                 dictionary.update({
                     name:landmark,
                 })
+            
 
+            dictionary.update({
+                    "Skipped points":skipped_points,
+                    "Skipped labels:":skipped_labels,
+                })
             if len(labels) != 9:
                 skip = True
     
