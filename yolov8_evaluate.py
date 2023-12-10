@@ -94,6 +94,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
     predicted_coordinates = 0
     with open(json_paths_predicted[idx]) as f:
         data = json.load(f)
+        print(data['Point coordinates'])
         predicted_coordinates = data['Point coordinates']
 
     print("Path:", path)

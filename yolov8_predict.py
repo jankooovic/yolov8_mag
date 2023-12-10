@@ -68,9 +68,6 @@ for directory in directories:
             labels = []
             for idx, keypoint in enumerate(result.keypoints):
                 point = keypoint.xy.tolist()
-                if point == [[]]:
-                    skip = True
-                    break
 
                 x = point[0][0][0]
                 y = point[0][0][1]
@@ -91,19 +88,21 @@ for directory in directories:
 
 
                 dictionary.update({
-                    name:{
-                        "Predicted coordinates [x,y]": landmark,
-                        },
+                    name:landmark,
                 })
+
+            if len(labels) != 9:
+                skip = True
     
         if skip:
             print("Skipping over:", img_path)
             skipped.append(img_path)
             continue
 
-        dictionary.update({
-        "Skipped images":skipped,
-        })
-
         yolov8_functions.save_prediction_image(landmarks, temp, filename)
         yolov8_functions.create_json_datafile(dictionary, filename)
+
+dict = {
+    "Skipped images":skipped,
+}
+yolov8_functions.create_json_datafile(dict, save_path + "/" + "skipped")
