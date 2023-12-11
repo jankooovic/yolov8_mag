@@ -15,7 +15,6 @@ skipped_path = "data/predicted/skipped.json"
 # create dataset archive
 #yolov8_functions.dataset_archive(save_path)
 
-
 # get image
 image_paths = yolov8_functions.get_dirs(images_path)
 
@@ -47,17 +46,7 @@ json_paths_predicted = sorted(json_paths_predicted)
 
 
 for idx, img_path in enumerate(image_paths):
-    print("Image path:", img_path, "Point:", json_paths_predicted[idx])
-
-    # load image
-    image = cv2.imread(img_path)
-
-    # perform the canny edge detector to detect image edges
-    edges = cv2.Canny(image, threshold1=30, threshold2=100)
-
-    plt.imshow(edges, cmap="gray")
-    plt.show()
-
+    
     # load points
     predicted_coordinates = []
     with open(json_paths_predicted[idx]) as f:
@@ -65,7 +54,20 @@ for idx, img_path in enumerate(image_paths):
         for name in landmark_names:
             predicted_coordinates.append(data[name])
 
-    print("Predicted coordinates:", predicted_coordinates)
+    #print("Image path:", img_path, "Point:", json_paths_predicted[idx])
+    #print("Predicted coordinates:", predicted_coordinates)
+
+    # load image
+    image = cv2.imread(img_path)
+
+    # perform the canny edge detector to detect image edges
+    #edges = cv2.Canny(image, threshold1=60, threshold2=150)
+    #edges = cv2.Canny(image, threshold1=100, threshold2=200, apertureSize = 5, L2gradient = True)
+
+    plt.imshow(image, cmap="gray")
+    plt.show()
+
+
 
 
 # Find edges for FNOC, sTMA, sFDMA, 
