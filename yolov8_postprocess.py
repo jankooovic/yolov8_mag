@@ -16,6 +16,3 @@ landmark_names = ['sTMA1', 'sTMA2', 'FHC', 'sFMDA1', 'sFMDA2','TKC', 'TML', 'FNO
 
 # Get points
 
-# check image size
-
-# remove all points that are inside 20% of the picture width from edge
