@@ -9,6 +9,7 @@ import numpy as np
 test_images_path =  "./data/dataset/ALL/images/test/"
 json_test_path = "./data/dataset/JSON/"
 json_predict_path = "./data/predicted/"
+json_postprocess_path = "./data/postprocess/"
 json_save_path = "./data/evaluation"
 statistics_path = "./data/evaluation/statistics"
 slicer_path = "./data/evaluation/slicer_coordinates"
@@ -57,8 +58,10 @@ tml_points_t = []
 yolov8_functions.dataset_archive(json_save_path)
 
 # Load json files
-json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_predict_path) if ".json" in str(directory)]
-json_paths_predicted.remove(skipped_path)
+#json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_predict_path) if ".json" in str(directory)]
+json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_postprocess_path) if ".json" in str(directory)]
+if skipped_path in json_paths_predicted:
+    json_paths_predicted.remove(skipped_path)
 
 # get only paths that are to be evaluated from test
 json_paths_test = [path for path in yolov8_functions.get_dirs(json_test_path) if not any(name in path for name in point_names_all)]
@@ -184,8 +187,8 @@ for idx, path in enumerate(to_evaluate_json_paths):
     test_coordinates[2:8] = test_sPoints
     predicted_coordinates[2:8] = predicted_sPoints
     """
-    print("Test coordinates     :", test_coordinates)
-    print("Predicted coordinates:", predicted_coordinates)
+    #print("Test coordinates     :", test_coordinates)
+    #print("Predicted coordinates:", predicted_coordinates)
 
     # assign points to its evaluation array ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
     aF1_points_t.append(test_coordinates[1])
