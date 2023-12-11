@@ -502,3 +502,33 @@ def euclidean_distance(point1, point2):
 
     distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
     return distance
+
+def find_point_on_contour(contours, point_of_interest):
+    # Initialize variables for the closest contour and its distance
+    closest_contour = None
+    min_distance = float('inf')
+    point_on_contour = None
+
+    # Iterate through contours
+    for contour in contours:
+
+        # Iterate through points in the contour
+        for point in contour:
+            x, y = point[0]
+            contour_point = [x,y]
+            distance = euclidean_distance(point_of_interest, contour_point)
+
+            # Update closest contour if the current contour is closer
+            if distance < min_distance:
+                min_distance = distance
+                closest_contour = contour
+                point_on_contour = contour_point
+    return closest_contour, point_on_contour
+
+def aF1_y_algorithm(fnoc, fhc):
+
+    fnoc_y = fnoc[1]
+    fhc_y = fhc[1]
+
+    aF1_y = ((abs(fhc_y - fnoc_y))/2) + fhc_y
+    return aF1_y
