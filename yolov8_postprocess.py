@@ -144,6 +144,3 @@ for idx, img_path in enumerate(image_paths):
 
     filename = postprocess_path + image_name
     yolov8_functions.create_json_datafile(dictionary, filename)
-
-# Find midlle of edged for TML
-# Allign TKC, FHC better? 
