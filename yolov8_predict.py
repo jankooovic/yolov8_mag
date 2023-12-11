@@ -1,4 +1,6 @@
 """ Use a trained YOLOv8n-pose model to run predictions on images. """
+#https://docs.ultralytics.com/reference/engine/results/#ultralytics.engine.results.Keypoints
+
 from ultralytics import YOLO
 import cv2
 import numpy as np
