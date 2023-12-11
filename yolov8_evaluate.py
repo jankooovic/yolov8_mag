@@ -20,12 +20,14 @@ map_factor = 3.6
 predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped, evaluated_images, mmmErr_arr = [], [], [], [], [], [], [], []
 coor_y = 1
 coor_x = 0
+skipped_path = 'data/predicted/skipped.json'
 
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
 
 # Load json files
 json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_predict_path) if ".json" in str(directory)]
+json_paths_predicted.remove(skipped_path)
 
 # get only paths that are to be evaluated from test
 json_paths_test = [path for path in yolov8_functions.get_dirs(json_test_path) if not any(name in path for name in point_names_all)]
@@ -36,7 +38,7 @@ img_names_test =  [yolov8_functions.filename_creation(path, "") for path in test
 for i, img in enumerate(img_names_test):
     img_names_test[i] = img.replace(".jpg","")
 
-# get test json files
+# get test json files names
 json_names_test =  [yolov8_functions.filename_creation(path, "") for path in json_paths_test]
 for i, img in enumerate(json_names_test):
     json_names_test[i] = img.replace(".json","")
@@ -48,10 +50,26 @@ for i, p in enumerate(json_names_test):
         if p == im:
             to_evaluate_json_paths.append(json_paths_test[i])
 
+# remove images with false predictions
+to_skip = []
+with open(skipped_path) as f:
+        data = json.load(f)
+        to_skip = (data['Skipped images'])
+
+to_skip =  [yolov8_functions.filename_creation(path, "") for path in to_skip]
+for i, name in enumerate(to_skip):
+    to_skip_name = name.replace(".jpg","")
+    to_skip[i] = "data/dataset/JSON/" + to_skip_name + ".json"
+
+for skip in to_skip:
+    to_evaluate_json_paths.remove(skip)
+
 # sort paths:
 to_evaluate_json_paths = sorted(to_evaluate_json_paths)
 json_paths_predicted = sorted(json_paths_predicted)
-json_paths_predicted.remove("data/predicted/skipped.json")
+
+print("Length test:", len(to_evaluate_json_paths))
+print("Length predicted:", len(json_paths_predicted))
 
 for idx, path in enumerate(to_evaluate_json_paths):
     skip = False
@@ -252,7 +270,8 @@ if (len(predictedCoord_arr) != 0):
         "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
         "Average mm error [x,y]": yolov8_functions.get_average(mmmErr_arr),
         "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
-        "Skipped images:": skipped
+        "Skipped images": skipped,
+        "False predictions": to_skip
     }
 
     # Save JSON file with data
