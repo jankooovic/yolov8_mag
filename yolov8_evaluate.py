@@ -31,7 +31,7 @@ coor_y = 1
 coor_x = 0
 skipped_path = 'data/predicted/skipped.json'
 
-# pPredicted points
+# Predicted points
 aF1_points_p = []
 fhc_points_p = []
 fnoc_points_p = []
@@ -152,6 +152,10 @@ for idx, path in enumerate(to_evaluate_json_paths):
         "Image_size": img_size,
         }
     
+    # round predicted coordinates
+    for idx, coord in enumerate(predicted_coordinates):
+        predicted_coordinates[idx] = [math.ceil(predicted_coordinates[idx][0]), math.ceil(predicted_coordinates[idx][1])]
+
     """
     # sort points based on Y&X coordinates [FHC, aF1, TKC, FNOC, sFMDA, sTMA, TML] 
     test_coordinates = sorted(test_coordinates, key=lambda point: point[1])
@@ -180,8 +184,8 @@ for idx, path in enumerate(to_evaluate_json_paths):
     test_coordinates[2:8] = test_sPoints
     predicted_coordinates[2:8] = predicted_sPoints
     """
-    #print("Test coordinates     :", test_coordinates)
-    #print("Predicted coordinates:", predicted_coordinates)
+    print("Test coordinates     :", test_coordinates)
+    print("Predicted coordinates:", predicted_coordinates)
 
     # assign points to its evaluation array ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
     aF1_points_t.append(test_coordinates[1])
@@ -237,7 +241,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
         percent_x = yolov8_functions.percentage(predicted_coordinates[idx][coor_x], test_coordinates[idx][coor_x]) 
 
         test_point = [test_coordinates[idx][coor_x], test_coordinates[idx][coor_y]]
-        predicted_point = [math.ceil(predicted_coordinates[idx][coor_x]), math.ceil(predicted_coordinates[idx][coor_y])]
+        predicted_point = [predicted_coordinates[idx][coor_x], predicted_coordinates[idx][coor_y]]
         percent_missmatch = [abs(100 - percent_x), abs(100 - percent_y)]
         pixel_error = [abs(test_point[0] - predicted_point[0]), abs(test_point[1] - predicted_point[1])]
         pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])] 
@@ -320,16 +324,23 @@ if (len(predictedCoord_arr) != 0):
         x = i / map_factor
         eucledian_distances_all_mm.append(x)
 
-    print("Euclidean",eucledian_distances_all_mm)
     dictionary = {
-        "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
         "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
         "Average mm error [x,y]": yolov8_functions.get_average(mmmErr_arr),
-        "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
-        "Average euclidean distance pixel": yolov8_functions.get_average_one(eucledian_distances_all),
-        "Average euclidean distance mm": yolov8_functions.get_average_one(eucledian_distances_all_mm),
+        "Average euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_distances_all), yolov8_functions.get_average_one(eucledian_distances_all_mm)],
+        "Average FHC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(fhc_points_p, fhc_points_t),
+        "Average aF1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(aF1_points_p, aF1_points_t),
+        "Average FNOC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(fnoc_points_p, fnoc_points_t),
+        "Average TKC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(tkc_points_p, tkc_points_t),
+        "Average sFDMA1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(sfdma1_points_p, sfdma1_points_t),
+        "Average sFDMA2 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(sfdma2_points_p, sfdma2_points_t),
+        "Average sTMA1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(stma1_points_p, stma1_points_t),
+        "Average sTMA2 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(stma2_points_p, stma2_points_t),
+        "Average TML error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(tml_points_p, tml_points_t),
         "Images with <10 percent error": skipped,
-        "False predictions": to_skip
+        "False predictions": to_skip,
+        "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
+        "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
     }
 
     # Save JSON file with data

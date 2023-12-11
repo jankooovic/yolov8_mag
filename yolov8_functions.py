@@ -298,6 +298,36 @@ def get_average_one(err_arr):
     
     return err_avg_x
 
+def get_average_points(test_ps, predicted_ps):
+
+    error_x_pixel = []
+    error_y_pixel = []
+    error_x_mm = []
+    error_y_mm = []
+
+    for i, p in enumerate(test_ps):
+        x_t = test_ps[i][0]
+        y_t = test_ps[i][1]
+        x_p = predicted_ps[i][0]
+        y_p = predicted_ps[i][1]
+
+        err_x_pix = abs(x_t - x_p)
+        err_y_pix = abs(y_t - y_p)
+        err_x_mm = err_x_pix / 3.6
+        err_y_mm = err_y_pix / 3.6
+        
+        error_x_pixel.append(err_x_pix)
+        error_y_pixel.append(err_y_pix)
+        error_x_mm.append(err_x_mm)
+        error_y_mm.append(err_y_mm)
+
+        err_avg_x_pixel = sum(error_x_pixel) / len(error_x_pixel)
+        err_avg_y_pixel = sum(error_y_pixel) / len(error_y_pixel)
+        err_avg_x_mm = sum(error_x_mm) / len(error_x_mm)
+        err_avg_y_mm = sum(error_y_mm) / len(error_y_mm)
+    
+    return [[err_avg_x_pixel, err_avg_y_pixel],[err_avg_x_mm, err_avg_y_mm]]
+
 def scatter_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     name = 'Scatter Plot of Measured vs. True Coordinates for ' + coordinate
     plt.scatter(measured_coordinates, true_coordinates, s=20, alpha=0.7)
