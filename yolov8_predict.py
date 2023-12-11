@@ -61,7 +61,7 @@ for directory in directories:
         
         # Save JSON file with data
         dictionary = {
-            "Image name": filename,
+            "Image name": name,
             "Image_size": img_shape,
         }
         landmarks = [] # landmarks list
