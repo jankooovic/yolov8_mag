@@ -15,7 +15,6 @@ imgsize = 3680 # check if the same as trained model
 model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
 model_paths = {"ALL" : "./runs/pose/train_SGD_3680_params/weights/best.pt"}
 skipped = []
-removed = []
 
 
 # create dataset archive
@@ -105,7 +104,8 @@ for directory in directories:
                 remove_occurances = []
                 for dup in duplicates:
                     occurances = yolov8_functions.get_indices(dup, labels)
-                    remove_occurances.append(occurances)
+                    for occ in occurances:
+                        remove_occurances.append(occ)
 
                     # get confidence for each duplicate
                     confs = []
@@ -119,10 +119,9 @@ for directory in directories:
 
                 # remove other occurances from labels, landmarks, etc
                 remove_occurances.sort(reverse=True)
+                print("remove_occurances", remove_occurances)
                 for idx in remove_occurances:
-                    removed_labels.append(labels[idx])
                     del labels[idx]
-                    removed_points.append(landmarks[idx])
                     del landmarks[idx]
                     del conf_box[idx]
                     del conf_pose[idx]
