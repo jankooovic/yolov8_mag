@@ -14,13 +14,44 @@ statistics_path = "./data/evaluation/statistics"
 slicer_path = "./data/evaluation/slicer_coordinates"
 slicerPointTemplate = "./data/evaluation/slicer_coordinates/pointTemplate.mrk.json"
 point_names_all = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA', 'sTMA', 'TML']
-landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTMA2','TML']
+landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
 square_size_ratio = 0.1
 map_factor = 3.6
-predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped, evaluated_images, mmmErr_arr = [], [], [], [], [], [], [], []
+predictedCoord_arr = []
+anotatedCoord_arr = []
+pixelPercentErr_arr = []
+pixelErr_arr = []
+missmatchErr_arr = []
+eucledian_distances_all = []
+eucledian_distances_all_mm = []
+skipped = []
+evaluated_images = []
+mmmErr_arr = []
 coor_y = 1
 coor_x = 0
 skipped_path = 'data/predicted/skipped.json'
+
+# pPredicted points
+aF1_points_p = []
+fhc_points_p = []
+fnoc_points_p = []
+tkc_points_p = []
+sfdma1_points_p = []
+sfdma2_points_p = []
+stma1_points_p = []
+stma2_points_p = []
+tml_points_p = []
+
+# Test points
+aF1_points_t = []
+fhc_points_t = []
+fnoc_points_t = []
+tkc_points_t = []
+sfdma1_points_t = []
+sfdma2_points_t= []
+stma1_points_t = []
+stma2_points_t = []
+tml_points_t = []
 
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
@@ -68,9 +99,6 @@ for skip in to_skip:
 to_evaluate_json_paths = sorted(to_evaluate_json_paths)
 json_paths_predicted = sorted(json_paths_predicted)
 
-print("Length test:", len(to_evaluate_json_paths))
-print("Length predicted:", len(json_paths_predicted))
-
 for idx, path in enumerate(to_evaluate_json_paths):
     skip = False
     print("Path:", path)
@@ -113,14 +141,10 @@ for idx, path in enumerate(to_evaluate_json_paths):
     # Predicted points json
     predicted_coordinates = []
     path = json_paths_predicted[idx]
-    print("Path:", path)
     with open(path) as f:
         data = json.load(f)
         for name in landmark_names:
             predicted_coordinates.append(data[name])
-
-    print("Predicted coordinates:", predicted_coordinates)
-    print("Test coordinates:", test_coordinates)
 
     dictionary = {
         "Image name": path,
@@ -128,6 +152,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
         "Image_size": img_size,
         }
     
+    """
     # sort points based on Y&X coordinates [FHC, aF1, TKC, FNOC, sFMDA, sTMA, TML] 
     test_coordinates = sorted(test_coordinates, key=lambda point: point[1])
     predicted_coordinates = sorted(predicted_coordinates, key=lambda point: point[1])
@@ -154,9 +179,30 @@ for idx, path in enumerate(to_evaluate_json_paths):
 
     test_coordinates[2:8] = test_sPoints
     predicted_coordinates[2:8] = predicted_sPoints
-
+    """
     #print("Test coordinates     :", test_coordinates)
     #print("Predicted coordinates:", predicted_coordinates)
+
+    # assign points to its evaluation array ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
+    aF1_points_t.append(test_coordinates[1])
+    fhc_points_t.append(test_coordinates[0])
+    fnoc_points_t.append(test_coordinates[2])
+    tkc_points_t.append(test_coordinates[3])
+    sfdma1_points_t.append(test_coordinates[4])
+    sfdma2_points_t.append(test_coordinates[5])
+    stma1_points_t.append(test_coordinates[6])
+    stma2_points_t.append(test_coordinates[7])
+    tml_points_t.append(test_coordinates[8])
+
+    aF1_points_p.append(predicted_coordinates[1])
+    fhc_points_p.append(predicted_coordinates[0])
+    fnoc_points_p.append(predicted_coordinates[2])
+    tkc_points_p.append(predicted_coordinates[3])
+    sfdma1_points_p.append(predicted_coordinates[4])
+    sfdma2_points_p.append(predicted_coordinates[5])
+    stma1_points_p.append(predicted_coordinates[6])
+    stma2_points_p.append(predicted_coordinates[7])
+    tml_points_p.append(predicted_coordinates[8])
 
     # check for missing coordinates
     for idx, point in enumerate(test_coordinates):
@@ -182,7 +228,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
     if (skip):
         print(text, path)
         skipped.append(path)
-        continue
+        #continue
     
     # compare point coordinates
     for idx, point in enumerate(test_coordinates):
@@ -195,6 +241,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
         percent_missmatch = [abs(100 - percent_x), abs(100 - percent_y)]
         pixel_error = [abs(test_point[0] - predicted_point[0]), abs(test_point[1] - predicted_point[1])]
         pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])] 
+        eucledian_distance = yolov8_functions.euclidean_distance(predicted_coordinates[idx], test_coordinates[idx])
 
         missmatchErr_arr.append(percent_missmatch)
         pixelErr_arr.append(pixel_error)
@@ -202,6 +249,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
 
         predictedCoord_arr.append(predicted_point)
         anotatedCoord_arr.append(test_point)
+        eucledian_distances_all.append(eucledian_distance)
         
         dictionary.update({
                     landmark_names[idx]:{
@@ -209,7 +257,10 @@ for idx, path in enumerate(to_evaluate_json_paths):
                         "Predicted point coordinates [x,y]": predicted_point,
                         "Percentage missmatch [x,y]": percent_missmatch,
                         "Pixel error [x,y]": pixel_error,
+                        "mm error [x,y]": [pixel_error[0] / 3.6, pixel_error[1] / 3.6],
                         "Percent pixel error [x,y]": pixel_error_percents,
+                        "Eucledian distance pixel": eucledian_distance,
+                        "Eucledian distance mm": eucledian_distance / 3.6,
                         },
         })
 
@@ -260,17 +311,24 @@ for idx, path in enumerate(to_evaluate_json_paths):
 if (len(predictedCoord_arr) != 0):
     # Error statistics - explanation in -/documents/graphs_explanation.txt
     for i in pixelErr_arr:
-        x = math.ceil(i[coor_x]/ map_factor)
-        y = math.ceil(i[coor_y]/ map_factor)
+        x = i[coor_x] / map_factor
+        y = i[coor_y] / map_factor
         p = [x,y]
         mmmErr_arr.append(p)
 
+    for i in eucledian_distances_all:
+        x = i / map_factor
+        eucledian_distances_all_mm.append(x)
+
+    print("Euclidean",eucledian_distances_all_mm)
     dictionary = {
         "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
         "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
         "Average mm error [x,y]": yolov8_functions.get_average(mmmErr_arr),
         "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
-        "Skipped images": skipped,
+        "Average euclidean distance pixel": yolov8_functions.get_average_one(eucledian_distances_all),
+        "Average euclidean distance mm": yolov8_functions.get_average_one(eucledian_distances_all_mm),
+        "Images with <10 percent error": skipped,
         "False predictions": to_skip
     }
 

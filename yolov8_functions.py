@@ -12,6 +12,7 @@ from datetime import datetime
 from sklearn.model_selection import train_test_split
 from PIL import Image
 import seaborn as sns
+import math
 
 def normalize_data(data):
     return (data - np.min(data)) / (np.max(data) - np.min(data))
@@ -278,10 +279,24 @@ def get_average(err_arr):
     if not err_arr:
         return 0, 0  # Handle empty array to avoid division by zero
     
-    err_avg_x = sum(err[0] for err in err_arr) / len(err_arr)
-    err_avg_y = sum(err[1] for err in err_arr) / len(err_arr)
+    x_err = []
+    y_err = []
+    for err in err_arr:  
+        x_err.append(err[0])
+        y_err.append(err[1])
+    
+    err_avg_x = sum(x_err) / len(err_arr)
+    err_avg_y = sum(y_err) / len(err_arr)
     
     return err_avg_x, err_avg_y
+
+def get_average_one(err_arr):
+    if not err_arr:
+        return 0  # Handle empty array to avoid division by zero
+ 
+    err_avg_x = sum(err_arr) / len(err_arr)
+    
+    return err_avg_x
 
 def scatter_plot(measured_coordinates, true_coordinates, coordinate, sav_path):
     name = 'Scatter Plot of Measured vs. True Coordinates for ' + coordinate
@@ -437,3 +452,23 @@ def get_indices(element, lst):
         if lst[i] == element:
             indices.append(i)
     return indices
+
+def euclidean_distance(point1, point2):
+    """
+    Calculate the Euclidean distance between two points.
+
+    Parameters:
+    - point1: List or tuple representing the coordinates of the first point [x1, y1].
+    - point2: List or tuple representing the coordinates of the second point [x2, y2].
+
+    Returns:
+    - The Euclidean distance between the two points.
+    """
+    if len(point1) != 2 or len(point2) != 2:
+        raise ValueError("Each point should be represented as [x, y]")
+
+    x1, y1 = point1
+    x2, y2 = point2
+
+    distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    return distance
