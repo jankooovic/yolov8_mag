@@ -51,9 +51,11 @@ for i, p in enumerate(json_names_test):
 # sort paths:
 to_evaluate_json_paths = sorted(to_evaluate_json_paths)
 json_paths_predicted = sorted(json_paths_predicted)
+json_paths_predicted.remove("data/predicted/skipped.json")
 
 for idx, path in enumerate(to_evaluate_json_paths):
     skip = False
+    print("Path:", path)
 
     # Test points json
     test_coordinates = []
@@ -81,9 +83,9 @@ for idx, path in enumerate(to_evaluate_json_paths):
                 stma1 = [stma1_x, stma1_y]
                 stma2 = [stma2_x, stma2_y]
                 test_coordinates.append(stma1)
-                point_names.append('sFDMA1')
+                point_names.append('sFMDA1')
                 test_coordinates.append(stma2)
-                point_names.append('sFDMA2')
+                point_names.append('sFMDA2')
             else:
                 test_coordinates.append(data[coord])
                 point_names.append(coord)
@@ -91,13 +93,17 @@ for idx, path in enumerate(to_evaluate_json_paths):
         img_size = [img_size[1], img_size[0]]
 
     # Predicted points json
-    predicted_coordinates = 0
-    with open(json_paths_predicted[idx]) as f:
-        data = json.load(f)
-        print(data['Point coordinates'])
-        predicted_coordinates = data['Point coordinates']
-
+    predicted_coordinates = []
+    path = json_paths_predicted[idx]
     print("Path:", path)
+    with open(path) as f:
+        data = json.load(f)
+        for name in landmark_names:
+            predicted_coordinates.append(data[name])
+
+    print("Predicted coordinates:", predicted_coordinates)
+    print("Test coordinates:", test_coordinates)
+
     dictionary = {
         "Image name": path,
         "Point names": point_names_all,

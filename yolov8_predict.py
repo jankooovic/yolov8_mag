@@ -106,8 +106,6 @@ for directory in directories:
                 remove_occurances = []
                 for dup in duplicates:
                     occurances = yolov8_functions.get_indices(dup, labels)
-                    for occ in occurances:
-                        remove_occurances.append(occ)
 
                     # get confidence for each duplicate
                     confs = []
@@ -117,11 +115,13 @@ for directory in directories:
                     
                     # get highest confidence of all duplicates or first highest confidence - upgrade to average
                     highest_conf_idx = confs.index(max(confs))
-                    del remove_occurances[highest_conf_idx]
+                    del occurances[highest_conf_idx]
+
+                    for occ in occurances:
+                        remove_occurances.append(occ)
 
                 # remove other occurances from labels, landmarks, etc
                 remove_occurances.sort(reverse=True)
-                print("remove_occurances", remove_occurances)
                 for idx in remove_occurances:
                     del labels[idx]
                     del landmarks[idx]
