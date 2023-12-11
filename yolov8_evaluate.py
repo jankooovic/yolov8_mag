@@ -233,7 +233,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
             skip = True
 
     if (skip):
-        print(text, path)
+        #print(text, path)
         skipped.append(path)
         #continue
     
