@@ -12,7 +12,7 @@ postprocess_path = "./data/postprocess/"
 save_path = "./data/postprocess"
 images_path = "./data/dataset/ALL/images/test/"
 landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
-skipped_path = "data/predicted/skipped.json"
+skipped_path = "data/postprocess/skipped.json"
 false_prediction = []
 image_name = None
 
@@ -41,7 +41,7 @@ with open(predicted_path + "skipped.json") as f:
         to_skip = (data['Skipped images'])
 
 json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(predicted_path) if ".json" in str(directory)]
-json_paths_predicted.remove(skipped_path)
+#json_paths_predicted.remove(skipped_path)
 #print(json_paths_predicted)
 
 # sort paths:
