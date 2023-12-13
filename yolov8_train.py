@@ -1,10 +1,15 @@
 """ Train YOLOv8-pose model on the COCO128-pose dataset. """
 from ultralytics import YOLO
 
-### Load a model
+### Load a model - nano 3.3M params
 model = YOLO('yolov8n-pose.yaml')   # build a new model from YAML
 model = YOLO('yolov8n-pose.pt')  # load a pretrained model
 model = YOLO('yolov8n-pose.yaml').load('yolov8n-pose.pt')   # build from YAML and transfer weights
+
+### Load a model - small 11.6M params
+model = YOLO('yolov8s-pose.yaml')   # build a new model from YAML
+model = YOLO('yolov8s-pose.pt')  # load a pretrained model
+model = YOLO('yolov8s-pose.yaml').load('yolov8s-pose.pt')   # build from YAML and transfer weights
 
 """
 # Re-Train the model:
