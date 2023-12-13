@@ -35,7 +35,7 @@ models = ["SGD"] # "SGD", "Adamax", "Adam"
 config = 'config/config_ALL.yaml'
 
 ### Train model - per config file
-for model in models:
+for m in models:
         for img_size in img_sizes:
             model.train(
                 data=config,
@@ -45,7 +45,7 @@ for model in models:
                 patience=50,
                 batch=16,
                 lr0 = 0.01,
-                optimizer=model,
+                optimizer=m,
                 # Data augemntation parameters
                 degrees=10,
                 scale=0.1,
