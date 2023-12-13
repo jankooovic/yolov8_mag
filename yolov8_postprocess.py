@@ -13,6 +13,7 @@ save_path = "./data/postprocess"
 images_path = "./data/dataset/ALL/images/test/"
 landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
 skipped_path = "data/predicted/skipped.json"
+false_prediction = []
 image_name = None
 
 # create dataset archive
@@ -49,6 +50,8 @@ json_paths_predicted = sorted(json_paths_predicted)
 
 
 for idx, img_path in enumerate(image_paths):
+    print("Processing:", img_path)
+    skip = False
     
     # load points
     predicted_coordinates = []
@@ -57,9 +60,18 @@ for idx, img_path in enumerate(image_paths):
         data = json.load(f)
         img_shape = data['Image_size']
         image_name = data['Image name']
-        for name in landmark_names:
-            predicted_coordinates.append(data[name])
+        
+        missing_keys = [key for key in landmark_names if key not in data]
+        if missing_keys:
+            print(f"Missing keys: {missing_keys}")
+            false_prediction.append(image_name)
+            skip = True
+        else:
+            for name in landmark_names:
+                predicted_coordinates.append(data[name])
 
+    if skip:
+         continue
     #print("Image path:", img_path, "Point:", json_paths_predicted[idx])
     #print("Predicted coordinates:", predicted_coordinates)
 
@@ -142,5 +154,13 @@ for idx, img_path in enumerate(image_paths):
             landmark_names[idx]:landmark,
         })
 
+
     filename = postprocess_path + image_name
     yolov8_functions.create_json_datafile(dictionary, filename)
+
+dictionary = {
+    "False predictions": false_prediction
+}
+
+filename = postprocess_path + "skipped"
+yolov8_functions.create_json_datafile(dictionary, filename)

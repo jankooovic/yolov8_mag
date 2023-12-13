@@ -30,7 +30,7 @@ evaluated_images = []
 mmmErr_arr = []
 coor_y = 1
 coor_x = 0
-skipped_path = 'data/predicted/skipped.json'
+skipped_path = 'data/postprocess/skipped.json'
 
 # Predicted points
 aF1_points_p = []
@@ -88,9 +88,9 @@ for i, p in enumerate(json_names_test):
 to_skip = []
 with open(skipped_path) as f:
         data = json.load(f)
-        to_skip = (data['Skipped images'])
+        to_skip = (data['False predictions'])
 
-to_skip =  [yolov8_functions.filename_creation(path, "") for path in to_skip]
+to_skip =  [img_name for img_name in to_skip]
 for i, name in enumerate(to_skip):
     to_skip_name = name.replace(".jpg","")
     to_skip[i] = "data/dataset/JSON/" + to_skip_name + ".json"

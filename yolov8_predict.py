@@ -13,9 +13,9 @@ save_path = "./data/predicted"
 test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sTMA', 'sFDMA']
 landmark_names = ['sTMA1', 'sTMA2', 'FHC', 'sFMDA1', 'sFMDA2','TKC', 'TML', 'FNOC', 'aF1'] # based on labels in config file
-imgsize = 3680 # check if the same as trained model
+imgsize = 1920 # check if the same as trained model
 model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
-model_paths = {"ALL" : "./runs/pose/train_SGD_3680_params/weights/best.pt"}
+model_paths = {"ALL" : "./runs/pose/train_SGD_1920_small/weights/best.pt"}
 skipped = []
 
 
@@ -139,19 +139,6 @@ for directory in directories:
                     "Removed points":removed_points,
                     "removed labels":removed_labels
                 })
-            
-            if len(labels) < 9:
-                skip = True
-    
-        if skip:
-            print("Skipping over because missing cooridnates:", img_path)
-            skipped.append(img_path)
-            continue
 
         yolov8_functions.save_prediction_image(landmarks, temp, filename)
         yolov8_functions.create_json_datafile(dictionary, filename)
-
-dict = {
-    "Skipped images":skipped,
-}
-yolov8_functions.create_json_datafile(dict, save_path + "/" + "skipped")
