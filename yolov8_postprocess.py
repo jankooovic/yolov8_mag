@@ -22,6 +22,7 @@ yolov8_functions.dataset_archive(save_path)
 # get image
 image_paths = yolov8_functions.get_dirs(images_path)
 
+"""
 # get skipped images
 to_skip = []
 with open(predicted_path + "skipped.json") as f:
@@ -31,14 +32,16 @@ with open(predicted_path + "skipped.json") as f:
 # remove skipped images
 for skip in to_skip:
     image_paths.remove(skip)
+"""
 
 #print(image_paths)
 #print(to_skip)
-
+"""
 # Get points
 with open(predicted_path + "skipped.json") as f:
         data = json.load(f)
         to_skip = (data['Skipped images'])
+"""
 
 json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(predicted_path) if ".json" in str(directory)]
 #json_paths_predicted.remove(skipped_path)
