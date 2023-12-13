@@ -356,10 +356,10 @@ if (len(predictedCoord_arr) != 0):
     # x coordinate
     yolov8_functions.scatter_plot(measured_data_x, true_data_x, "X", statistics_path)
     yolov8_functions.residual_plot(measured_data_x, true_data_x, "X", statistics_path)
-    yolov8_functions.histogram_of_errors(true_data_x - measured_data_x, "X", statistics_path)
-    yolov8_functions.qq_plot(true_data_x - measured_data_x, "X", statistics_path)
+    yolov8_functions.histogram_of_errors(abs(true_data_x - measured_data_x), "X", statistics_path)
+    yolov8_functions.qq_plot(abs(true_data_x - measured_data_x), "X", statistics_path)
     yolov8_functions.bland_altman_plot(measured_data_x, true_data_x, "X", statistics_path)
-    yolov8_functions.box_plot(true_data_x - measured_data_x, "X", statistics_path)
+    yolov8_functions.box_plot(abs(true_data_x - measured_data_x), "X", statistics_path)
     yolov8_functions.heatmap(measured_data_x, true_data_x, "X", statistics_path)
     yolov8_functions.violin_plot_of_differences(measured_data_x, true_data_x, "X", statistics_path)
 
@@ -381,10 +381,10 @@ if (len(predictedCoord_arr) != 0):
     # y coordinate
     yolov8_functions.scatter_plot(measured_data_y, true_data_y, "Y", statistics_path)
     yolov8_functions.residual_plot(measured_data_y, true_data_y, "Y", statistics_path)
-    yolov8_functions.histogram_of_errors(true_data_y - measured_data_y, "Y", statistics_path)
-    yolov8_functions.qq_plot(true_data_y - measured_data_y, "Y", statistics_path)
+    yolov8_functions.histogram_of_errors(abs(true_data_y - measured_data_y), "Y", statistics_path)
+    yolov8_functions.qq_plot(abs(true_data_y - measured_data_y), "Y", statistics_path)
     yolov8_functions.bland_altman_plot(measured_data_y, true_data_y, "Y", statistics_path)
-    yolov8_functions.box_plot(true_data_y - measured_data_y, "Y", statistics_path)
+    yolov8_functions.box_plot(abs(true_data_y - measured_data_y), "Y", statistics_path)
     yolov8_functions.heatmap(measured_data_y, true_data_y, "Y", statistics_path)
     yolov8_functions.violin_plot_of_differences(measured_data_y, true_data_y, "Y", statistics_path)
 
