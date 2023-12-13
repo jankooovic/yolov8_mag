@@ -57,4 +57,7 @@ for m in models:
                 hsv_h = 0,
                 hsv_s = 0,
                 hsv_v = 0,
+                # multi GPUs
+                device=[0,1],
+                data_parallel=True
             )
