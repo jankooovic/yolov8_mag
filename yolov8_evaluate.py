@@ -402,3 +402,14 @@ if (len(predictedCoord_arr) != 0):
     # Save JSON file with data
     filename = statistics_path + "/" + "variability_Y"
     yolov8_functions.create_json_datafile(dictionary, filename)
+
+
+    # Points plots
+    test_arrs = [fhc_points_t, aF1_points_t, fnoc_points_t, tkc_points_t, sfdma1_points_t, sfdma2_points_t, stma1_points_t, stma2_points_t, tml_points_t]
+    predicted_arrs = [fhc_points_p, aF1_points_p, fnoc_points_p, tkc_points_p, sfdma1_points_p, sfdma2_points_p, stma1_points_p, stma2_points_p, tml_points_p]
+    for idx, name in enumerate(landmark_names):
+
+        test_data_x, test_data_y = yolov8_functions.extract_points(test_arrs[idx])
+        predicted_data_x, predicted_data_y = yolov8_functions.extract_points(predicted_arrs[idx])
+        yolov8_functions.box_plot(abs(test_data_x - predicted_data_x, name) + " X", statistics_path)
+        yolov8_functions.box_plot(abs(test_data_y - predicted_data_y, name) + " Y", statistics_path)
