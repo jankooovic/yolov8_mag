@@ -30,7 +30,7 @@ lr0 = 0.01
 Sample command: model.train(data='config.yaml', epochs=100, imgsz=640) 
 """
 
-img_sizes = [1920 ,3680] #960, 1280, 1920, 2016, 3040, 3680
+img_sizes = [3680] #960, 1280, 1920, 2016, 3040, 3680
 models = ["SGD"] # "SGD", "Adamax", "Adam"
 config = 'config/config_ALL.yaml'
 
