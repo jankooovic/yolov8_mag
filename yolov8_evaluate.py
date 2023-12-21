@@ -155,11 +155,13 @@ for idx, path in enumerate(to_evaluate_json_paths):
         "Image_size": img_size,
         }
     
+    """
+    print("Predicted:",predicted_coordinates)
     # round predicted coordinates
     for idx, coord in enumerate(predicted_coordinates):
-        predicted_coordinates[idx] = [math.ceil(predicted_coordinates[idx][0]), math.ceil(predicted_coordinates[idx][1])]
-
-    """
+        predicted_coordinates[idx] = [predicted_coordinates[idx][0], predicted_coordinates[idx][1]]
+    print("After:", predicted_coordinates)
+    
     # sort points based on Y&X coordinates [FHC, aF1, TKC, FNOC, sFMDA, sTMA, TML] 
     test_coordinates = sorted(test_coordinates, key=lambda point: point[1])
     predicted_coordinates = sorted(predicted_coordinates, key=lambda point: point[1])
@@ -304,7 +306,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
                     percent_x = yolov8_functions.percentage(pp[coor_x], p[coor_x])
 
                     p = np.array(p)
-                    im = np.array(image)[p[1]-half_side:p[1]+half_side,p[0]-half_side:p[0]+half_side]
+                    im = np.array(image)[round(p[1]-half_side):round(p[1]+half_side),round(p[0]-half_side):round(p[0]+half_side)]
         
                     fig, ax = plt.subplots()
                     ax.plot(half_side, half_side, marker='x', color="black")  # test point
@@ -411,5 +413,5 @@ if (len(predictedCoord_arr) != 0):
 
         test_data_x, test_data_y = yolov8_functions.extract_points(test_arrs[idx])
         predicted_data_x, predicted_data_y = yolov8_functions.extract_points(predicted_arrs[idx])
-        yolov8_functions.box_plot(abs(test_data_x - predicted_data_x, name) + " X", statistics_path)
-        yolov8_functions.box_plot(abs(test_data_y - predicted_data_y, name) + " Y", statistics_path)
+        yolov8_functions.box_plot(abs(test_data_x - predicted_data_x), name + " X", statistics_path)
+        yolov8_functions.box_plot(abs(test_data_y - predicted_data_y), name + " Y", statistics_path)

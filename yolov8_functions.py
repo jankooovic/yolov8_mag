@@ -78,7 +78,7 @@ def get_points(json_file_path, scale_factor):
 
         # faktor za translacijo med RAS/LPS v voxels
         center = (center[0] * scale_factor, center[1] * scale_factor)
-        points = [round(center[0]), round(center[1])]
+        points = [center[0], center[1]]
         return points, "good"
     
     elif len(control_points) == 2:
@@ -90,8 +90,8 @@ def get_points(json_file_path, scale_factor):
         p2_z = p[2]
 
         # faktor za translacijo med RAS/LPS v voxels
-        point1 = [round(p1_x*scale_factor), round(p1_z*scale_factor)]
-        point2 = [round(p2_x*scale_factor), round(p2_z*scale_factor)]
+        point1 = [p1_x*scale_factor, p1_z*scale_factor]
+        point2 = [p2_x*scale_factor, p2_z*scale_factor]
         return [point1, point2], "sPoints"
 
     else:
@@ -101,7 +101,7 @@ def get_points(json_file_path, scale_factor):
 
         # faktor za translacijo med RAS/LPS v voxels
         points = (p1_x * scale_factor, p1_z * scale_factor)
-        points = [round(points[0]), round(points[1])]
+        points = [points[0], points[1]]
         return points, "good"
 
 def create_point_array(paths, scale_factor):

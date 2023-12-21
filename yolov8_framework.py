@@ -25,7 +25,7 @@ with open("yolov8_predict.py") as f:
 f.close()
 
 # Run yolov8_postprocess.py
-print("Executing yolov8_predict.py ...")
+print("Executing yolov8_postprocess.py ...")
 with open("yolov8_postprocess.py") as f:
     exec(f.read())
 f.close()
