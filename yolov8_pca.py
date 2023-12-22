@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
 import yolov8_functions
 import json
+from sklearn.decomposition import PCA
 
 # Dataset path:
 predicted_path = "./data/predicted/"
@@ -16,11 +17,24 @@ postprocess_path = "./data/postprocess/"
 skipped_path = 'data/postprocess/skipped.json'
 save_path = "./data/postprocess"
 images_path = "./data/dataset/ALL/images/test/"
-landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
+landmark_names_pca = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
 point_names_all = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA', 'sTMA', 'TML']
 skipped_path = "data/postprocess/skipped.json"
 false_prediction = []
 image_name = None
+
+# Test points
+aF1_points_t = []
+fhc_points_t = []
+fnoc_points_t = []
+tkc_points_t = []
+sfdma1_points_t = []
+sfdma2_points_t = []
+stma1_points_t = []
+stma2_points_t = []
+tml_points_t = []
+
+test_points_array = [aF1_points_t, fhc_points_t, fnoc_points_t, tkc_points_t, sfdma1_points_t, sfdma2_points_t, stma1_points_t, stma2_points_t, tml_points_t]
 
 # create dataset archive
 #yolov8_functions.dataset_archive(save_path)
@@ -64,7 +78,7 @@ for i, name in enumerate(to_skip):
     to_skip[i] = "data/dataset/JSON/" + to_skip_name + ".json"
 
 for skip in to_skip:
-    print(skip)
+    print("Skipping:",skip)
     if skip in to_evaluate_json_paths:
         to_evaluate_json_paths.remove(skip)
 
@@ -75,16 +89,14 @@ to_evaluate_json_paths = sorted(to_evaluate_json_paths)
 
 #print("Length test:", len(to_evaluate_json_paths), "Predicted test:", len(json_paths_predicted))
 
-predicted_coordinates = []
-test_coordinates = []
 
-for idx, path in enumerate(to_evaluate_json_paths):
+for idx, path in enumerate(json_paths_test):
     skip = False
-    print("Path:", path)
 
     # Test points json
     point_names = []
     img_size = []
+    test_coordinates = []
     with open(path) as f:
         data = json.load(f)
         for coord in point_names_all:
@@ -116,34 +128,75 @@ for idx, path in enumerate(to_evaluate_json_paths):
         img_size =  data['Image_size']  # x,y are swapped
         img_size = [img_size[1], img_size[0]]
 
-    # Predicted points json
-    path = json_paths_predicted[idx]
-    with open(path) as f:
-        data = json.load(f)
-        for name in landmark_names:
-            predicted_coordinates.append(data[name])
+    # assign points to its evaluation array ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
+    fhc_points_t.append(test_coordinates[0])
+    aF1_points_t.append(test_coordinates[1])
+    fnoc_points_t.append(test_coordinates[2])
+    tkc_points_t.append(test_coordinates[3])
+    sfdma1_points_t.append(test_coordinates[4])
+    sfdma2_points_t.append(test_coordinates[5])
+    stma1_points_t.append(test_coordinates[6])
+    stma2_points_t.append(test_coordinates[7])
+    tml_points_t.append(test_coordinates[8])
 
-
-print("Predicted coordinates", predicted_coordinates)
-print("Test coordinates", predicted_coordinates)
-
-from sklearn.decomposition import PCA
-
-def draw_vector(v0, v1, ax=None):
-    ax = ax or plt.gca()
-    arrowprops=dict(arrowstyle='->',
-                    linewidth=2,
-                    shrinkA=0, shrinkB=0)
-    ax.annotate('', v1, v0, arrowprops=arrowprops)
-
+### PCA ###
 # The fit learns some quantities from the data, most importantly the "components" and "explained variance":
-pca = PCA().fit(test_coordinates)
+pca_fhc = PCA().fit(fhc_points_t)
+pca_af1 = PCA().fit(aF1_points_t)
+pca_fnoc = PCA().fit(fnoc_points_t)
+pca_tkc = PCA().fit(tkc_points_t)
+pca_sfdma1 = PCA().fit(sfdma1_points_t)
+pca_sfdma2 = PCA().fit(sfdma2_points_t)
+pca_stma1 = PCA().fit(stma1_points_t)
+pca_stma2 = PCA().fit(stma2_points_t)
+pca_tml = PCA().fit(tml_points_t)
 
+pca_arr = [pca_fhc, pca_af1, pca_fnoc, pca_tkc, pca_sfdma1, pca_sfdma2, pca_stma1, pca_stma2, pca_tml]
+
+"""
 # PCA components
 print(pca.components_)
 # PCA variance
 print(pca.explained_variance_)
+"""
 
+for idx, path in enumerate(to_evaluate_json_paths):
+    skip = False
+    print("Path:", path)
+
+    # Predicted points json
+    # tukaj naredi, da grem direkt iz predict-a v to, da uporabi vse točke in naredi kombinacije teh točk, katera je najboljša?
+    predicted_coordinates = []
+    path = json_paths_predicted[idx]
+    with open(path) as f:
+        data = json.load(f)
+        for name in landmark_names_pca:
+            predicted_coordinates.append(data[name])
+
+    #print(predicted_coordinates)
+    # PCA noise filtering
+    for idx, p in enumerate(predicted_coordinates):
+        pca = pca_arr[idx]
+        components = pca.transform([p])
+        filtered = pca.inverse_transform(components)
+
+    for idx, p in enumerate(test_coordinates):
+        plt.scatter(p[0], p[1], alpha=0.6, marker="o", c="Green")
+    for idx, p in enumerate(predicted_coordinates):
+        plt.scatter(p[0],p[1], alpha=0.8, marker="+", c="Black")
+    for idx, p in enumerate(filtered):
+        plt.scatter(p[0],p[1], alpha=0.8, marker="x", c="Red")
+    plt.show()
+
+
+#print("Predicted coordinates", predicted_coordinates)
+#print("Test coordinates", predicted_coordinates)
+
+
+
+
+# Per image naredi, da naredi filtracijo - funkcija, ki vrne samo točke ... 
+"""
 # noisy data
 pca = PCA(0.50).fit(predicted_coordinates)
 print("PCA predicted components at 50%:",pca.n_components_)
@@ -151,6 +204,17 @@ print("PCA predicted components at 50%:",pca.n_components_)
 components = pca.transform(predicted_coordinates)
 filtered = pca.inverse_transform(components)
 print(filtered)
+
+
+# plot data
+for idx, p in enumerate(test_coordinates):
+    plt.scatter(p[0], p[1], alpha=0.6, marker="o", c="Green")
+for idx, p in enumerate(predicted_coordinates):
+    plt.scatter(p[0],p[1], alpha=0.8, marker="+", c="Black")
+for idx, p in enumerate(filtered):
+    plt.scatter(p[0],p[1], alpha=0.8, marker="x", c="Red")
+plt.show()
+"""
 
 # prikaz točk na slikah per point - evaluate fora
 # izračun razlik med točkami in če jih dejansko doda/odstrani še preveri

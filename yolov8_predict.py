@@ -82,7 +82,7 @@ for directory in directories:
                 y = point[0][0][1]
                 landmark = [x,y]
 
-                # get label abd point names from result
+                # get label and point names from result
                 label = int(result.boxes.cls[idx])
                 label = landmark_names[label]
 
