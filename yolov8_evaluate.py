@@ -342,7 +342,7 @@ if (len(predictedCoord_arr) != 0):
         "Average sTMA1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(stma1_points_p, stma1_points_t),
         "Average sTMA2 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(stma2_points_p, stma2_points_t),
         "Average TML error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(tml_points_p, tml_points_t),
-        "Images with <10 percent error": skipped,
+        "Images with >10 percent error": skipped,
         "False predictions": to_skip,
         "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
         "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
