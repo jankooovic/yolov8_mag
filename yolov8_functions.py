@@ -532,3 +532,12 @@ def aF1_y_algorithm(fnoc, fhc):
 
     aF1_y = ((abs(fhc_y - fnoc_y))/2) + fhc_y
     return aF1_y
+
+def flatten(lst):
+    flattened = []
+    for item in lst:
+        if isinstance(item, list):
+            flattened.extend(flatten(item))
+        else:
+            flattened.append(item)
+    return flattened

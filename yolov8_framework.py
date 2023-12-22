@@ -20,7 +20,7 @@ f.close()
 
 # Run yolov8_predict.py
 print("Executing yolov8_predict.py ...")
-with open("yolov8_predict.py") as f:
+with open("yolov8_predict_pca.py") as f:
     exec(f.read())
 f.close()
 

@@ -8,6 +8,7 @@ import yolov8_functions
 import re
 from sklearn.decomposition import PCA
 import json
+from scipy.spatial.distance import euclidean
 
 # Dataset path:
 dataset_path = "./data/dataset/"
@@ -26,7 +27,7 @@ test_path = "./data/dataset/JSON/"
 test_images_path =  "./data/dataset/ALL/images/test/"
 postprocess_path = "./data/postprocess/"
 skipped_path = 'data/postprocess/skipped.json'
-save_path = "./data/postprocess"
+#save_path = "./data/postprocess"
 images_path = "./data/dataset/ALL/images/test/"
 landmark_names_pca = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
 point_names_all = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA', 'sTMA', 'TML']
@@ -44,12 +45,8 @@ stma1_points_t = []
 stma2_points_t = []
 tml_points_t = []
 
-
-
-
-
 # create dataset archive
-#yolov8_functions.dataset_archive(save_path)
+yolov8_functions.dataset_archive(save_path)
 
 
 ### PCA learning on test points ###
@@ -107,19 +104,30 @@ for idx, path in enumerate(json_paths_test):
     tml_points_t.append(test_coordinates[8])
 
 # The fit learns some quantities from the data, most importantly the "components" and "explained variance":
-pca_fhc = PCA().fit(fhc_points_t)
-pca_af1 = PCA().fit(aF1_points_t)
-pca_fnoc = PCA().fit(fnoc_points_t)
-pca_tkc = PCA().fit(tkc_points_t)
-pca_sfdma1 = PCA().fit(sfdma1_points_t)
-pca_sfdma2 = PCA().fit(sfdma2_points_t)
-pca_stma1 = PCA().fit(stma1_points_t)
-pca_stma2 = PCA().fit(stma2_points_t)
-pca_tml = PCA().fit(tml_points_t)
+# Step 1: Fit PCA on training/reference data
+num = 2
+pca_fhc = PCA(n_components=num).fit(fhc_points_t)
+pca_af1 = PCA(n_components=num).fit(aF1_points_t)
+pca_fnoc = PCA(n_components=num).fit(fnoc_points_t)
+pca_tkc = PCA(n_components=num).fit(tkc_points_t)
+pca_sfdma1 = PCA(n_components=num).fit(sfdma1_points_t)
+pca_sfdma2 = PCA(n_components=num).fit(sfdma2_points_t)
+pca_stma1 = PCA(n_components=num).fit(stma1_points_t)
+pca_stma2 = PCA(n_components=num).fit(stma2_points_t)
+pca_tml = PCA(n_components=num).fit(tml_points_t)
 
 pca_arr = [pca_fhc, pca_af1, pca_fnoc, pca_tkc, pca_sfdma1, pca_sfdma2, pca_stma1, pca_stma2, pca_tml]
+pca_points_arr = [fhc_points_t, aF1_points_t, fnoc_points_t, tkc_points_t, sfdma1_points_t, sfdma2_points_t, stma1_points_t, stma2_points_t, tml_points_t]
 
-
+# get average point coordinates
+pca_average_points = []
+for points in pca_points_arr:
+    average = yolov8_functions.get_average(points)
+    average_point = []
+    for p in average:
+        average_point.append(p)
+    pca_average_points.append(average_point)
+#print(pca_average_points)
 
 
 ### Preedictions by YOLO model ###  
@@ -171,6 +179,7 @@ for directory in directories:
         skipped_labels = []
         removed_points = []
         removed_labels = []
+        missing_labels = []
         i = 0
         conf_box = []
         conf_pose = []
@@ -187,119 +196,158 @@ for directory in directories:
                 label = int(result.boxes.cls[idx])
                 label = landmark_names[label]
 
+                """
                 if landmark[0] < img_shape[0]*0.15 or landmark[0] > img_shape[0]*0.85:
                     skipped_points.append(landmark)
                     skipped_labels.append(label)
                     continue
+                """
 
                 labels.append(label)
                 landmarks.append(landmark)
                 #conf_box.append(float(result.boxes.conf[idx]))
                 #conf_pose.append(float(result.keypoints.conf[idx]))
 
-        print("Lables:", labels)
-        print("Landmarks:", landmarks)
+        #print("Lables:", labels)
+        #print("Landmarks:", landmarks)
 
-        # PCA noise filtering
- 
+        # PCA noise filtering and missing coordinate determination 
+        # - preveri kako se anredi, da izboljšam pozicijo glede na ostale točke ...
+        # preveri, kako se naredi, da določim FHC točko ... 
+
+        # check landmarks for missing labels
+        missing = {x for x in landmark_names if labels.count(x) == 0}
+        missing = list(missing)
+        missing_labels.append(missing)
+
+        """
+        for miss in missing:
+            print("Missing:", miss)
+
+            # chose correct PCA method based on duplicate point name
+            idx = yolov8_functions.get_indices(miss, landmark_names_pca)
+
+            # PCA choice 
+            print("Choosing PCA:", landmark_names_pca[idx[0]])
+            pca = pca_arr[idx[0]]
+
+            # Step 2: Transform new coordinates using the fitted PCA model
+            predicted_pca = pca.transform([pca_average_points[idx[0]]])
+            print("Average " + landmark_names_pca[idx[0]], pca_average_points[idx[0]])
+            print("PCA predicted FHC point:", predicted_pca)
+        """
+
         # check landmarks for duplicate labels
         duplicates = {x for x in labels if labels.count(x) > 1}
         duplicates = list(duplicates)
 
         # get array indexes for duplicates
         duplicate_occurances = []
+        removal_arr = []
         for dup in duplicates:
+            #print("Duplicate:", dup)
             duplicate_occurances = yolov8_functions.get_indices(dup, labels)
 
-        # check landmarks for missing labels
-        missing = {x for x in landmark_names if labels.count(x) == 0}
-        missing = list(missing)
+            # check landmarks for duplicate labels
+            duplicate_coords = []
+            for idx in duplicate_occurances:
+                duplicate_coords.append(landmarks[idx])
 
-        duplicate_coords = []
-        for idx in duplicate_occurances:
-            duplicate_coords.append(landmarks[idx])
-
-        print("Duplicates:", duplicates)
-        print("Missing:", missing)
-        print("Duplicate indexes:", duplicate_occurances)
-        print("Duplicate coordinates:", duplicate_coords)
-
-        # zgoraj funkcije premakni v tole, ker rabim PCA za vsak duplicate ...
-
-        # chose correct PCA method based on duplicate point name
-        for dup in duplicates:
-            # get array index for PCA choice
+            # chose correct PCA method based on duplicate point name
             idx = yolov8_functions.get_indices(dup, landmark_names_pca)
-            # PCA choice 
-            pca = pca_arr[idx[0]]
-            # cooridnates for duplicates % 
+            #print("idx:", idx)
+            #print("Duplicate point name:", landmark_names_pca[idx[0]])
 
-            """
-            components = pca.transform([p])
-            filtered = pca.inverse_transform(components)
-            print(filtered)
-            """
+            # PCA choice 
+            #print("Choosing PCA:", landmark_names_pca[idx[0]])
+            pca = pca_arr[idx[0]]
+
+            # Step 2: Transform new coordinates using the fitted PCA model
+            predicted_pca = pca.transform(duplicate_coords)
+
+            # Step 3: Filter out less accurate points based on Euclidean distance in the reduced space
+            center = np.mean(pca.transform(pca_points_arr[idx[0]]), axis=0)
+            distances = np.array([euclidean(point, center) for point in predicted_pca])
+            #print("Distances:", distances)
+
+            best_idx = 1000000
+            best_dist = 1000000
+            for idx, dist in enumerate(distances):
+                if dist < best_dist:
+                    best_idx = idx
+                    best_dist = dist
+            to_remove = duplicate_occurances
+            del to_remove[best_idx]
+            removal_arr.append(to_remove)
+
+            #print("Filtered best idx:", best_idx)
+            #print("Best distance:", best_dist)
+
+            # Index the new_coordinates array using the smallest distance index
+            filtered_points = duplicate_coords[best_idx]
+
+            # cooridnates for duplicates
+            #print("Duplicate coordinates:", duplicate_coords)
+            #print("Filtered coordinates:",filtered_points)
 
             
+        # remove other occurances from labels, landmarks, etc
+        removal_arr = yolov8_functions.flatten(removal_arr)
+        removal_arr.sort(reverse=True)
+        #print(removal_arr)
+        #print("To remove indexes:", removal_arr)
+        for idx in removal_arr:
+            removed_labels.append(labels[idx])
+            del labels[idx]
+            removed_points.append(landmarks[idx])
+            del landmarks[idx]
         
-            print("point indexes:", idx)
-            print("Point for PCA:", landmark_names_pca[idx[0]])
+        #print("Duplicates:", duplicates)
+        #print("Missing:", missing)
 
-        # make PCA prediction
         """
-        for idx, p in enumerate(duplicate_coords):
-            pca = pca_arr[idx]
-            components = pca.transform([p])
-            filtered = pca.inverse_transform(components)
-            print(filtered)
+        # narejeno v postprocess skripti
+        # check for FHC, FNOC & aF1 - dodaj, da ne rabi obstajati aF1 in določi x naknadno glede na y vrednost...
+        # x koord je tam kjer je najvišja belost? ker je v sredini kosti
+        fhc_p, fnoc_p, aF1_p = False, False, False
+        aF1_idx = 0
+        for idx, lable in enumerate(labels):
+            if lable == 'FHC':
+                fhc_p = True
+                fhc_idx = idx
+            elif lable == 'FNOC':
+                fnoc_p = True
+                fnoc_idx = idx
+            elif lable == "aF1":
+                aF1_p = True
+                aF1_idx = idx
+
+        # if FHC, aF1 & FNOC exist do aF1 algorithm 
+        if (fhc_p and fnoc_p and aF1_p):
+            point_aF1 = landmarks[aF1_idx]
+            point_fnoc = landmarks[fnoc_idx]
+            point_fhc = landmarks[fhc_idx]
+            # aF1 algorithm
+            af1_y = yolov8_functions.aF1_y_algorithm(point_fnoc, point_fhc)
+            aF1 = [point_aF1[0], af1_y]
+
+            # rewrite aF1 point
+            landmarks[aF1_idx] = aF1
         """
 
-        """ 
-            # sortiranje glede na confidence level
-            # check landmarks for duplicates
-            if len(labels) > 9:
-
-                duplicates = {x for x in labels if labels.count(x) > 1}
-                duplicates = list(duplicates)
-
-                # get array indexes for duplicates
-                remove_occurances = []
-                for dup in duplicates:
-                    occurances = yolov8_functions.get_indices(dup, labels)
-
-                    # get confidence for each duplicate
-                    confs = []
-                    for idx in occurances:
-                        conf = conf_box[idx] + conf_pose[idx]
-                        confs.append(conf)
-                    
-                    # get highest confidence of all duplicates or first highest confidence - upgrade to average
-                    highest_conf_idx = confs.index(max(confs))
-                    del occurances[highest_conf_idx]
-
-                    for occ in occurances:
-                        remove_occurances.append(occ)
-
-                # remove other occurances from labels, landmarks, etc
-                remove_occurances.sort(reverse=True)
-                for idx in remove_occurances:
-                    del labels[idx]
-                    del landmarks[idx]
-                    del conf_box[idx]
-                    del conf_pose[idx]
-        
-            for idx, landmark in enumerate(landmarks):
-                dictionary.update({
-                    labels[idx]:landmark,
-                })
-
+        for idx, landmark in enumerate(landmarks):
             dictionary.update({
-                    "Skipped points":skipped_points,
-                    "Skipped labels":skipped_labels,
-                    "Removed points":removed_points,
-                    "removed labels":removed_labels
-                })
+                labels[idx]:landmark,
+            })
+
+        dictionary.update({
+                "Skipped points":skipped_points,
+                "Skipped labels":skipped_labels,
+                "Removed points":removed_points,
+                "Removed labels":removed_labels,
+                "Missing labels":missing_labels
+            })
 
         yolov8_functions.save_prediction_image(landmarks, temp, filename)
         yolov8_functions.create_json_datafile(dictionary, filename)
-        """
+

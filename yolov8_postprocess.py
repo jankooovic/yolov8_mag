@@ -110,6 +110,7 @@ for idx, img_path in enumerate(image_paths):
     point_stma2 = predicted_coordinates[7]
     point_tml = predicted_coordinates[8]
 
+    # naredi, da vzame samo odsek slike
     closest_contour_fnoc, point_on_contour_fnoc = yolov8_functions.find_point_on_contour(contours, point_fnoc)
 
     # update fnoc coordinate 
