@@ -62,7 +62,7 @@ for config in configs:
         patience=50,
         batch=16,
         lr0 = 0.01,
-        optimizer=m,
+        optimizer=model,
         # Data augemntation parameters
         degrees=10,
         scale=0.1,
