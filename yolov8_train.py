@@ -46,7 +46,7 @@ configs = {
   'config/config_TKC.yaml': zoomed_size,
 }
 
-opt = ["SGD"] # "SGD", "Adamax", "Adam"
+opt = "SGD" # "SGD", "Adamax", "Adam"
 #img_sizes = [3680] #960, 1280, 1920, 2016, 3040, 3680
 
 ### Train model - per config file
