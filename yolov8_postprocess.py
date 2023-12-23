@@ -15,6 +15,7 @@ landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTM
 skipped_path = "data/postprocess/skipped.json"
 false_prediction = []
 image_name = None
+square_size_ratio = 0.2
 
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
@@ -77,28 +78,7 @@ for idx, img_path in enumerate(image_paths):
          continue
     #print("Image path:", img_path, "Point:", json_paths_predicted[idx])
     #print("Predicted coordinates:", predicted_coordinates)
-
-    # load image
-    image = cv2.imread(img_path)
-
-    # Apply Gaussian blur to reduce noise and improve edge detection
-    blurred = cv2.GaussianBlur(image, (5, 5), 0)
-
-    # Apply Canny edge detector
-    edges = cv2.Canny(blurred, 20, 80)
-
-    # Define a kernel for dilation and erosion
-    kernel = np.ones((3, 3), np.uint8)
-
-    # Dilate the edges to connect them and make them thicker
-    dilated_edges = cv2.dilate(edges, kernel, iterations=1)
-
-    # Erode the edges to make them thinner and smoother
-    smoothed_edges = cv2.erode(dilated_edges, kernel, iterations=1)
-
-    # Find contours
-    contours, _ = cv2.findContours(smoothed_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+       
     # Define the points to find on edges ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
     point_fhc = predicted_coordinates[0]
     point_aF1 = predicted_coordinates[1]
@@ -110,15 +90,54 @@ for idx, img_path in enumerate(image_paths):
     point_stma2 = predicted_coordinates[7]
     point_tml = predicted_coordinates[8]
 
-    # naredi, da vzame samo odsek slike
-    closest_contour_fnoc, point_on_contour_fnoc = yolov8_functions.find_point_on_contour(contours, point_fnoc)
+    # load image
+    image = cv2.imread(img_path)
 
-    # update fnoc coordinate 
+    """
+    # get zoomed image around FNOC point
+    filename = postprocess_path + image_name + "_FNOC"
+    zooomed_part = yolov8_functions.get_zoomed_image_part(img_shape, square_size_ratio, point_fnoc, image, filename)
+    zoomed_img_shape = zooomed_part.shape
+    zoomed_point = [zoomed_img_shape[0]/2, zoomed_img_shape[1]/2]
+    print("Zoomed point:", zoomed_point)
+    #plt.imshow(zooomed_part)
+    #plt.show()
+    """
+
+    # Apply Gaussian blur to reduce noise and improve edge detection
+    blurred = cv2.GaussianBlur(image, (5, 5), 0)
+    #plt.imshow(blurred)
+    #plt.show()
+
+    # Apply Canny edge detector
+    edges = cv2.Canny(blurred, 20, 80)
+    #plt.imshow(edges)
+    #plt.show()
+
+    # Define a kernel for dilation and erosion
+    kernel = np.ones((3, 3), np.uint8)
+
+    # Dilate the edges to connect them and make them thicker - tukaj mogoče naredi interpolacijo ...
+    dilated_edges = cv2.dilate(edges, kernel, iterations=1)
+    #plt.imshow(dilated_edges)
+    #plt.show()
+
+    # Erode the edges to make them thinner and smoother
+    smoothed_edges = cv2.erode(dilated_edges, kernel, iterations=1)
+    #plt.imshow(smoothed_edges)
+    #plt.show()
+
+    # Find contours
+    contours, _ = cv2.findContours(smoothed_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    closest_contour_fnoc, point_on_contour_fnoc = yolov8_functions.find_point_on_contour(contours, point_fnoc)
+    point_change = [point_fnoc[0] - point_on_contour_fnoc[0], point_fnoc[1] - point_on_contour_fnoc[1]]
+
+    # update fnoc coordinate
     predicted_coordinates[2] = point_on_contour_fnoc
 
     """
     # Display the original image with closest contour
-    image_with_closest_contour = image.copy()
+    image_with_closest_contour = zooomed_part.copy()
     #cv2.drawContours(image_with_contours, contours, -1, (0, 255, 0), 2)
     cv2.drawContours(image_with_closest_contour, [closest_contour_fnoc], -1, (0, 255, 0), 2)
     

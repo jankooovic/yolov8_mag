@@ -220,6 +220,8 @@ for directory in directories:
         missing = list(missing)
         missing_labels.append(missing)
 
+        # if missing label use second model for specific labels and try to determine ...
+
         """
         for miss in missing:
             print("Missing:", miss)
