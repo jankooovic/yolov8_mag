@@ -260,6 +260,12 @@ for directory in directories:
 
             landmarks_zoomed = [] # landmarks list
             labels_zoomed = [] # labels list
+
+            # check if there are results, if None skip and make it missing - popravi še zgoraj ko narediš
+            if results == None:
+                continue
+                missing_labels.append(missing)
+
             for result in results:
                 for idx, keypoint in enumerate(result.keypoints):
                     point = keypoint.xy.tolist()
