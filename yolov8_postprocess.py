@@ -78,6 +78,10 @@ for idx, img_path in enumerate(image_paths):
          continue
     #print("Image path:", img_path, "Point:", json_paths_predicted[idx])
     #print("Predicted coordinates:", predicted_coordinates)
+
+    """
+    Dodaj, da z manjšimi modeli per point pogleda še enkrat zoomed slike, če najde boljše lokacije 
+    """
        
     # Define the points to find on edges ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
     point_fhc = predicted_coordinates[0]
