@@ -35,7 +35,7 @@ Sample command: model.train(data='config.yaml', epochs=100, imgsz=640)
 zoomed_size = 640
 all_size = 1920
 configs = {
-  #'config/config_ALL.yaml': all_size,
+  'config/config_ALL.yaml': all_size,
   'config/config_FHC.yaml': zoomed_size,
   'config/config_FNOC.yaml': zoomed_size,
   'config/config_TKC.yaml': zoomed_size,
