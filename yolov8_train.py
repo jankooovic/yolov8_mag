@@ -43,7 +43,7 @@ configs = {
   'config/config_sTMA2.yaml': zoomed_size,
   'config/config_sFMDA1.yaml': zoomed_size,
   'config/config_sFMDA2.yaml': zoomed_size,
-  'config/config_TKC.yaml': zoomed_size,
+  'config/config_TML.yaml': zoomed_size,
 }
 
 opt = "SGD" # "SGD", "Adamax", "Adam"

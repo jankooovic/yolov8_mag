@@ -16,22 +16,21 @@ save_path = "./data/predicted"
 test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sTMA', 'sFDMA']
 landmark_names = ['sTMA1', 'sTMA2', 'FHC', 'sFMDA1', 'sFMDA2','TKC', 'TML', 'FNOC', 'aF1'] # based on labels in config file
-imgsize = 1920 # check if the same as trained model
+imgsize = 3680 # check if the same as trained model
 zoomed_img_size = 640
 square = 0.1    # square size
 num_parts = 3   # number of parts on image
 #model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
 model_paths = {
     "ALL" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
-    "sTMA1" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
-    "sTMA2" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
-    "FHC" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
-    "sFMDA2" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
-    "sFMDA1" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
-    "TKC" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
-    "TML" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
-    "FNOC" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt"
-
+    "sTMA1" : "./runs/pose/train_SGD_sTMA1_"+ str(zoomed_img_size) + "/weights/best.pt",
+    "sTMA2" : "./runs/pose/train_SGD_sTMA2_"+ str(zoomed_img_size) + "/weights/best.pt",
+    "FHC" : "./runs/pose/train_SGD_FHC_"+ str(zoomed_img_size) + "/weights/best.pt",
+    "sFMDA2" : "./runs/pose/train_SGD_sFDMA2_"+ str(zoomed_img_size) + "/weights/best.pt",
+    "sFMDA1" : "./runs/pose/train_SGD_sFDMA1_"+ str(zoomed_img_size) + "/weights/best.pt",
+    "TKC" : "./runs/pose/train_SGD_TKC_"+ str(zoomed_img_size) + "/weights/best.pt",
+    "TML" : "./runs/pose/train_SGD_TML_"+ str(zoomed_img_size) + "/weights/best.pt",
+    "FNOC" : "./runs/pose/train_SGD_FNOC"+ str(zoomed_img_size) + "/weights/best.pt"
     }
 skipped = []
 
@@ -241,12 +240,12 @@ for directory in directories:
         # if missing label use second model for specific labels and try to determine ...
         for miss in missing:
             print("Missing:", miss)
-
-            model_path = model_paths.get(miss, None)
-            print("Missing model path:", model_path)
-            print("Image size:", zoomed_img_size)
-
+            # ne najde točk ...
             """
+            model_path = model_paths.get(miss, None)
+            #print("Missing model path:", model_path)
+            #print("Image size:", zoomed_img_size)
+
             # get zoomed image
             img, p_toChange, changed_image_shape, changed_img_ratio = yolov8_functions.slice_image_3_parts(img_shape, square, [0,0], img, miss, None)
             # p_toChange je vrednost, ki jo dodam/odštejem, da dobim nazaj original točko
@@ -260,14 +259,25 @@ for directory in directories:
             landmarks_zoomed = [] # landmarks list
             labels_zoomed = [] # labels list
 
-            # check if there are results, if None skip and make it missing - popravi še zgoraj ko narediš
-            if results == None:
-                continue
+            # check if there are results, if None skip and make it missing - popravi še zgoraj ko narediš - missing labels
+            #print(results)
+            false_continue = False
+            for result in results:
+                for idx, keypoint in enumerate(result.keypoints):
+                    point = keypoint.xy.tolist()
+                    if point == [[]]:
+                        false_continue = True
+                        print("No results!")
+                
+            if false_continue:
                 missing_labels.append(missing)
+                continue
 
             for result in results:
                 for idx, keypoint in enumerate(result.keypoints):
                     point = keypoint.xy.tolist()
+                    
+                    #print(point)
 
                     x = point[0][0][0]
                     y = point[0][0][1]
@@ -282,6 +292,8 @@ for directory in directories:
                     # tukaj dodam direkt v labels in landmarks in potem itak naprej duplikate odstranijujem kasneje
                     # ce ni rezultata je false predicted in sliko lepo dam v skipped
 
+            print("Zoomed labels:", labels_zoomed)
+            print("Zoomed landmarks:", landmarks_zoomed)
             """
 
         # check landmarks for duplicate labels
