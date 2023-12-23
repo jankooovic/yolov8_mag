@@ -1,4 +1,4 @@
-# MAC
+"""# MAC
 path: /Users/jankovic/Documents/yolov8/data/dataset/TML
 train: images/train  # train images (relative to 'path')
 val: images/val  # val images (relative to 'path')
@@ -7,6 +7,7 @@ val: images/val  # val images (relative to 'path')
 path: C:\Users\jank\Documents\Seafile\yolov8_new_location\data\dataset\TML\
 train: images\train\  # train images (relative to 'path')
 val: images\val\  # val images (relative to 'path')
+"""
 
 # RunPod.io
 path: /workspace/yolov8_mag/data/dataset/TML
