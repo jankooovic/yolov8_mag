@@ -212,8 +212,6 @@ for directory in directories:
         #print("Landmarks:", landmarks)
 
         # PCA noise filtering and missing coordinate determination 
-        # - preveri kako se anredi, da izboljšam pozicijo glede na ostale točke ...
-        # preveri, kako se naredi, da določim FHC točko ... 
 
         # check landmarks for missing labels
         missing = {x for x in landmark_names if labels.count(x) == 0}
