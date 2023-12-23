@@ -1,16 +1,17 @@
 """ Train YOLOv8-pose model on the COCO128-pose dataset. """
 from ultralytics import YOLO
 
-"""
 ### Load a model - nano 3.3M params
 model = YOLO('yolov8n-pose.yaml')   # build a new model from YAML
 model = YOLO('yolov8n-pose.pt')  # load a pretrained model
 model = YOLO('yolov8n-pose.yaml').load('yolov8n-pose.pt')   # build from YAML and transfer weights
+
 """
 ### Load a model - small 11.6M params
 model = YOLO('yolov8s-pose.yaml')   # build a new model from YAML
 model = YOLO('yolov8s-pose.pt')  # load a pretrained model
 model = YOLO('yolov8s-pose.yaml').load('yolov8s-pose.pt')   # build from YAML and transfer weights
+"""
 
 """
 # Re-Train the model:
@@ -30,33 +31,49 @@ lr0 = 0.01
 Sample command: model.train(data='config.yaml', epochs=100, imgsz=640) 
 """
 
-img_sizes = [3680] #960, 1280, 1920, 2016, 3040, 3680
-models = ["SGD"] # "SGD", "Adamax", "Adam"
-config = 'config/config_ALL.yaml'
+# naredi dictionary z vrednostmi !!!
+zoomed_size = 640
+all_size = 1920
+configs = {
+  'config/config_ALL.yaml': all_size,
+  'config/config_FHC.yaml': zoomed_size,
+  'config/config_FNOC.yaml': zoomed_size,
+  'config/config_TKC.yaml': zoomed_size,
+  'config/config_sFTMA1.yaml': zoomed_size,
+  'config/config_sFTMA2.yaml': zoomed_size,
+  'config/config_sFMDA1.yaml': zoomed_size,
+  'config/config_sFMDA2.yaml': zoomed_size,
+  'config/config_TKC.yaml': zoomed_size,
+}
+model = ["SGD"] # "SGD", "Adamax", "Adam"
+#img_sizes = [3680] #960, 1280, 1920, 2016, 3040, 3680
 
 ### Train model - per config file
-for m in models:
-        for img_size in img_sizes:
-            model.train(
-                data=config,
-                imgsz=img_size,
-                pretrained=True,
-                epochs=300,
-                patience=50,
-                batch=16,
-                lr0 = 0.01,
-                optimizer=m,
-                # Data augemntation parameters
-                degrees=10,
-                scale=0.1,
-                perspective=0.001,
-                # annoyance
-                translate=0,
-                fliplr=0,
-                mosaic=0,
-                hsv_h = 0,
-                hsv_s = 0,
-                hsv_v = 0,
-                # multi GPUs
-                #device=[0,1,2,3],
-            )
+for config in configs:
+
+    print("Image size:",configs[config])
+    print("Config:",config)
+    img_size = configs[config]
+    model.train(
+        data=config,
+        imgsz=img_size,
+        pretrained=True,
+        epochs=300,
+        patience=50,
+        batch=16,
+        lr0 = 0.01,
+        optimizer=m,
+        # Data augemntation parameters
+        degrees=10,
+        scale=0.1,
+        perspective=0.001,
+        # annoyance
+        translate=0,
+        fliplr=0,
+        mosaic=0,
+        hsv_h = 0,
+        hsv_s = 0,
+        hsv_v = 0,
+        # multi GPUs
+        #device=[0,1,2,3],
+    )

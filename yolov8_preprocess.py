@@ -6,6 +6,7 @@ workingDirPath = "./"
 path = "./data/RTG_dataset/"
 save_path = './data/dataset'
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'sFMDA', 'sTMA']
+landmark_names = ['sTMA1', 'sTMA2', 'FHC', 'sFMDA1', 'sFMDA2','TKC', 'TML', 'FNOC', 'aF1'] # based on labels in config file
 filter_val = 10000
 map_factor = 3.6
 square = 0.1    # square size
@@ -52,7 +53,7 @@ for n in nrrd_image_paths:
     else:
         data = "test"
     
-    yolov8_functions.main_func(save_path, name, data_arr, point_names, points, orig_image_shape, square, orig_img_ratio, data)
+    yolov8_functions.main_func(save_path, name, data_arr, landmark_names, points, orig_image_shape, square, orig_img_ratio, data)
 
 print("Processed " + str(len(nrrd_image_paths)) + " images!")
 print("Test images:", len(test))

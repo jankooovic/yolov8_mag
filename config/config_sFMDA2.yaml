@@ -1,0 +1,32 @@
+# MAC
+path: /Users/jankovic/Documents/yolov8/data/dataset/sFMDA2
+train: images/train  # train images (relative to 'path')
+val: images/val  # val images (relative to 'path')
+
+# Windows
+path: C:\Users\jank\Documents\Seafile\yolov8_new_location\data\dataset\sFMDA2\
+train: images\train\  # train images (relative to 'path')
+val: images\val\  # val images (relative to 'path')
+
+# RunPod.io
+path: /workspace/yolov8_mag/data/dataset/sFMDA2
+train: images/train  # train images (relative to 'path')
+val: images/val  # val images (relative to 'path')
+
+# Keypoints
+kpt_shape: [1, 3]  # [number of keypoints in data, number of dim]
+#v datoteki class.names definiraš imena točk
+flip_idx: [0] # What is the correct index when flipping image
+#flip_idx: [0, 1, 2, 3]
+
+# Classes
+names:
+  0: sFMDA2
+  
+#names:
+#  0: FHC #hip
+#  1: TKC #femur
+#  2: TML #knee
+#  3: aF1 #ankle
+
+

@@ -160,7 +160,7 @@ def create_landmarks_file(points, img_shape, sqr, rat, filename, point_name=""):
     n = 0
     for idx, point in enumerate(points):
 
-        if isinstance(point, int):
+        if isinstance(point, float):
             point = points
 
         x_percent, y_percent = get_coordinate_percent(point, img_shape) # get cooridnate width/heigth percentage
@@ -215,6 +215,28 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
 
     create_json_datafile(dictionary, f"{save_path}/JSON/{name}")
     create_landmarks_file(points, orig_image_shape, square, orig_img_ratio, f"{save_path}/ALL/labels/{data}/{name}")
+
+    ## create zoomed images for later learning per point - uporabi point_names + points
+    # get smaller pictures of landmarks for cascade learning
+    for i, point in enumerate(points):
+
+        img, p_changed, changed_image_shape, changed_img_ratio = slice_image_3_parts(orig_image_shape, square, point, data_arr, point_names[i], f"{save_path}/PNGs/{name}_{point_names[i]}")
+
+        filename = f"{save_path}/{point_names[i]}/images/{data}/{name}_{point_names[i]}"
+        matplotlib.image.imsave(f"{filename}.jpg", img, cmap="gray")
+
+        dictionary = {
+            "Image name": filename,
+            "Point name": point_names[i],
+            "Point coordinates": point, #x&y coordinates are reversed
+            "Changed coordinates": p_changed,
+            "Image_size": orig_image_shape,
+            "Zoomed_image_size": img.shape
+        }
+
+        create_json_datafile(dictionary, f"{save_path}/JSON/{name}_{point_names[i]}")
+        create_landmarks_file(p_changed, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/{point_names[i]}/labels/{data}/{name}", point_names[i])
+
 
 def get_dirs(path):
     return [str(item) for item in pathlib.Path(path).iterdir() if ".DS_Store" not in str(item)]
@@ -541,3 +563,33 @@ def flatten(lst):
         else:
             flattened.append(item)
     return flattened
+
+def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
+    square_side = image_shape[0]*square # define square side size
+    height = image_shape[0]
+    two_thirds = math.ceil(height * 2 / 3)
+    one_third = math.ceil(height / 3)
+
+    # točka na sliki + izrez kvadrata iz slike
+    #landmark_names = ['sTMA1', 'sTMA2', 'FHC', 'sFMDA1', 'sFMDA2','TKC', 'TML', 'FNOC', 'aF1'] # based on labels in config file
+    if point_name == 'FHC':
+        image_part = img[0:one_third,:]
+    elif point_name in ['TKC','FNOC', 'sTMA1', 'sTMA2', 'sFMDA1', 'sFMDA2']:
+        image_part = img[one_third:two_thirds,:]
+        point = [point[0], point[1] - one_third]
+    elif point_name == 'TML':
+        image_part = img[two_thirds:height,:]
+        point = [point[0], point[1] - two_thirds]
+    elif point_name == 'aF1':
+        image_part = img[0:math.ceil(height / 2),:]
+    
+    fig, ax = plt.subplots()
+    ax.plot(*point, marker='.', color="white")
+    rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
+    ax.add_patch(rect)
+
+    plt.imshow(image_part, cmap="gray")
+    plt.savefig(filename + '.png')
+    plt.close()
+    
+    return image_part, point, image_part.shape, (image_part.shape[0] / image_part.shape[1])
