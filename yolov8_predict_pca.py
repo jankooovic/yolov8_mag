@@ -231,7 +231,7 @@ for directory in directories:
         #print("Lables:", labels)
         #print("Landmarks:", landmarks)
 
-        # PCA noise filtering and missing coordinate determination 
+        ### PCA noise filtering and missing coordinate determination 
 
         # check landmarks for missing labels
         missing = {x for x in landmark_names if labels.count(x) == 0}
@@ -239,7 +239,6 @@ for directory in directories:
         missing_labels.append(missing)
 
         # if missing label use second model for specific labels and try to determine ...
-
         for miss in missing:
             print("Missing:", miss)
 
