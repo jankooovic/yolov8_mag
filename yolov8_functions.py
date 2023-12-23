@@ -588,8 +588,9 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     rect = patches.Rectangle((point[0]-square_side/2, point[1]-square_side/2), square_side, square_side, linewidth=1, edgecolor='r', facecolor="none")
     ax.add_patch(rect)
 
-    plt.imshow(image_part, cmap="gray")
-    plt.savefig(filename + '.png')
+    if filename is not None:
+        plt.imshow(image_part, cmap="gray")
+        plt.savefig(filename + '.png')
     plt.close()
     
     return image_part, point, image_part.shape, (image_part.shape[0] / image_part.shape[1])

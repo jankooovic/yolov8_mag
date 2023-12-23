@@ -17,8 +17,22 @@ test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sTMA', 'sFDMA']
 landmark_names = ['sTMA1', 'sTMA2', 'FHC', 'sFMDA1', 'sFMDA2','TKC', 'TML', 'FNOC', 'aF1'] # based on labels in config file
 imgsize = 1920 # check if the same as trained model
+zoomed_img_size = 640
+square = 0.1    # square size
+num_parts = 3   # number of parts on image
 #model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
-model_paths = {"ALL" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt"}
+model_paths = {
+    "ALL" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
+    "sTMA1" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
+    "sTMA2" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
+    "FHC" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
+    "sFMDA2" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
+    "sFMDA1" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
+    "TKC" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
+    "TML" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
+    "FNOC" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt"
+
+    }
 skipped = []
 
 # PCA script - to check and remove duplicates
@@ -137,10 +151,15 @@ directories = yolov8_functions.get_dirs(dataset_path)
 for directory in directories:
     print("Directory path:", directory + test_img_path)
 
+    """
     # select correct point name based on directory
-    point_name = next((name for name in point_names if name in directory), None)
+    point_name = next((name for name in landmark_names if name in directory), None)
 
     if point_name is None:
+        continue
+    """ 
+
+    if "ALL" not in directory:
         continue
 
     image_paths = yolov8_functions.get_jpg_paths("./" + directory + test_img_path)
@@ -148,13 +167,14 @@ for directory in directories:
     # select correct model based on point
     for img_path in image_paths:
         skip = False
+        """
         model_path = model_paths.get(point_name, None)
-    
         if model_path is None:
             continue
+        """
 
-        # load correct model of yolov8
-        yolov8_model = YOLO(model_path)  # load a custom model
+        # load ALL model of yolov8
+        yolov8_model = YOLO(model_paths.get("ALL"))  # load a custom model
 
         # Run inference on image with arguments - same imgsize as training
         results = yolov8_model.predict(img_path,imgsz=imgsize)  # predict on an image 
@@ -220,10 +240,44 @@ for directory in directories:
 
         # if missing label use second model for specific labels and try to determine ...
 
-        """
         for miss in missing:
             print("Missing:", miss)
 
+            model_path = model_paths.get(miss, None)
+            print("Missing model path:", model_path)
+            print("Image size:", zoomed_img_size)
+            
+            """
+            # get zoomed image
+            img, p_toChange, changed_image_shape, changed_img_ratio = yolov8_functions.slice_image_3_parts(img_shape, square, [0,0], img, miss, None)
+            # p_toChange je vrednost, ki jo dodam/odštejem, da dobim nazaj original točko
+
+            # load ALL model of yolov8
+            yolov8_model = YOLO(model_path)  # load a custom model
+
+            # Run inference on image with arguments - same imgsize as training
+            results = yolov8_model.predict(img_path,imgsz=zoomed_img_size)  # predict on an image 
+
+            landmarks_zoomed = [] # landmarks list
+            labels_zoomed = [] # labels list
+            for result in results:
+                for idx, keypoint in enumerate(result.keypoints):
+                    point = keypoint.xy.tolist()
+
+                    x = point[0][0][0]
+                    y = point[0][0][1]
+                    landmark = [x,y]
+
+                    # get label and point names from result
+                    label = int(result.boxes.cls[idx])
+                    label = landmark_names[label]
+
+                    labels_zoomed.append(label)
+                    landmarks_zoomed.append(landmark)
+                    # tukaj dodam direkt v labels in landmarks in potem itak naprej duplikate odstranijujem ...
+
+            """
+            """
             # chose correct PCA method based on duplicate point name
             idx = yolov8_functions.get_indices(miss, landmark_names_pca)
 
@@ -235,7 +289,7 @@ for directory in directories:
             predicted_pca = pca.transform([pca_average_points[idx[0]]])
             print("Average " + landmark_names_pca[idx[0]], pca_average_points[idx[0]])
             print("PCA predicted FHC point:", predicted_pca)
-        """
+            """
 
         # check landmarks for duplicate labels
         duplicates = {x for x in labels if labels.count(x) > 1}
