@@ -45,7 +45,8 @@ configs = {
   'config/config_sFMDA2.yaml': zoomed_size,
   'config/config_TKC.yaml': zoomed_size,
 }
-model = ["SGD"] # "SGD", "Adamax", "Adam"
+
+opt = ["SGD"] # "SGD", "Adamax", "Adam"
 #img_sizes = [3680] #960, 1280, 1920, 2016, 3040, 3680
 
 ### Train model - per config file
@@ -62,7 +63,7 @@ for config in configs:
         patience=50,
         batch=16,
         lr0 = 0.01,
-        optimizer=model,
+        optimizer=opt,
         # Data augemntation parameters
         degrees=10,
         scale=0.1,
