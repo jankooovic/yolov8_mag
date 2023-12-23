@@ -246,7 +246,7 @@ for directory in directories:
             model_path = model_paths.get(miss, None)
             print("Missing model path:", model_path)
             print("Image size:", zoomed_img_size)
-            
+
             """
             # get zoomed image
             img, p_toChange, changed_image_shape, changed_img_ratio = yolov8_functions.slice_image_3_parts(img_shape, square, [0,0], img, miss, None)
@@ -274,21 +274,9 @@ for directory in directories:
 
                     labels_zoomed.append(label)
                     landmarks_zoomed.append(landmark)
-                    # tukaj dodam direkt v labels in landmarks in potem itak naprej duplikate odstranijujem ...
+                    # tukaj dodam direkt v labels in landmarks in potem itak naprej duplikate odstranijujem kasneje
+                    # ce ni rezultata je false predicted in sliko lepo dam v skipped
 
-            """
-            """
-            # chose correct PCA method based on duplicate point name
-            idx = yolov8_functions.get_indices(miss, landmark_names_pca)
-
-            # PCA choice 
-            print("Choosing PCA:", landmark_names_pca[idx[0]])
-            pca = pca_arr[idx[0]]
-
-            # Step 2: Transform new coordinates using the fitted PCA model
-            predicted_pca = pca.transform([pca_average_points[idx[0]]])
-            print("Average " + landmark_names_pca[idx[0]], pca_average_points[idx[0]])
-            print("PCA predicted FHC point:", predicted_pca)
             """
 
         # check landmarks for duplicate labels
