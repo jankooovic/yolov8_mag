@@ -36,6 +36,8 @@ zoomed_size = 640
 all_size = 1920
 configs = {
   'config/config_ALL.yaml': all_size,
+  }
+"""
   'config/config_FHC.yaml': zoomed_size,
   'config/config_FNOC.yaml': zoomed_size,
   'config/config_TKC.yaml': zoomed_size,
@@ -45,6 +47,7 @@ configs = {
   'config/config_sFMDA2.yaml': zoomed_size,
   'config/config_TML.yaml': zoomed_size,
 }
+"""
 
 opt = "SGD" # "SGD", "Adamax", "Adam"
 #img_sizes = [3680] #960, 1280, 1920, 2016, 3040, 3680
