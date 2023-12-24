@@ -155,40 +155,6 @@ for idx, path in enumerate(to_evaluate_json_paths):
         "Image_size": img_size,
         }
     
-    """
-    print("Predicted:",predicted_coordinates)
-    # round predicted coordinates
-    for idx, coord in enumerate(predicted_coordinates):
-        predicted_coordinates[idx] = [predicted_coordinates[idx][0], predicted_coordinates[idx][1]]
-    print("After:", predicted_coordinates)
-    
-    # sort points based on Y&X coordinates [FHC, aF1, TKC, FNOC, sFMDA, sTMA, TML] 
-    test_coordinates = sorted(test_coordinates, key=lambda point: point[1])
-    predicted_coordinates = sorted(predicted_coordinates, key=lambda point: point[1])
-    # round predicted coordinates
-    for idx, coord in enumerate(predicted_coordinates):
-        predicted_coordinates[idx] = [math.ceil(predicted_coordinates[idx][0]), math.ceil(predicted_coordinates[idx][1])]
-
-    if len(test_coordinates) != 9 or len(predicted_coordinates) != 9:
-        print("Coordinates are not OK!")
-        print("Test coordinates:     ", test_coordinates)
-        print("Predicted coordinates:", predicted_coordinates)
-        skipped.append(path)
-        continue
-
-    # sort knee Points
-    test_sPoints = test_coordinates[2:8]
-    predicted_sPoints = predicted_coordinates[2:8]
-    # sort the 6 points based on X values
-    test_sPoints = sorted(test_sPoints, key=lambda point: point[0])
-    predicted_sPoints = sorted(predicted_sPoints, key=lambda point: point[0])
-
-    test_sPoints = yolov8_functions.sort_sPoints(test_sPoints)
-    predicted_sPoints = yolov8_functions.sort_sPoints(predicted_sPoints)
-
-    test_coordinates[2:8] = test_sPoints
-    predicted_coordinates[2:8] = predicted_sPoints
-    """
     #print("Test coordinates     :", test_coordinates)
     #print("Predicted coordinates:", predicted_coordinates)
 
@@ -404,7 +370,6 @@ if (len(predictedCoord_arr) != 0):
     # Save JSON file with data
     filename = statistics_path + "/" + "variability_Y"
     yolov8_functions.create_json_datafile(dictionary, filename)
-
 
     # Points plots
     test_arrs = [fhc_points_t, aF1_points_t, fnoc_points_t, tkc_points_t, sfdma1_points_t, sfdma2_points_t, stma1_points_t, stma2_points_t, tml_points_t]

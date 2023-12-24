@@ -47,6 +47,7 @@ for idx, path in enumerate(paths_to_compare):
         points_i = yolov8_functions.create_point_array(json_files_i, map_factor)
         points_a = yolov8_functions.create_point_array(json_files_a, map_factor)
 
+        
         # sort points based on Y&X coordinates [FHC, aF1, TKC, FNOC, sFMDA, sTMA, TML] 
         points_i = sorted(points_i, key=lambda point: point[1])
         points_a = sorted(points_a, key=lambda point: point[1])
