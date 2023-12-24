@@ -216,6 +216,7 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
     create_json_datafile(dictionary, f"{save_path}/JSON/{name}")
     create_landmarks_file(points, orig_image_shape, square, orig_img_ratio, f"{save_path}/ALL/labels/{data}/{name}")
 
+    """
     ## create zoomed images for later learning per point - uporabi point_names + points
     # get smaller pictures of landmarks for cascade learning
     for i, point in enumerate(points):
@@ -236,7 +237,7 @@ def main_func(save_path, name, data_arr, point_names, points, orig_image_shape, 
 
         create_json_datafile(dictionary, f"{save_path}/JSON/{name}_{point_names[i]}")
         create_landmarks_file(p_changed, changed_image_shape, 0.2, changed_img_ratio, f"{save_path}/{point_names[i]}/labels/{data}/{name}", point_names[i])
-
+    """
 
 def get_dirs(path):
     return [str(item) for item in pathlib.Path(path).iterdir() if ".DS_Store" not in str(item)]

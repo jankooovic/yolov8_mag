@@ -2,6 +2,8 @@
 import yolov8_functions
 import math
 import pathlib
+import numpy as np
+import matplotlib.pyplot as plt
 
 # Dataset path:
 dataset_path_igor =  "./data/RTG_dataset_Igor/"
@@ -16,6 +18,40 @@ predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missma
 coor_y = 1
 coor_x = 0
 filter_val = 10000
+
+# Arrays
+predictedCoord_arr = []
+anotatedCoord_arr = []
+pixelPercentErr_arr = []
+pixelErr_arr = []
+missmatchErr_arr = []
+eucledian_distances_all = []
+eucledian_distances_all_mm = []
+skipped = []
+evaluated_images = []
+mmmErr_arr = []
+
+# Igor points
+aF1_points_p = []
+fhc_points_p = []
+fnoc_points_p = []
+tkc_points_p = []
+sfdma1_points_p = []
+sfdma2_points_p = []
+stma1_points_p = []
+stma2_points_p = []
+tml_points_p = []
+
+# Andrej points
+aF1_points_t = []
+fhc_points_t = []
+fnoc_points_t = []
+tkc_points_t = []
+sfdma1_points_t = []
+sfdma2_points_t= []
+stma1_points_t = []
+stma2_points_t = []
+tml_points_t = []
 
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
@@ -43,11 +79,19 @@ for idx, path in enumerate(paths_to_compare):
         json_files_i = [directory for directory in yolov8_functions.get_dirs(path_i) if ".json" in str(directory)]
         json_files_a = [directory for directory in yolov8_functions.get_dirs(path_a) if ".json" in str(directory)]
 
+        # sort json files based on points
+        # FHC, FNOC, TKC, TML, aF1, sFMDA, sTMA
+        json_files_i = sorted(json_files_i)
+        json_files_a = sorted(json_files_a)
+
+        #print("Igor json:", json_files_i)
+        #print("Andrej json:", json_files_a)
+
         # open json files
         points_i = yolov8_functions.create_point_array(json_files_i, map_factor)
         points_a = yolov8_functions.create_point_array(json_files_a, map_factor)
-
         
+        """
         # sort points based on Y&X coordinates [FHC, aF1, TKC, FNOC, sFMDA, sTMA, TML] 
         points_i = sorted(points_i, key=lambda point: point[1])
         points_a = sorted(points_a, key=lambda point: point[1])
@@ -64,27 +108,48 @@ for idx, path in enumerate(paths_to_compare):
 
         points_i[2:8] = igor_sPoints
         points_a[2:8] = andrej_sPoints
-
+        """
         # remove af1 
-        del points_i[1]
-        del points_a[1]
+        del points_i[4]
+        del points_a[4]
 
+        # FHC, FNOC, TKC, TML, sFMDA, sTMA# FHC, FNOC, TKC, TML, sFMDA, sTMA
         print("Slika:", path_i)
-        #print("Igor točke:  ", points_i)
-        #print("Andrej točke:", points_a)
+        print("Igor točke:  ", points_i)
+        print("Andrej točke:", points_a)
 
         # get image size
-        nrrd_image_path = 0
+        img_size = None
+        image = None
         for idx, item in enumerate(pathlib.Path(path + "/").iterdir()):
             item = str(item)
             if ".nrrd" in item:
                 data_arr, img_size, orig_img_ratio = yolov8_functions.preprocess_image(item, filter_val)
-
+                image = data_arr
         dictionary = {
             "Image name": path,
             "Point names": point_names_all,
             "Image size": img_size
             }
+
+        # assign points to its evaluation array # FHC, FNOC, TKC, TML, sFMDA, sTMA
+        fhc_points_t.append(points_a[0])
+        fnoc_points_t.append(points_a[1])
+        tkc_points_t.append(points_a[2])
+        sfdma1_points_t.append(points_a[4])
+        sfdma2_points_t.append(points_a[5])
+        stma1_points_t.append(points_a[6])
+        stma2_points_t.append(points_a[7])
+        tml_points_t.append(points_a[3])
+
+        fhc_points_p.append(points_i[0])
+        fnoc_points_p.append(points_i[1])
+        tkc_points_p.append(points_i[2])
+        sfdma1_points_p.append(points_i[4])
+        sfdma2_points_p.append(points_i[5])
+        stma1_points_p.append(points_i[6])
+        stma2_points_p.append(points_i[7])
+        tml_points_p.append(points_i[3])
         
         # compare point coordinates
         for idx, point in enumerate(points_i):
@@ -93,10 +158,11 @@ for idx, path in enumerate(paths_to_compare):
             percent_x = yolov8_functions.percentage(points_a[idx][coor_x], points_i[idx][coor_x]) 
 
             test_point = [points_i[idx][coor_x], points_i[idx][coor_y]]
-            predicted_point = [math.ceil(points_a[idx][coor_x]), math.ceil(points_a[idx][coor_y])]
+            predicted_point = [points_a[idx][coor_x], points_a[idx][coor_y]]
             percent_missmatch = [abs(100 - percent_x), abs(100 - percent_y)]
             pixel_error = [abs(test_point[0] - predicted_point[0]), abs(test_point[1] - predicted_point[1])]
             pixel_error_percents = [100*abs((test_point[0] - predicted_point[0])/img_size[0]), 100*abs((test_point[1] - predicted_point[1])/img_size[0])] 
+            eucledian_distance = yolov8_functions.euclidean_distance(points_i[idx], points_a[idx])
 
             missmatchErr_arr.append(percent_missmatch)
             pixelErr_arr.append(pixel_error)
@@ -104,14 +170,18 @@ for idx, path in enumerate(paths_to_compare):
 
             predictedCoord_arr.append(predicted_point)
             anotatedCoord_arr.append(test_point)
+            eucledian_distances_all.append(eucledian_distance)
             
             dictionary.update({
                         landmark_names[idx]:{
-                            "Test point coordinates [x,y]": test_point,
-                            "Predicted point coordinates [x,y]": predicted_point,
+                            "Igor point coordinates [x,y]": test_point,
+                            "Andrej point coordinates [x,y]": predicted_point,
                             "Percentage missmatch [x,y]": percent_missmatch,
                             "Pixel error [x,y]": pixel_error,
+                            "mm error [x,y]": [pixel_error[0] / 3.6, pixel_error[1] / 3.6],
                             "Percent pixel error [x,y]": pixel_error_percents,
+                            "Eucledian distance pixel": eucledian_distance,
+                            "Eucledian distance mm": eucledian_distance / 3.6,
                             },
             })
 
@@ -119,6 +189,32 @@ for idx, path in enumerate(paths_to_compare):
         name = yolov8_functions.filename_creation(path, ".json")
         filename = save_path + "/" + name
         yolov8_functions.create_json_datafile(dictionary, filename)
+
+        # open image based on point name
+        yolov8_functions.save_evaluation_image(image, filename, points_i, points_a)
+        image_shape = np.array(image).shape # x and y are switched
+        square_side = image_shape[0]*square_size_ratio
+        half_side = math.ceil(square_side/2)
+        
+        sorted_names = ["FHC", "FNOC", "TKC", "TML", "sFMDA1", "sFMDA2", "sTMA1", "sTMA2"]
+        for i, p in enumerate(points_a):
+            coor_y = 1
+            coor_x = 0
+            pp = points_i[i]
+            percent_y = yolov8_functions.percentage(pp[coor_y], p[coor_y])
+            percent_x = yolov8_functions.percentage(pp[coor_x], p[coor_x])
+
+            p = np.array(p)
+            im = np.array(image)[round(p[1]-half_side):round(p[1]+half_side),round(p[0]-half_side):round(p[0]+half_side)]
+
+            fig, ax = plt.subplots()
+            ax.plot(half_side, half_side, marker='x', color="black")  # test point
+            ax.plot(half_side + (p[0] - pp[0]),half_side + (p[1] - pp[1]), marker='+', color="red")  # predicted point
+
+            plt.imshow(im, cmap="gray")
+            plt.savefig(filename + "_" + sorted_names[i] + '.png')
+            #plt.show()
+            plt.close()
 
 if (len(predictedCoord_arr) != 0):
     # Error statistics - explanation in -/documents/graphs_explanation.txt
@@ -128,12 +224,25 @@ if (len(predictedCoord_arr) != 0):
         p = [x,y]
         mmmErr_arr.append(p)
 
+    for i in eucledian_distances_all:
+        x = i / map_factor
+        eucledian_distances_all_mm.append(x)
+
     dictionary = {
-        "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
         "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
         "Average mm error [x,y]": yolov8_functions.get_average(mmmErr_arr),
+        "Average euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_distances_all), yolov8_functions.get_average_one(eucledian_distances_all_mm)],
+        "Average FHC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(fhc_points_p, fhc_points_t),
+        "Average aF1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(aF1_points_p, aF1_points_t),
+        "Average FNOC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(fnoc_points_p, fnoc_points_t),
+        "Average TKC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(tkc_points_p, tkc_points_t),
+        "Average sFDMA1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(sfdma1_points_p, sfdma1_points_t),
+        "Average sFDMA2 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(sfdma2_points_p, sfdma2_points_t),
+        "Average sTMA1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(stma1_points_p, stma1_points_t),
+        "Average sTMA2 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(stma2_points_p, stma2_points_t),
+        "Average TML error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(tml_points_p, tml_points_t),
         "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
-        "Skipped images:": skipped
+        "Average missmatch error [x,y]": yolov8_functions.get_average(missmatchErr_arr),
     }
 
     # Save JSON file with data
@@ -192,3 +301,13 @@ if (len(predictedCoord_arr) != 0):
     # Save JSON file with data
     filename = statistics_path + "/" + "variability_Y"
     yolov8_functions.create_json_datafile(dictionary, filename)
+
+    # Points plots
+    test_arrs = [fhc_points_t, aF1_points_t, fnoc_points_t, tkc_points_t, sfdma1_points_t, sfdma2_points_t, stma1_points_t, stma2_points_t, tml_points_t]
+    predicted_arrs = [fhc_points_p, aF1_points_p, fnoc_points_p, tkc_points_p, sfdma1_points_p, sfdma2_points_p, stma1_points_p, stma2_points_p, tml_points_p]
+    for idx, name in enumerate(landmark_names):
+
+        test_data_x, test_data_y = yolov8_functions.extract_points(test_arrs[idx])
+        predicted_data_x, predicted_data_y = yolov8_functions.extract_points(predicted_arrs[idx])
+        yolov8_functions.box_plot(abs(test_data_x - predicted_data_x), name + " X", statistics_path)
+        yolov8_functions.box_plot(abs(test_data_y - predicted_data_y), name + " Y", statistics_path)

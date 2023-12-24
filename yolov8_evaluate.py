@@ -18,6 +18,11 @@ point_names_all = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA', 'sTMA', 'TML']
 landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
 square_size_ratio = 0.1
 map_factor = 3.6
+coor_y = 1
+coor_x = 0
+skipped_path = 'data/postprocess/skipped.json'
+
+# Arrays
 predictedCoord_arr = []
 anotatedCoord_arr = []
 pixelPercentErr_arr = []
@@ -28,9 +33,6 @@ eucledian_distances_all_mm = []
 skipped = []
 evaluated_images = []
 mmmErr_arr = []
-coor_y = 1
-coor_x = 0
-skipped_path = 'data/postprocess/skipped.json'
 
 # Predicted points
 aF1_points_p = []
