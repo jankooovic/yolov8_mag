@@ -62,7 +62,7 @@ tml_points_t = []
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
 
-
+"""
 ### PCA learning on test points ###
 # get only paths that are to be evaluated from test
 json_paths_test = [path for path in yolov8_functions.get_dirs(test_path) if not any(name in path for name in point_names_all)]
@@ -119,7 +119,7 @@ for idx, path in enumerate(json_paths_test):
 
 # The fit learns some quantities from the data, most importantly the "components" and "explained variance":
 # Step 1: Fit PCA on training/reference data
-"""
+
 num = 2
 pca_fhc = PCA(n_components=num).fit(fhc_points_t)
 pca_af1 = PCA(n_components=num).fit(aF1_points_t)
