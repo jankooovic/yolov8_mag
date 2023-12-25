@@ -115,8 +115,8 @@ for idx, path in enumerate(paths_to_compare):
 
         # FHC, FNOC, TKC, TML, sFMDA, sTMA# FHC, FNOC, TKC, TML, sFMDA, sTMA
         print("Slika:", path_i)
-        print("Igor točke:  ", points_i)
-        print("Andrej točke:", points_a)
+        print("Igor točke:  ", points_i, len(points_i))
+        print("Andrej točke:", points_a, len(points_a))
 
         # get image size
         img_size = None
