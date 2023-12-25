@@ -12,6 +12,7 @@ save_path = "./data/evaluate_specialists"
 statistics_path = "./data/evaluate_specialists/statistics"
 point_names_all = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA', 'sTMA', 'TML']
 landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTMA2','TML']
+landmark_names_no_aF1 = ['FHC', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTMA2','TML']
 square_size_ratio = 0.1
 map_factor = 3.6
 predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped, evaluated_images, mmmErr_arr = [], [], [], [], [], [], [], []
@@ -286,7 +287,7 @@ if (len(predictedCoord_arr) != 0):
     # Points plots
     test_arrs = [fhc_points_t, fnoc_points_t, tkc_points_t, sfdma1_points_t, sfdma2_points_t, stma1_points_t, stma2_points_t, tml_points_t]
     predicted_arrs = [fhc_points_p, fnoc_points_p, tkc_points_p, sfdma1_points_p, sfdma2_points_p, stma1_points_p, stma2_points_p, tml_points_p]
-    for idx, name in enumerate(landmark_names):
+    for idx, name in enumerate(landmark_names_no_aF1):
 
         test_data_x, test_data_y = yolov8_functions.extract_points(test_arrs[idx])
         predicted_data_x, predicted_data_y = yolov8_functions.extract_points(predicted_arrs[idx])
