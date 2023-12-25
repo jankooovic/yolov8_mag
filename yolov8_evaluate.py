@@ -20,8 +20,6 @@ square_size_ratio = 0.1
 map_factor = 3.6
 coor_y = 1
 coor_x = 0
-skipped_path = 'data/postprocess/skipped.json'
-skipped_path = 'data/predicted/skipped.json'
 
 # Arrays
 predictedCoord_arr = []
@@ -60,6 +58,10 @@ tml_points_t = []
 # create dataset archive
 yolov8_functions.dataset_archive(json_save_path)
 
+# comment based on what you want
+#skipped_path = 'data/postprocess/skipped.json'
+skipped_path = 'data/predicted/skipped.json'
+
 # Load json files
 json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_predict_path) if ".json" in str(directory)]
 #json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_postprocess_path) if ".json" in str(directory)]
@@ -94,12 +96,18 @@ with open(skipped_path) as f:
         to_skip = (data['False predictions'])
 
 to_skip =  [img_name for img_name in to_skip]
+skipping_evaluate = []
+skipping_predicted = []
 for i, name in enumerate(to_skip):
     to_skip_name = name.replace(".jpg","")
-    to_skip[i] = "data/dataset/JSON/" + to_skip_name + ".json"
+    skipping_evaluate.append("data/dataset/JSON/" + to_skip_name + ".json")
+    skipping_predicted.append("data/predicted/" + to_skip_name + ".json")
 
-for skip in to_skip:
+for skip in skipping_evaluate:
     to_evaluate_json_paths.remove(skip)
+
+for skip in skipping_predicted:
+    json_paths_predicted.remove(skip)
 
 # sort paths:
 to_evaluate_json_paths = sorted(to_evaluate_json_paths)
@@ -147,6 +155,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
     # Predicted points json
     predicted_coordinates = []
     path = json_paths_predicted[idx]
+    print(path)
     with open(path) as f:
         data = json.load(f)
         for name in landmark_names:
