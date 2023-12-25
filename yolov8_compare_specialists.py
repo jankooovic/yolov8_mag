@@ -90,25 +90,7 @@ for idx, path in enumerate(paths_to_compare):
         # open json files
         points_i = yolov8_functions.create_point_array(json_files_i, map_factor)
         points_a = yolov8_functions.create_point_array(json_files_a, map_factor)
-        
-        """
-        # sort points based on Y&X coordinates [FHC, aF1, TKC, FNOC, sFMDA, sTMA, TML] 
-        points_i = sorted(points_i, key=lambda point: point[1])
-        points_a = sorted(points_a, key=lambda point: point[1])
 
-        # sort knee Points
-        igor_sPoints = points_i[2:8]
-        andrej_sPoints = points_a[2:8]
-        # sort the 6 points based on X values
-        igor_sPoints = sorted(igor_sPoints, key=lambda point: point[0])
-        andrej_sPoints = sorted(andrej_sPoints, key=lambda point: point[0])
-        
-        igor_sPoints = yolov8_functions.sort_sPoints(igor_sPoints)
-        andrej_sPoints = yolov8_functions.sort_sPoints(andrej_sPoints)
-
-        points_i[2:8] = igor_sPoints
-        points_a[2:8] = andrej_sPoints
-        """
         # remove af1 
         del points_i[4]
         del points_a[4]
