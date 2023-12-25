@@ -215,7 +215,6 @@ if (len(predictedCoord_arr) != 0):
         "Average mm error [x,y]": yolov8_functions.get_average(mmmErr_arr),
         "Average euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_distances_all), yolov8_functions.get_average_one(eucledian_distances_all_mm)],
         "Average FHC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(fhc_points_p, fhc_points_t),
-        "Average aF1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(aF1_points_p, aF1_points_t),
         "Average FNOC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(fnoc_points_p, fnoc_points_t),
         "Average TKC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(tkc_points_p, tkc_points_t),
         "Average sFDMA1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(sfdma1_points_p, sfdma1_points_t),
@@ -285,8 +284,8 @@ if (len(predictedCoord_arr) != 0):
     yolov8_functions.create_json_datafile(dictionary, filename)
 
     # Points plots
-    test_arrs = [fhc_points_t, aF1_points_t, fnoc_points_t, tkc_points_t, sfdma1_points_t, sfdma2_points_t, stma1_points_t, stma2_points_t, tml_points_t]
-    predicted_arrs = [fhc_points_p, aF1_points_p, fnoc_points_p, tkc_points_p, sfdma1_points_p, sfdma2_points_p, stma1_points_p, stma2_points_p, tml_points_p]
+    test_arrs = [fhc_points_t, fnoc_points_t, tkc_points_t, sfdma1_points_t, sfdma2_points_t, stma1_points_t, stma2_points_t, tml_points_t]
+    predicted_arrs = [fhc_points_p, fnoc_points_p, tkc_points_p, sfdma1_points_p, sfdma2_points_p, stma1_points_p, stma2_points_p, tml_points_p]
     for idx, name in enumerate(landmark_names):
 
         test_data_x, test_data_y = yolov8_functions.extract_points(test_arrs[idx])
