@@ -252,6 +252,8 @@ for directory in directories:
         missing = {x for x in landmark_names if labels.count(x) == 0}
         missing = list(missing)
         missing_labels.append(missing)
+        if len (missing) != 0:
+            skipped.append(name)
 
         # if missing label use second model for specific labels and try to determine ...
         for miss in missing:
@@ -426,3 +428,9 @@ for directory in directories:
         yolov8_functions.save_prediction_image(landmarks, temp, filename)
         yolov8_functions.create_json_datafile(dictionary, filename)
 
+dictionary = {
+    "False predictions": skipped
+}
+
+filename = predicted_path + "skipped"
+yolov8_functions.create_json_datafile(dictionary, filename)

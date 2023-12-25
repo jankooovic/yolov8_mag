@@ -21,6 +21,7 @@ map_factor = 3.6
 coor_y = 1
 coor_x = 0
 skipped_path = 'data/postprocess/skipped.json'
+skipped_path = 'data/predicted/skipped.json'
 
 # Arrays
 predictedCoord_arr = []
@@ -60,8 +61,8 @@ tml_points_t = []
 yolov8_functions.dataset_archive(json_save_path)
 
 # Load json files
-#json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_predict_path) if ".json" in str(directory)]
-json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_postprocess_path) if ".json" in str(directory)]
+json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_predict_path) if ".json" in str(directory)]
+#json_paths_predicted = [directory for directory in yolov8_functions.get_dirs(json_postprocess_path) if ".json" in str(directory)]
 if skipped_path in json_paths_predicted:
     json_paths_predicted.remove(skipped_path)
 
