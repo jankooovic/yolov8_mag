@@ -155,7 +155,7 @@ for idx, path in enumerate(to_evaluate_json_paths):
     # Predicted points json
     predicted_coordinates = []
     path = json_paths_predicted[idx]
-    print(path)
+    #print(path)
     with open(path) as f:
         data = json.load(f)
         for name in landmark_names:
