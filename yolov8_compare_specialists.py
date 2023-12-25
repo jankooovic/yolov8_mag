@@ -139,6 +139,7 @@ for idx, path in enumerate(paths_to_compare):
 
             percent_y = yolov8_functions.percentage(points_a[idx][coor_y], points_i[idx][coor_y]) 
             percent_x = yolov8_functions.percentage(points_a[idx][coor_x], points_i[idx][coor_x]) 
+            # print("Percent Y:", percent_y, "Percent X:", percent_x)
 
             test_point = [points_i[idx][coor_x], points_i[idx][coor_y]]
             predicted_point = [points_a[idx][coor_x], points_a[idx][coor_y]]
