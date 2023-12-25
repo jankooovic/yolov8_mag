@@ -9,6 +9,7 @@ import re
 from sklearn.decomposition import PCA
 import json
 from scipy.spatial.distance import euclidean
+import pickle as pk
 
 # Dataset path:
 dataset_path = "./data/dataset/"
@@ -118,6 +119,7 @@ for idx, path in enumerate(json_paths_test):
 
 # The fit learns some quantities from the data, most importantly the "components" and "explained variance":
 # Step 1: Fit PCA on training/reference data
+"""
 num = 2
 pca_fhc = PCA(n_components=num).fit(fhc_points_t)
 pca_af1 = PCA(n_components=num).fit(aF1_points_t)
@@ -128,9 +130,26 @@ pca_sfdma2 = PCA(n_components=num).fit(sfdma2_points_t)
 pca_stma1 = PCA(n_components=num).fit(stma1_points_t)
 pca_stma2 = PCA(n_components=num).fit(stma2_points_t)
 pca_tml = PCA(n_components=num).fit(tml_points_t)
+"""
+
+# Step 1: Load ans Fit PCA on training/reference data
+# pca_reload = pk.load(open("pca.pkl",'rb'))
+pca_fhc = pk.load(open(save_path + "/pca_FHC.pkl",'rb'))
+pca_af1 = pk.load(open(save_path + "/pca_aF1.pkl",'rb'))
+pca_fnoc = pk.load(open(save_path + "/pca_FNOC.pkl",'rb'))
+pca_tkc = pk.load(open(save_path + "/pca_TKC.pkl",'rb'))
+pca_sfdma1 = pk.load(open(save_path + "/pca_sFMDA1.pkl",'rb'))
+pca_sfdma2 = pk.load(open(save_path + "/pca_sFMDA2.pkl",'rb'))
+pca_stma1 = pk.load(open(save_path + "/pca_sTMA1.pkl",'rb'))
+pca_stma2 = pk.load(open(save_path + "/pca_sTMA2.pkl",'rb'))
+pca_tml = pk.load(open(save_path + "/pca_tml.pkl",'rb'))
 
 pca_arr = [pca_fhc, pca_af1, pca_fnoc, pca_tkc, pca_sfdma1, pca_sfdma2, pca_stma1, pca_stma2, pca_tml]
 pca_points_arr = [fhc_points_t, aF1_points_t, fnoc_points_t, tkc_points_t, sfdma1_points_t, sfdma2_points_t, stma1_points_t, stma2_points_t, tml_points_t]
+
+# landmark_names_pca = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
+for idx, pca in enumerate(pca_arr):
+    pk.dump(pca, open(save_path + "/pca_" + landmark_names_pca[idx] + ".pkl","wb"))
 
 # get average point coordinates
 pca_average_points = []
