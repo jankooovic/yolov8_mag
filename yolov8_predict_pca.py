@@ -21,7 +21,9 @@ imgsize = 1920 # check if the same as trained model
 zoomed_img_size = 640
 square = 0.1    # square size
 num_parts = 3   # number of parts on image
-#model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_grayscale/weights/best.pt"}
+model_paths = {"ALL" : "./runs/pose/train_ALL_" + str(imgsize) + "_adamax_01/weights/best.pt"}
+
+"""
 model_paths = {
     "ALL" : "./runs/pose/train_SGD_"+ str(imgsize) + "_small_batch8/weights/best.pt",
     "sTMA1" : "./runs/pose/train_SGD_sTMA1_"+ str(zoomed_img_size) + "/weights/best.pt",
@@ -33,6 +35,7 @@ model_paths = {
     "TML" : "./runs/pose/train_SGD_TML_"+ str(zoomed_img_size) + "/weights/best.pt",
     "FNOC" : "./runs/pose/train_SGD_FNOC"+ str(zoomed_img_size) + "/weights/best.pt"
     }
+"""
 skipped = []
 
 # PCA script - to check and remove duplicates
