@@ -104,10 +104,12 @@ for i, name in enumerate(to_skip):
     skipping_predicted.append("data/predicted/" + to_skip_name + ".json")
 
 for skip in skipping_evaluate:
-    to_evaluate_json_paths.remove(skip)
+    if skip in to_evaluate_json_paths:
+        to_evaluate_json_paths.remove(skip)
 
 for skip in skipping_predicted:
-    json_paths_predicted.remove(skip)
+    if skip in json_paths_predicted:
+        json_paths_predicted.remove(skip)
 
 # sort paths:
 to_evaluate_json_paths = sorted(to_evaluate_json_paths)
