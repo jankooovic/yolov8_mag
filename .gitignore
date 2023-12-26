@@ -1,11 +1,14 @@
 /.DS_Store
 /__pycache__
-/_archive
+/code_archive
 /data/*
+/data/.DS_Store
 !/data/dataset/
+/data/dataset/.DS_Store
 /data/dataset/JSON
+/data/dataset/JSON.DS_Store
 /data/dataset/PNGS
-/evaluate.py
+/data/dataset/PNGS/.DS_Store
 /yolov8n-pose.pt
 /Landmarks_definitions.pdf
 /runs
