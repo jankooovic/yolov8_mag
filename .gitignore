@@ -1,6 +1,5 @@
 /.DS_Store
 /__pycache__
-/code_archive
 /data/*
 /data/.DS_Store
 !/data/dataset/
@@ -14,3 +13,4 @@
 /runs
 /documents
 /eksperimenti*
+/code_archive
