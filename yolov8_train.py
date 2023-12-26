@@ -1,6 +1,6 @@
 """ Train YOLOv8-pose model on the COCO128-pose dataset. """
 from ultralytics import YOLO
-
+"""
 ### Load a model - nano 3.3M params
 model = YOLO('yolov8n-pose.yaml')   # build a new model from YAML
 model = YOLO('yolov8n-pose.pt')  # load a pretrained model
@@ -11,7 +11,7 @@ model = YOLO('yolov8n-pose.yaml').load('yolov8n-pose.pt')   # build from YAML an
 model = YOLO('yolov8s-pose.yaml')   # build a new model from YAML
 model = YOLO('yolov8s-pose.pt')  # load a pretrained model
 model = YOLO('yolov8s-pose.yaml').load('yolov8s-pose.pt')   # build from YAML and transfer weights
-"""
+
 
 """
 # Re-Train the model:
@@ -49,7 +49,7 @@ configs = {
 }
 """
 
-opt = "Adam" # "SGD", "Adamax", "Adam"
+opt = "SGD" # "SGD", "Adamax", "Adam"
 #img_sizes = [3680] #960, 1280, 1920, 2016, 3040, 3680
 
 ### Train model - per config file
@@ -68,9 +68,9 @@ for config in configs:
         lr0 = 0.01,
         optimizer=opt,
         # Data augemntation parameters
-        degrees=10,
-        scale=0.1,
-        perspective=0.001,
+        degrees=0,
+        scale=0,
+        perspective=0,
         # annoyance
         translate=0,
         fliplr=0,
