@@ -17,12 +17,12 @@ save_path = "./data/predicted"
 test_img_path = "/images/test/"
 point_names = ['FHC', 'TKC', 'TML', 'FNOC', 'aF1', 'ALL', 'sTMA', 'sFDMA']
 landmark_names = ['sTMA1', 'sTMA2', 'FHC', 'sFMDA1', 'sFMDA2','TKC', 'TML', 'FNOC', 'aF1'] # based on labels in config file
-imgsize = 3680 # check if the same as trained model
+imgsize = 1920# check if the same as trained model
 zoomed_img_size = 640
 square = 0.1    # square size
 num_parts = 3   # number of parts on image
 model_paths = {"ALL" : "./runs/pose/train_" + str(imgsize) + "_adam_params2/weights/best.pt"}
-model_paths = {"ALL" : "./runs/pose/train_SGD_noparams_3680/weights/best.pt"}
+model_paths = {"ALL" : "./runs/pose/train_SGD_1920_small/weights/best.pt"}
 
 """
 model_paths = {
