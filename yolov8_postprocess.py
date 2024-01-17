@@ -117,18 +117,22 @@ for idx, img_path in enumerate(image_paths):
     point_change = [point_fnoc[0] - point_on_contour_fnoc[0], point_fnoc[1] - point_on_contour_fnoc[1]]
 
     # update fnoc coordinate
+    old_fnoc = predicted_coordinates[2]
     predicted_coordinates[2] = point_on_contour_fnoc
 
     """
     # Display the original image with closest contour
-    image_with_closest_contour = zooomed_part.copy()
+    image_with_closest_contour = image.copy()
     #cv2.drawContours(image_with_contours, contours, -1, (0, 255, 0), 2)
     cv2.drawContours(image_with_closest_contour, [closest_contour_fnoc], -1, (0, 255, 0), 2)
     
     # plot predicted points
     fig, ax = plt.subplots()   
-    for point in predicted_coordinates: 
-        ax.plot(*point, marker='o', color="white")
+    
+    #for point in predicted_coordinates: 
+    #    ax.plot(*point, marker='o', color="white")
+    ax.plot(*predicted_coordinates[2], marker='o', color="white")
+    ax.plot(*old_fnoc, marker='o', color="red")
     plt.imshow(image_with_closest_contour, cmap="gray")
     plt.show()
     """
