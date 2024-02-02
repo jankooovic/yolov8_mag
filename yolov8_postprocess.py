@@ -111,7 +111,7 @@ for idx, img_path in enumerate(image_paths):
     #plt.imshow(smoothed_edges)
     #plt.show()
 
-    # Find contours
+    # Find contoursa
     contours, _ = cv2.findContours(smoothed_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     closest_contour_fnoc, point_on_contour_fnoc = yolov8_functions.find_point_on_contour(contours, point_fnoc)
     point_change = [point_fnoc[0] - point_on_contour_fnoc[0], point_fnoc[1] - point_on_contour_fnoc[1]]

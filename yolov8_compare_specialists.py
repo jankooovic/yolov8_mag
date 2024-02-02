@@ -203,8 +203,8 @@ for idx, path in enumerate(paths_to_compare):
 if (len(predictedCoord_arr) != 0):
     # Error statistics - explanation in -/documents/graphs_explanation.txt
     for i in pixelErr_arr:
-        x = math.ceil(i[coor_x]/ map_factor)
-        y = math.ceil(i[coor_y]/ map_factor)
+        x = i[coor_x]/ map_factor
+        y = i[coor_y]/ map_factor
         p = [x,y]
         mmmErr_arr.append(p)
 
