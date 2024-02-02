@@ -308,20 +308,100 @@ if (len(predictedCoord_arr) != 0):
     for i in eucledian_distances_all:
         x = i / map_factor
         eucledian_distances_all_mm.append(x)
+    
+    # Eucledian distances per point
+    t_points = [fhc_points_t, 
+                aF1_points_t, 
+                fnoc_points_t, 
+                tkc_points_t, 
+                sfdma1_points_t, 
+                sfdma2_points_t, 
+                stma1_points_t, 
+                stma2_points_t, 
+                tml_points_t]
+    
+    p_points = [fhc_points_p, 
+                aF1_points_p, 
+                fnoc_points_p, 
+                tkc_points_p, 
+                sfdma1_points_p, 
+                sfdma2_points_p, 
+                stma1_points_p, 
+                stma2_points_p, 
+                tml_points_p]
+    
+    eucledian_fhc = []
+    eucledian_aF1 = []
+    eucledian_fnoc = []
+    eucledian_tkc = []
+    eucledian_sfmda1 = []
+    eucledian_sfmda2 = []
+    eucledian_stma1 = []
+    eucledian_stma2 = []
+    eucledian_tml = []
+
+    eu_distances = [eucledian_fhc,
+                    eucledian_aF1,
+                    eucledian_fnoc,
+                    eucledian_tkc,
+                    eucledian_sfmda1,
+                    eucledian_sfmda2,
+                    eucledian_stma1,
+                    eucledian_stma2,
+                    eucledian_tml] 
+    
+    eucledian_fhc_mm = []
+    eucledian_aF1_mm = []
+    eucledian_fnoc_mm = []
+    eucledian_tkc_mm = []
+    eucledian_sfmda1_mm = []
+    eucledian_sfmda2_mm = []
+    eucledian_stma1_mm = []
+    eucledian_stma2_mm = []
+    eucledian_tml_mm = []
+    
+    eu_distances_mm = [eucledian_fhc_mm,
+                    eucledian_aF1_mm,
+                    eucledian_fnoc_mm,
+                    eucledian_tkc_mm,
+                    eucledian_sfmda1_mm,
+                    eucledian_sfmda2_mm,
+                    eucledian_stma1_mm,
+                    eucledian_stma2_mm,
+                    eucledian_tml_mm] 
+
+ 
+    for j,arr in enumerate(p_points):
+        for i, value in enumerate(arr):
+            eucledian_distance = yolov8_functions.euclidean_distance(p_points[j][i], t_points[j][i])
+            eu_distances[j].append(eucledian_distance)
+
+    
+    for i, arr in enumerate(eu_distances):
+        for j, value in enumerate(arr):
+            x = value / map_factor
+            eu_distances_mm[i].append(x)
 
     dictionary = {
         "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
         "Average mm error [x,y]": yolov8_functions.get_average(mmmErr_arr),
         "Average euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_distances_all), yolov8_functions.get_average_one(eucledian_distances_all_mm)],
         "Average FHC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(fhc_points_p, fhc_points_t),
-        "Average aF1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(aF1_points_p, aF1_points_t),
+        "Average FHC euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_fhc), yolov8_functions.get_average_one(eucledian_fhc_mm)],
         "Average FNOC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(fnoc_points_p, fnoc_points_t),
+        "Average FNOC euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_fnoc), yolov8_functions.get_average_one(eucledian_fnoc_mm)],
         "Average TKC error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(tkc_points_p, tkc_points_t),
+        "Average TKC euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_tkc), yolov8_functions.get_average_one(eucledian_tkc_mm)],
         "Average sFDMA1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(sfdma1_points_p, sfdma1_points_t),
+        "Average sFDMA1 euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_sfmda1), yolov8_functions.get_average_one(eucledian_sfmda1_mm)],
         "Average sFDMA2 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(sfdma2_points_p, sfdma2_points_t),
+        "Average sFDMA2 euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_sfmda2), yolov8_functions.get_average_one(eucledian_sfmda2_mm)],
         "Average sTMA1 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(stma1_points_p, stma1_points_t),
+        "Average sTMA1 euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_stma1), yolov8_functions.get_average_one(eucledian_stma1_mm)],
         "Average sTMA2 error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(stma2_points_p, stma2_points_t),
+        "Average sTMA2 euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_stma2), yolov8_functions.get_average_one(eucledian_stma2_mm)],
         "Average TML error [[x,y]pixel, [x,y]mm]": yolov8_functions.get_average_points(tml_points_p, tml_points_t),
+        "Average TML euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_tml), yolov8_functions.get_average_one(eucledian_tml_mm)],
         "Images with >10 percent error": skipped,
         "False predictions": to_skip,
         "Average pixel error percentage [x,y]": yolov8_functions.get_average(pixelPercentErr_arr),
