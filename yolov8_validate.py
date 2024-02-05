@@ -2,7 +2,7 @@
 from ultralytics import YOLO
 
 model = YOLO('yolov8n-pose.pt')   # build a new model from YAML
-model = YOLO('./runs/pose/train_SGD_noparams/weights/best.pt')
+model = YOLO('./runs/pose/train_SGD_noparams/weights/best.pt') # path to custom model
 
 # Validate the model
 # check config file and chnage path to MAC
