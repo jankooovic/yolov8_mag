@@ -9,6 +9,7 @@
 /data/dataset/PNGS
 /data/dataset/PNGS/.DS_Store
 /yolov8n-pose.pt
+/yolov8s-pose.pt
 /Landmarks_definitions.pdf
 /runs
 /documents
