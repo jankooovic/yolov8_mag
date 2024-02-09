@@ -32,24 +32,12 @@ Sample command: model.train(data='config.yaml', epochs=100, imgsz=640)
 """
 
 # naredi dictionary z vrednostmi !!!
-zoomed_size = 640
-all_size = 1920
+all_size = 1920 # 1920 ali 3680
 configs = {
   'config/config_ALL.yaml': all_size,
   }
-"""
-  'config/config_FHC.yaml': zoomed_size,
-  'config/config_FNOC.yaml': zoomed_size,
-  'config/config_TKC.yaml': zoomed_size,
-  'config/config_sTMA1.yaml': zoomed_size,
-  'config/config_sTMA2.yaml': zoomed_size,
-  'config/config_sFMDA1.yaml': zoomed_size,
-  'config/config_sFMDA2.yaml': zoomed_size,
-  'config/config_TML.yaml': zoomed_size,
-}
-"""
 
-opt = "SGD" # "SGD", "Adamax", "Adam"
+opt = "Adamax" # "SGD", "Adamax", "Adam"
 #img_sizes = [3680] #960, 1280, 1920, 2016, 3040, 3680
 
 ### Train model - per config file
@@ -68,9 +56,9 @@ for config in configs:
         lr0 = 0.01,
         optimizer=opt,
         # Data augemntation parameters
-        degrees=0,
-        scale=0,
-        perspective=0,
+        degrees=10,
+        scale=0.1,
+        perspective=0.001,
         # annoyance
         translate=0,
         fliplr=0,
