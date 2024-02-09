@@ -4,7 +4,7 @@ train: images/train  # train images (relative to 'path')
 val: images/val  # val images (relative to 'path')
 
 # MAC
-path: /Users/jankovic/Downloads/Sealife/yolov8_new_location/data/dataset/ALL
+#path: /Users/jankovic/Downloads/Sealife/yolov8_new_location/data/dataset/ALL
 #train: images/train  # train images (relative to 'path')
 #val: images/val  # val images (relative to 'path')
 
