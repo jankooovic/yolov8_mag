@@ -2,10 +2,10 @@
 from ultralytics import YOLO
 
 model = YOLO('yolov8n-pose.pt')   # build a new model from YAML
-m = './eksperimenti_26122023/eksperiment7 - vpliv postprocesiranja/'
+m = './eksperimenti_26122023/eksperiment2 - izbira velikosti vhodne slike/'
 w = '/weights/best.pt'
 
-model = YOLO(m + 'train_SGD_1920_nano' + w) # path to custom model
+model = YOLO(m + 'train_adam_3680_params' + w) # path to custom model
 
 # Validate the model
 # check config file and chnage path to MAC

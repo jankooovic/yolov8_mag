@@ -21,8 +21,8 @@ imgsize = 1920# check if the same as trained model
 zoomed_img_size = 640
 square = 0.1    # square size
 num_parts = 3   # number of parts on image
-model_paths = {"ALL" : "./runs/pose/train_" + str(imgsize) + "_adam_params2/weights/best.pt"}
-model_paths = {"ALL" : "./runs/pose/train_SGD_1920_small/weights/best.pt"}
+#model_paths = {"ALL" : "./runs/pose/train_" + str(imgsize) + "_adam_params2/weights/best.pt"}
+model_paths = {"ALL" : "./runs/pose/train_adam_1920_small/weights/best.pt"}
 
 """
 model_paths = {
