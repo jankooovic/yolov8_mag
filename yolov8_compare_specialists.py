@@ -15,7 +15,7 @@ landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTM
 landmark_names_no_aF1 = ['FHC', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTMA2','TML']
 square_size_ratio = 0.1
 map_factor = 3.6
-predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped, evaluated_images, mmmErr_arr = [], [], [], [], [], [], [], []
+predictedCoord_arr, anotatedCoord_arr, pixelPercentErr_arr, pixelErr_arr, missmatchErr_arr, skipped, evaluated_images = [], [], [], [], [], [], []
 coor_y = 1
 coor_x = 0
 filter_val = 10000
@@ -92,9 +92,13 @@ for idx, path in enumerate(paths_to_compare):
         points_i = yolov8_functions.create_point_array(json_files_i, map_factor)
         points_a = yolov8_functions.create_point_array(json_files_a, map_factor)
 
+        
+
         # remove af1 
         del points_i[4]
         del points_a[4]
+
+        print(points_i)
 
         # FHC, FNOC, TKC, TML, sFMDA, sTMA# FHC, FNOC, TKC, TML, sFMDA, sTMA
         print("Slika:", path_i)
