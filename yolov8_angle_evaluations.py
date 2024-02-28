@@ -46,7 +46,10 @@ map_factor = 3.6
 coor_y = 1
 coor_x = 0
 
-
+all_HKA_test = []
+all_HKA_predicted = []
+all_FSTS_test = []
+all_FSTS_predicted = []
 
 
 # search for files with points
@@ -55,7 +58,6 @@ print(json_file_paths)
 
 # get points 
 for idx, path in enumerate(json_file_paths):
-    skip = False
     print("Path:", path)
 
     # Test points json
@@ -73,7 +75,7 @@ for idx, path in enumerate(json_file_paths):
         img_size = data['Image_size']  # x,y are swapped
         img_size = [img_size[1], img_size[0]]
         img_name = data['Image name']
-
+    print("")
     print("Name: ", img_name)
     print("Size: ", img_size)
     print("Points: ", test_coordinates)
@@ -89,5 +91,60 @@ for idx, path in enumerate(json_file_paths):
     angle_FSTS_predicted = calculate_angle(predicted_coordinates[1], predicted_coordinates[2], predicted_coordinates[3], predicted_coordinates[8])
     print(f"The FS-TS angle is: {angle_FSTS_test:.2f} degrees.")
     print(f"The FS-TS angle is: {angle_FSTS_predicted:.2f} degrees.")
+
+    all_HKA_test.append(angle_HKA_test)
+    all_HKA_predicted.append(angle_HKA_predicted)
+    all_FSTS_test.append(angle_FSTS_test)
+    all_FSTS_predicted.append(angle_FSTS_predicted)
     
     # write data to json file
+    dictionary = {
+        "Image name": path,
+        "Point names": point_names_all,
+        "Image_size": img_size,
+        "Test points": test_coordinates,
+        "Predicted points": predicted_coordinates,
+        "HKA angle test": angle_HKA_test,
+        "HKA angle predicted": angle_HKA_predicted,
+        "HKA diff": abs(np.array(angle_HKA_test) - np.array(angle_HKA_predicted)),
+        "FS-TS angle test": angle_FSTS_test,
+        "FS-TS angle predicted": angle_FSTS_predicted,
+        "FS-TS diff": abs(np.array(angle_FSTS_test) - np.array(angle_FSTS_predicted)),
+        }
+    
+    # Save JSON file with data
+    name = yolov8_functions.filename_creation(path, ".json")
+    filename = angles_path + "/" + name
+    yolov8_functions.create_json_datafile(dictionary, filename)
+
+# calculate the averages and min max values
+average_HKA_test = yolov8_functions.get_average_one(all_HKA_test)
+average_HKA_predicted = yolov8_functions.get_average_one(all_HKA_predicted)
+average_FSTS_test = yolov8_functions.get_average_one(all_FSTS_test)
+average_FSTS_predicted = yolov8_functions.get_average_one(all_FSTS_predicted)
+
+diff_HKA = abs(np.array(all_HKA_test) - np.array(all_HKA_predicted))
+diff_FSTS = abs(np.array(all_FSTS_test) - np.array(all_FSTS_predicted))
+
+# create a list of all images where predictions were satisfactory
+succ_localization = []
+print("")
+for idx, path in enumerate(json_file_paths):
+    if diff_HKA[idx] < 3:
+        name = name = yolov8_functions.filename_creation(path, ".json")
+        print("Successfull localization on image: ", name)
+        succ_localization.append(name)
+
+dictionary = {
+    "HKA angle test average": average_HKA_test,
+    "HKA angle predicted average": average_HKA_predicted,
+    "HKA angle min/max diff": [min(diff_HKA),max(diff_HKA)],
+    "FS-TS angle test average": average_FSTS_test,
+    "FS-TS angle predicted average": average_FSTS_predicted,
+    "FS-TS angle min/max diff": [min(diff_FSTS),max(diff_FSTS)],
+    "Successfull localization": succ_localization 
+    }
+
+# Save JSON file with data
+filename = angles_path + "/" + "errors"
+yolov8_functions.create_json_datafile(dictionary, filename)
