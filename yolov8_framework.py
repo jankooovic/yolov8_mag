@@ -39,4 +39,10 @@ with open("yolov8_evaluate.py") as f:
     exec(f.read())
 f.close()
 
+# Run yolov8_angle_evaluations.py
+print("Executing yolov8_angle_evaluations.py ...")
+with open("yolov8_angle_evaluations.py") as f:
+    exec(f.read())
+f.close()
+
 print("Finished framework procedure!")
