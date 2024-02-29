@@ -10,6 +10,7 @@ dataset_path_igor =  "./data/RTG_dataset_Igor/"
 dataset_path_andrej =  "./data/RTG_dataset_Andrej/"
 save_path = "./data/evaluate_specialists"
 statistics_path = "./data/evaluate_specialists/statistics"
+angles_path = "./data/evaluate_specialists/angles"
 point_names_all = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA', 'sTMA', 'TML']
 landmark_names = ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTMA2','TML']
 landmark_names_no_aF1 = ['FHC', 'FNOC', 'TKC', 'sFMDA1', 'sTMA1', 'sFMDA2', 'sTMA2','TML']
@@ -54,6 +55,12 @@ stma1_points_t = []
 stma2_points_t = []
 tml_points_t = []
 
+# angles
+all_HKA_test = []
+all_HKA_predicted = []
+all_FSTS_test = []
+all_FSTS_predicted = []
+
 # create dataset archive
 yolov8_functions.dataset_archive(save_path)
                                  
@@ -70,7 +77,8 @@ for i_path in paths_igor:
             paths_to_compare.append(i_path)
             paths_to_compare.append(a_path)
 
-
+nm_of_images = 0
+files = []
 # For each folder open json files and compare coordinates
 for idx, path in enumerate(paths_to_compare):
     if idx%2 == 0:
@@ -84,6 +92,8 @@ for idx, path in enumerate(paths_to_compare):
         # FHC, FNOC, TKC, TML, aF1, sFMDA, sTMA
         json_files_i = sorted(json_files_i)
         json_files_a = sorted(json_files_a)
+        nm_of_images = len(json_files_a)
+        files = json_files_i
 
         #print("Igor json:", json_files_i)
         #print("Andrej json:", json_files_a)
@@ -91,19 +101,6 @@ for idx, path in enumerate(paths_to_compare):
         # open json files
         points_i = yolov8_functions.create_point_array(json_files_i, map_factor)
         points_a = yolov8_functions.create_point_array(json_files_a, map_factor)
-
-        
-
-        # remove af1 
-        del points_i[4]
-        del points_a[4]
-
-        print(points_i)
-
-        # FHC, FNOC, TKC, TML, sFMDA, sTMA# FHC, FNOC, TKC, TML, sFMDA, sTMA
-        print("Slika:", path_i)
-        #print("Igor točke:  ", points_i, len(points_i))
-        #print("Andrej točke:", points_a, len(points_a))
 
         # get image size
         img_size = None
@@ -113,6 +110,50 @@ for idx, path in enumerate(paths_to_compare):
             if ".nrrd" in item:
                 data_arr, img_size, orig_img_ratio = yolov8_functions.preprocess_image(item, filter_val)
                 image = data_arr
+
+        # calculate angles - [FHC, FNOC, TKC, TML, aF1, sFMDA, sTMA]
+        angle_HKA_test = yolov8_functions.calculate_angle(points_i[0], points_i[1], points_i[2], points_i[3])
+        angle_HKA_predicted = yolov8_functions.calculate_angle(points_a[0], points_a[1], points_a[2], points_a[3])
+
+        angle_FSTS_test = yolov8_functions.calculate_angle(points_i[4], points_i[1], points_i[2], points_i[3])
+        angle_FSTS_predicted = yolov8_functions.calculate_angle(points_a[4], points_a[1], points_a[2], points_a[3])
+        
+        all_HKA_test.append(angle_HKA_test)
+        all_HKA_predicted.append(angle_HKA_predicted)
+        all_FSTS_test.append(angle_FSTS_test)
+        all_FSTS_predicted.append(angle_FSTS_predicted)
+
+        # write data to json file
+        dictionary = {
+            "Image name": path,
+            "Point names": point_names_all,
+            "Image_size": img_size,
+            "Igor points": points_i,
+            "Andrej points": points_a,
+            "HKA angle Igor": angle_HKA_test,
+            "HKA angle Andrej": angle_HKA_predicted,
+            "HKA diff": abs(np.array(angle_HKA_test) - np.array(angle_HKA_predicted)),
+            "FS-TS angle Igor": angle_FSTS_test,
+            "FS-TS angle Andrej": angle_FSTS_predicted,
+            "FS-TS diff": abs(np.array(angle_FSTS_test) - np.array(angle_FSTS_predicted)),
+            }
+        
+        # Save JSON file with data
+        name = yolov8_functions.filename_creation(path, ".json")
+        filename = angles_path + "/" + name
+        yolov8_functions.create_json_datafile(dictionary, filename)
+
+        # remove af1 
+        del points_i[4]
+        del points_a[4]
+
+        #print(points_i)
+
+        # FHC, FNOC, TKC, TML, sFMDA, sTMA# FHC, FNOC, TKC, TML, sFMDA, sTMA
+        print("Slika:", path_i)
+        #print("Igor točke:  ", points_i, len(points_i))
+        #print("Andrej točke:", points_a, len(points_a))
+
         dictionary = {
             "Image name": path,
             "Point names": point_names_all,
@@ -290,6 +331,10 @@ if (len(predictedCoord_arr) != 0):
             eu_distances_mm[i].append(x)
 
     dictionary = {
+        "Pixel error min/max [x,y]": [min(pixelErr_arr),max(pixelErr_arr)],
+        "mm error min/max [x,y]": [min(mmmErr_arr),max(mmmErr_arr)],
+        "Euclidean dist min/max pixel": [min(eucledian_distances_all),max(eucledian_distances_all)],
+        "Euclidean dist min/max mm": [min(eucledian_distances_all_mm),max(eucledian_distances_all_mm)],
         "Average pixel error [x,y]": yolov8_functions.get_average(pixelErr_arr),
         "Average mm error [x,y]": yolov8_functions.get_average(mmmErr_arr),
         "Average euclidean distance [pixel, mm]": [yolov8_functions.get_average_one(eucledian_distances_all), yolov8_functions.get_average_one(eucledian_distances_all_mm)],
@@ -379,3 +424,49 @@ if (len(predictedCoord_arr) != 0):
         predicted_data_x, predicted_data_y = yolov8_functions.extract_points(predicted_arrs[idx])
         yolov8_functions.box_plot(abs(test_data_x - predicted_data_x), name + " X", statistics_path)
         yolov8_functions.box_plot(abs(test_data_y - predicted_data_y), name + " Y", statistics_path)
+
+# calculate the averages and min max values
+average_HKA_test = yolov8_functions.get_average_one(all_HKA_test)
+average_HKA_predicted = yolov8_functions.get_average_one(all_HKA_predicted)
+average_FSTS_test = yolov8_functions.get_average_one(all_FSTS_test)
+average_FSTS_predicted = yolov8_functions.get_average_one(all_FSTS_predicted)
+
+diff_HKA = abs(np.array(all_HKA_test) - np.array(all_HKA_predicted))
+diff_FSTS = abs(np.array(all_FSTS_test) - np.array(all_FSTS_predicted))
+
+# create a list of all images where predictions were satisfactory
+succ_localization = []
+not_succ_localization = []
+print("")
+nm_of_succ = 0
+nm_of_not_succ = 0
+for idx, path in enumerate(files):
+    if diff_HKA[idx] < 3:
+        name = name = yolov8_functions.filename_creation(path, ".json")
+        # print("Successfull localization on image: ", name)
+        succ_localization.append(name)
+        nm_of_succ += 1
+    else:
+        name = name = yolov8_functions.filename_creation(path, ".json")
+        # print("Successfull localization on image: ", name)
+        not_succ_localization.append(name)
+        nm_of_not_succ += 1
+
+# NEKAJ NE DELA ZA SUCESFUL LOCALIZATION ... NEKAJ JE NAROBE S POTMI ...
+dictionary = {
+    "HKA angle test average": average_HKA_test,
+    "HKA angle predicted average": average_HKA_predicted,
+    "HKA angle min/max diff": [min(diff_HKA),max(diff_HKA)],
+    "FS-TS angle test average": average_FSTS_test,
+    "FS-TS angle predicted average": average_FSTS_predicted,
+    "FS-TS angle min/max diff": [min(diff_FSTS),max(diff_FSTS)],
+    "Number of successful localizations": nm_of_succ,
+    "Number of not successful localizations": nm_of_not_succ,
+    "Number of images": nm_of_images,
+    "Successfull localization": succ_localization,
+    "Not successful localizations": not_succ_localization
+    }
+
+# Save JSON file with data
+filename = angles_path + "/" + "errors"
+yolov8_functions.create_json_datafile(dictionary, filename)

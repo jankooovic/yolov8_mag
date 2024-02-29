@@ -595,3 +595,23 @@ def slice_image_3_parts(image_shape, square, point, img, point_name, filename):
     plt.close()
     
     return image_part, point, image_part.shape, (image_part.shape[0] / image_part.shape[1])
+
+
+def calculate_slope(point1, point2):
+    # Calculate the slope (m) between two points
+    x1, y1 = point1
+    x2, y2 = point2
+    return (y2 - y1) / (x2 - x1)
+
+def calculate_angle(point1, point2, point3, point4):
+    # Calculate slopes for both lines
+    slope1 = calculate_slope(point1, point2)
+    slope2 = calculate_slope(point3, point4)
+
+    # Calculate the angle between the slopes
+    angle_radians = math.atan(abs((slope2 - slope1) / (1 + slope1 * slope2)))
+
+    # Convert radians to degrees
+    angle_degrees = math.degrees(angle_radians)
+
+    return angle_degrees
