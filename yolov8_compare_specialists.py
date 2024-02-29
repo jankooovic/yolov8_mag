@@ -433,6 +433,8 @@ average_FSTS_predicted = yolov8_functions.get_average_one(all_FSTS_predicted)
 
 diff_HKA = abs(np.array(all_HKA_test) - np.array(all_HKA_predicted))
 diff_FSTS = abs(np.array(all_FSTS_test) - np.array(all_FSTS_predicted))
+diff_HKA_average = np.average(diff_HKA)
+diff_FSTS_average = np.average(diff_FSTS)
 
 # create a list of all images where predictions were satisfactory
 succ_localization = []
@@ -456,15 +458,17 @@ for idx, path in enumerate(files):
 dictionary = {
     "HKA angle test average": average_HKA_test,
     "HKA angle predicted average": average_HKA_predicted,
+    "HKA angle diff average": diff_HKA_average,
     "HKA angle min/max diff": [min(diff_HKA),max(diff_HKA)],
     "FS-TS angle test average": average_FSTS_test,
     "FS-TS angle predicted average": average_FSTS_predicted,
+    "FS-TS angle diff average": diff_FSTS_average,
     "FS-TS angle min/max diff": [min(diff_FSTS),max(diff_FSTS)],
-    "Number of successful localizations": nm_of_succ,
-    "Number of not successful localizations": nm_of_not_succ,
-    "Number of images": nm_of_images,
-    "Successfull localization": succ_localization,
-    "Not successful localizations": not_succ_localization
+    #"Number of successful localizations": nm_of_succ,
+    #"Number of not successful localizations": nm_of_not_succ,
+    #"Number of images": nm_of_images,
+    #"Successfull localization": succ_localization,
+    #"Not successful localizations": not_succ_localization
     }
 
 # Save JSON file with data
