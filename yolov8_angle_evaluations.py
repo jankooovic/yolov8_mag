@@ -75,22 +75,27 @@ for idx, path in enumerate(json_file_paths):
         img_size = data['Image_size']  # x,y are swapped
         img_size = [img_size[1], img_size[0]]
         img_name = data['Image name']
+    """
     print("")
     print("Name: ", img_name)
     print("Size: ", img_size)
     print("Points: ", test_coordinates)
     print("Points: ", predicted_coordinates)
+    """
 
     # calculate angles - ['FHC', 'aF1', 'FNOC', 'TKC', 'sFMDA1', 'sFMDA2', 'sTMA1', 'sTMA2','TML']
     angle_HKA_test = calculate_angle(test_coordinates[0], test_coordinates[2], test_coordinates[3], test_coordinates[8])
     angle_HKA_predicted = calculate_angle(predicted_coordinates[0], predicted_coordinates[2], predicted_coordinates[3], predicted_coordinates[8])
-    print(f"The HKA angle is: {angle_HKA_test:.2f} degrees.")
-    print(f"The HKA angle is: {angle_HKA_predicted:.2f} degrees.")
 
     angle_FSTS_test = calculate_angle(test_coordinates[1], test_coordinates[2], test_coordinates[3], test_coordinates[8])
     angle_FSTS_predicted = calculate_angle(predicted_coordinates[1], predicted_coordinates[2], predicted_coordinates[3], predicted_coordinates[8])
+    
+    """
+    print(f"The HKA angle is: {angle_HKA_test:.2f} degrees.")
+    print(f"The HKA angle is: {angle_HKA_predicted:.2f} degrees.")
     print(f"The FS-TS angle is: {angle_FSTS_test:.2f} degrees.")
     print(f"The FS-TS angle is: {angle_FSTS_predicted:.2f} degrees.")
+    """
 
     all_HKA_test.append(angle_HKA_test)
     all_HKA_predicted.append(angle_HKA_predicted)
@@ -128,12 +133,21 @@ diff_FSTS = abs(np.array(all_FSTS_test) - np.array(all_FSTS_predicted))
 
 # create a list of all images where predictions were satisfactory
 succ_localization = []
+not_succ_localization = []
 print("")
+nm_of_succ = 0
+nm_of_not_succ = 0
 for idx, path in enumerate(json_file_paths):
     if diff_HKA[idx] < 3:
         name = name = yolov8_functions.filename_creation(path, ".json")
-        print("Successfull localization on image: ", name)
+        # print("Successfull localization on image: ", name)
         succ_localization.append(name)
+        nm_of_succ += 1
+    else:
+        name = name = yolov8_functions.filename_creation(path, ".json")
+        # print("Successfull localization on image: ", name)
+        not_succ_localization.append(name)
+        nm_of_not_succ += 1
 
 dictionary = {
     "HKA angle test average": average_HKA_test,
@@ -142,7 +156,11 @@ dictionary = {
     "FS-TS angle test average": average_FSTS_test,
     "FS-TS angle predicted average": average_FSTS_predicted,
     "FS-TS angle min/max diff": [min(diff_FSTS),max(diff_FSTS)],
-    "Successfull localization": succ_localization 
+    "Number of successful localizations": nm_of_succ,
+    "Number of not successful localizations": nm_of_not_succ,
+    "Number of images": len(json_file_paths),
+    "Successfull localization": succ_localization,
+    "Not successful localizations": not_succ_localization
     }
 
 # Save JSON file with data
